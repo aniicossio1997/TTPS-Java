@@ -1,11 +1,13 @@
 import domain.models.Ubicacion;
 import jakarta.servlet.*;
+import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.*;
 import persistence.FactoryDAO;
 import persistence.dao.UbicacionDAO;
 
 import java.util.List;
 
+@WebListener // ¡Importante! Esto registra el listener automáticamente
 public class InicioAplicacionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 
     public InicioAplicacionListener() {
@@ -17,6 +19,7 @@ public class InicioAplicacionListener implements ServletContextListener, HttpSes
         // (1) Obtenemos el Contexto de la Aplicación
         ServletContext context = sce.getServletContext();
 
+        System.out.println("--- HOLA-INICIO V1---");
         // (2) Imprimimos en la consola (como pediste)
         System.out.println("--- Aplicación Iniciada: Cargando datos iniciales ---");
 
@@ -25,7 +28,7 @@ public class InicioAplicacionListener implements ServletContextListener, HttpSes
             UbicacionDAO ubicacionDAO = FactoryDAO.getUbicacionDAO(); // [cite: 266, 271]
 
             // (4) Obtenemos la lista de ubicaciones (ordenadas por provincia, por ejemplo)
-            List<Ubicacion> listaUbicaciones = ubicacionDAO.getAll("provincia"); // [cite: 153]
+            List<Ubicacion> listaUbicaciones = ubicacionDAO.getAll(); // [cite: 153]
 
             // (5) Guardamos la lista en el ServletContext
             // "listaDeUbicaciones" será la "llave" para recuperarla después

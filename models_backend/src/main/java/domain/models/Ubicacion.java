@@ -7,6 +7,7 @@ public class Ubicacion  {
 
     @Id // Marca este campo como la clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY) // Autogenerado por la BD
+
     private Long id;
     private String idExterno;
     private String provincia;

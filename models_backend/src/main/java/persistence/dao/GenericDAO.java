@@ -15,4 +15,5 @@ public interface GenericDAO<T> {
     public T get(Long id); // [cite: 84]
 
     public List<T> getAll(String columnOrder); // [cite: 85]
+    public List<T> getAll();
 }

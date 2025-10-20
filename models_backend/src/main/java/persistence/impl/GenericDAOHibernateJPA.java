@@ -110,4 +110,9 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
             em.close();
         }
     }
+
+    public List<T> getAll() {
+        // Llama al otro método 'getAll' pasándole null
+        return getAll(null);
+    }
 }
