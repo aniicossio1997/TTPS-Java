@@ -1,11 +1,10 @@
-package domain;
+package domain.models;
 
 import domain.enums.EstadoUsuarioEnum;
 import domain.enums.RolUsuarioEnum;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 @Entity

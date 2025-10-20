@@ -1,4 +1,4 @@
-package domain;
+package domain.models;
 
 import domain.enums.MedallaEnum;
 import java.util.Date;

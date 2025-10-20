@@ -1,13 +1,12 @@
-package domain;
+package domain.models;
 
 import jakarta.persistence.*;
 
-import java.util.Locale;
-
-@Entity
+@Entity // Indica que esta clase es una entidad persistente
 public class Ubicacion  {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+
+    @Id // Marca este campo como la clave primaria
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Autogenerado por la BD
     private Long id;
     private String idExterno;
     private String provincia;

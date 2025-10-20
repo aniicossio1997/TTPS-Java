@@ -1,4 +1,4 @@
-package domain;
+package domain.models;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

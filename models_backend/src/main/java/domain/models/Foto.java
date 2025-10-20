@@ -1,4 +1,4 @@
-package domain;
+package domain.models;
 
 /** FOTO: puede usarse en publicaciones y/o avistamientos */
 public class Foto {
