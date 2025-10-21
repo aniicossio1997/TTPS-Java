@@ -1,14 +1,14 @@
 package domain.models;
 
+import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity // Indica que esta clase es una entidad persistente
-public class Ubicacion  {
+public class Ubicacion  extends IdentifiableEntity {
 
-    @Id // Marca este campo como la clave primaria
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // Autogenerado por la BD
-
-    private Long id;
     private String idExterno;
     private String provincia;
     private String ciudad;
@@ -31,10 +31,6 @@ public class Ubicacion  {
     }
 
     // --- getters ---
-
-    public Long getId() {
-        return id;
-    }
 
     public String getIdExterno() {
         return idExterno;
@@ -60,5 +56,11 @@ public class Ubicacion  {
         return longitud;
     }
 
+
+    // --- Relaciones inversas (1 Ubicacion : N Publicaciones/Avistamientos/Usuarios)
+
+    @OneToMany(mappedBy = "ubicacion") private List<Usuario> usuarios = new ArrayList<>();
+    @OneToMany(mappedBy = "ubicacion") private List<Avistamiento> avistamientos = new ArrayList<>();
+    @OneToMany(mappedBy = "ubicacion") private List<Publicacion> publicaciones = new ArrayList<>();
 
 }

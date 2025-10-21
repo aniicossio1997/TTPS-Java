@@ -1,23 +1,37 @@
 package domain.models;
 
+import domain.models.base.IdentifiableEntity;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+@Entity
+public class Avistamiento extends IdentifiableEntity {
 
-public class Avistamiento {
-    private Integer id;
-    private String descripcion;
-    private LocalDate fecha;
+    @Column(length = 500) private String descripcion;
+    @Column(nullable = false) private LocalDate fecha;
 
     // Relaciones
+
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ubicacion_id", nullable = false)
+    private Ubicacion ubicacion;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "publicacion_id", nullable = false)
     private Publicacion publicacion;
-    private Usuario usuario; // Usuario que realizó el avistamiento
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @OneToMany(mappedBy = "avistamiento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Foto> fotos = new ArrayList<>();
 
 
-    // --- getters/setters ---
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    //--FIN RELACIONES
 
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }

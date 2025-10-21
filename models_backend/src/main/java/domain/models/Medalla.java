@@ -1,33 +1,28 @@
 package domain.models;
 
 import domain.enums.MedallaEnum;
+
 import java.util.Date;
 
+import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
 
 
+@Entity
+public class Medalla extends IdentifiableEntity {
 
-public class Medalla {
 
-
-    private Long id;
-
+    @Enumerated(EnumType.STRING) @Column(nullable = false)
     private MedallaEnum tipo;
-    private Date fechaAsignacion;
+
+    @Column(nullable = false) private Date fechaAsignacion;
     private Date fechaVencimiento;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     // --- getters ---
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-
 
     public MedallaEnum getTipo() {
         return tipo;

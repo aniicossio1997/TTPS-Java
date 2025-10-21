@@ -1,11 +1,15 @@
 package domain.models;
 
+import domain.models.base.IdentifiableEntity;
+import jakarta.persistence.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Publicacion {
-    private Integer id;
+@Entity
+public class Publicacion extends IdentifiableEntity {
+
     private String nombre;
     private String descripcion;
     private LocalDate fecha;
@@ -14,11 +18,34 @@ public class Publicacion {
     private String raza;
     private String tamanio;
 
-    // Relaciones
+    //-- Relaciones
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ubicacion_id", nullable = false)
+    private Ubicacion ubicacion;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario; // creador/dueño
+
+    // 1..N por regla de negocio (validar en servicio o con Bean Validation)
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Foto> fotos = new ArrayList<>();
-    private List<Avistamiento> avistamientos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "publicacion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<EstadoPublicacion> estados = new ArrayList<>();
 
+    @OneToMany(mappedBy = "publicacion")
+    private List<Avistamiento> avistamientos = new ArrayList<>();
+
+    //--FIN de RELACIONE
+
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(Ubicacion ubicacion) {
+        this.ubicacion = ubicacion;
+    }
     // --- getters ---
 
     public String getNombre() {
@@ -27,10 +54,6 @@ public class Publicacion {
 
     public String getDescripcion() {
         return descripcion;
-    }
-
-    public Integer getId() {
-        return id;
     }
 
     public LocalDate getFecha() {

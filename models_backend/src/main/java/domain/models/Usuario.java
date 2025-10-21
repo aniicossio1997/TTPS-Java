@@ -2,15 +2,14 @@ package domain.models;
 
 import domain.enums.EstadoUsuarioEnum;
 import domain.enums.RolUsuarioEnum;
+import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
-
-public class Usuario {
-
-    private Long id;
+@Entity
+public class Usuario extends IdentifiableEntity {
 
     private String nombre;
     private String apellido;
@@ -22,17 +21,39 @@ public class Usuario {
     private Integer puntos;
     private Integer mascotasEnTransito;
     private Integer ayudadosEnZona;
-    private EstadoUsuarioEnum estadosUsuario;
 
 
+    //CONFIG DE BASE
+    @Enumerated(EnumType.STRING) @Column(nullable = false)
+    private EstadoUsuarioEnum estado;
+
+    @Enumerated(EnumType.STRING) @Column(nullable = false)
     private RolUsuarioEnum rol;
 
-    //private Ubicacion ubicacion;
-    //private Foto fotoPerfil;
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "ubicacion_id", nullable = false)
+    private Ubicacion ubicacion;
 
+    // 0..1 foto de perfil
+    @OneToOne(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Foto fotoPerfil;
+
+    // relaciones de actividad
+    @OneToMany(mappedBy = "usuario") private List<Publicacion> publicaciones = new ArrayList<>();
+    @OneToMany(mappedBy = "usuario") private List<Avistamiento> avistamientos = new ArrayList<>();
+
+    // medallas del usuario
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Medalla> medallas = new ArrayList<>();
-    private List<Publicacion> publicaciones = new ArrayList<>();
-    private List<Avistamiento> avistamientosReportados = new ArrayList<>();
+
+    //FIN DE RELACIONES
+    public Ubicacion getUbicacion() {
+        return ubicacion;
+    }
+
+    public void setUbicacion(Ubicacion ubicacion) {
+        this.ubicacion = ubicacion;
+    }
 
     public Usuario(String nombre, String apellido, String email, String password, Integer puntos, Integer mascotasEnTransito, Integer ayudadosEnZona, RolUsuarioEnum rol, Ubicacion ubicacion, Foto fotoPerfil) {
         this.nombre = nombre;
@@ -89,20 +110,6 @@ public class Usuario {
 
 
 
-
-    public List<Medalla> getMedallas() {
-        return medallas;
-    }
-
-
-
-    public List<Publicacion> getPublicaciones() {
-        return publicaciones;
-    }
-
-    public List<Avistamiento> getAvistamientosReportados() {
-        return avistamientosReportados;
-    }
 
 
 
