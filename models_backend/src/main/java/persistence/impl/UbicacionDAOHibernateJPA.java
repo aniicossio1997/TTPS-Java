@@ -17,7 +17,7 @@ import java.util.List;
 public class UbicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Ubicacion> implements UbicacionDAO {
 
     public UbicacionDAOHibernateJPA() {
-        super(Ubicacion.class); // [cite: 190]
+        super(Ubicacion.class);
     }
 
     @Override

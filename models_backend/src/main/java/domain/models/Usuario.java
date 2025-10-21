@@ -19,7 +19,6 @@ public class Usuario extends IdentifiableEntity {
 
     private String password;
     private Integer puntos;
-    private Integer mascotasEnTransito;
     private Integer ayudadosEnZona;
 
 
@@ -61,7 +60,6 @@ public class Usuario extends IdentifiableEntity {
         this.email = email;
         this.password = password;
         this.puntos = puntos;
-        this.mascotasEnTransito = mascotasEnTransito;
         this.ayudadosEnZona = ayudadosEnZona;
         this.rol = rol;
 
@@ -92,9 +90,6 @@ public class Usuario extends IdentifiableEntity {
         return password;
     }
 
-    public Integer getMascotasEnTransito() {
-        return mascotasEnTransito;
-    }
 
     public Integer getPuntos() {
         return puntos;
