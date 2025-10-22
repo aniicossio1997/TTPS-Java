@@ -3,8 +3,8 @@ package domain.models;
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -12,7 +12,7 @@ public class Publicacion extends IdentifiableEntity {
 
     private String nombre;
     private String descripcion;
-    private LocalDate fecha;
+    private Date fecha;
     private String color;
     private String especie;
     private String raza;
@@ -56,7 +56,7 @@ public class Publicacion extends IdentifiableEntity {
         return descripcion;
     }
 
-    public LocalDate getFecha() {
+    public Date getFecha() {
         return fecha;
     }
 

@@ -3,6 +3,8 @@ package domain.models;
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
 
+import java.util.Arrays;
+
 /** FOTO: puede usarse en publicaciones y/o avistamientos */
 @Entity
 public class Foto extends IdentifiableEntity {
@@ -39,5 +41,12 @@ public class Foto extends IdentifiableEntity {
     private Publicacion publicacion;
 
 
-
+    @Override
+    public String toString() {
+        return "Foto{"
+                +"id=" + getId() +
+                "nombre='" + nombre + '\'' +
+                ", content=" + Arrays.toString(content) +
+                '}';
+    }
 }

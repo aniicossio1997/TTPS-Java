@@ -3,14 +3,14 @@ package domain.models;
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 @Entity
 public class Avistamiento extends IdentifiableEntity {
 
     @Column(length = 500) private String descripcion;
-    @Column(nullable = false) private LocalDate fecha;
+    @Column(nullable = false) private Date fecha;
 
     // Relaciones
 
@@ -36,8 +36,8 @@ public class Avistamiento extends IdentifiableEntity {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public LocalDate getFecha() { return fecha; }
-    public void setFecha(LocalDate fecha) { this.fecha = fecha; }
+    public Date getFecha() { return fecha; }
+    public void setFecha(Date fecha) { this.fecha = fecha; }
 
     public Publicacion getPublicacion() { return publicacion; }
     public void setPublicacion(Publicacion publicacion) { this.publicacion = publicacion; }
@@ -45,8 +45,18 @@ public class Avistamiento extends IdentifiableEntity {
     public List<Foto> getFotos() { return fotos; }
     public void setFotos(List<Foto> fotos) { this.fotos = fotos; }
 
-    // --- Método add ---
-    public void addFoto(Foto foto) {
-        fotos.add(foto);
+    @Override
+    public String toString() {
+        return "Avistamiento{" +
+                "id=" + getId() +
+                "descripcion='" + descripcion + '\'' +
+                ", fecha=" + fecha +
+                ", ubicacion=" + ubicacion +
+                ", publicacion=" + publicacion +
+                '}';
     }
+
+    // --- Método add ---
+    
+    
 }

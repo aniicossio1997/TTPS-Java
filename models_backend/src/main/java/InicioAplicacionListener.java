@@ -42,9 +42,9 @@ public class InicioAplicacionListener implements ServletContextListener, HttpSes
             nuevaUbicacion.setIdExterno("ID-EXT-PRUEBA-001");
             nuevaUbicacion.setLatitud(-90.0);
             nuevaUbicacion.setLongitud(-90.0);
-            nuevaUbicacion.setProvincia("San Luis");*/
+            nuevaUbicacion.setProvincia("San Luis");
 
-           // ubicacionDAO.persist(nuevaUbicacion);
+            ubicacionDAO.persist(nuevaUbicacion);*/
 
 
             System.out.println("OK: " + listaUbicaciones.size() + " ubicaciones cargadas en el ServletContext.");
