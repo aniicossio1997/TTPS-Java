@@ -25,14 +25,27 @@ public class InicioAplicacionListener implements ServletContextListener, HttpSes
 
         try {
             // (3) Usamos tu FactoryDAO para obtener el DAO
-            UbicacionDAO ubicacionDAO = FactoryDAO.getUbicacionDAO(); // [cite: 266, 271]
+                        UbicacionDAO ubicacionDAO = FactoryDAO.getUbicacionDAO();
 
-            // (4) Obtenemos la lista de ubicaciones (ordenadas por provincia, por ejemplo)
-            List<Ubicacion> listaUbicaciones = ubicacionDAO.getAll(); // [cite: 153]
+            // (4) Obtenemos la lista de ubicaciones
+                        List<Ubicacion> listaUbicaciones = ubicacionDAO.getAll();
 
-            // (5) Guardamos la lista en el ServletContext
-            // "listaDeUbicaciones" será la "llave" para recuperarla después
-            context.setAttribute("listaDeUbicaciones", listaUbicaciones);
+            // (5) ¡Simplemente imprime la lista!
+                        System.out.println("--- Listado de Ubicaciones Cargadas ANTES ---");
+                        System.out.println(listaUbicaciones);
+            System.out.println("----------------------------------------");
+
+            //creamos una ubicacion nueva
+/*            Ubicacion nuevaUbicacion = new  Ubicacion();
+            nuevaUbicacion.setBarrio("Altos");
+            nuevaUbicacion.setCiudad("Moreno");
+            nuevaUbicacion.setIdExterno("ID-EXT-PRUEBA-001");
+            nuevaUbicacion.setLatitud(-90.0);
+            nuevaUbicacion.setLongitud(-90.0);
+            nuevaUbicacion.setProvincia("San Luis");*/
+
+           // ubicacionDAO.persist(nuevaUbicacion);
+
 
             System.out.println("OK: " + listaUbicaciones.size() + " ubicaciones cargadas en el ServletContext.");
 
