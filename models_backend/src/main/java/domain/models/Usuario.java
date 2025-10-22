@@ -14,7 +14,7 @@ public class Usuario extends IdentifiableEntity {
     private String nombre;
     private String apellido;
 
-   // @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
 
     private String password;
