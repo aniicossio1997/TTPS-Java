@@ -3,6 +3,7 @@ package domain.models;
 import domain.enums.EstadoPublicacionEnum;
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Date;
 
@@ -10,6 +11,7 @@ import java.util.Date;
 @Table(name = "estado_publicacion")
 public class EstadoPublicacion extends IdentifiableEntity {
 
+    @Getter
     @Column(nullable = false) private Date fecha;
 
     @Enumerated(EnumType.STRING) @Column(nullable = false)
