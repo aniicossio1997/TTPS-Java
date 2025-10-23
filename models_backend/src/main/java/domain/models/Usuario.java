@@ -24,7 +24,7 @@ public class Usuario extends IdentifiableEntity {
 
     //CONFIG DE BASE
     @Enumerated(EnumType.STRING) @Column(nullable = false)
-    private EstadoUsuarioEnum estado;
+    private EstadoUsuarioEnum estado = EstadoUsuarioEnum.HABILITADO;
 
     @Enumerated(EnumType.STRING) @Column(nullable = false)
     private RolUsuarioEnum rol;
@@ -62,9 +62,8 @@ public class Usuario extends IdentifiableEntity {
         this.puntos = puntos;
         this.ayudadosEnZona = ayudadosEnZona;
         this.rol = rol;
-
-       // this.ubicacion = ubicacion;
-        // this.fotoPerfil = fotoPerfil;
+        this.ubicacion = ubicacion;
+        this.fotoPerfil = fotoPerfil;
     }
 
     public Usuario(String nombre, String apellido, String email, String password) {

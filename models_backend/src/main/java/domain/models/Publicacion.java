@@ -2,11 +2,13 @@ package domain.models;
 
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
+@Setter
+@Getter
 @Entity
 public class Publicacion extends IdentifiableEntity {
 
@@ -37,45 +39,12 @@ public class Publicacion extends IdentifiableEntity {
     @OneToMany(mappedBy = "publicacion")
     private List<Avistamiento> avistamientos = new ArrayList<>();
 
-    //--FIN de RELACIONE
+    public EstadoPublicacion getEstado() {
+        Optional<EstadoPublicacion> estadoReciente = this.estados.stream()
+                .max(Comparator.comparing(EstadoPublicacion::getFecha));
 
-    public Ubicacion getUbicacion() {
-        return ubicacion;
+        return estadoReciente.orElse(null);
     }
-
-    public void setUbicacion(Ubicacion ubicacion) {
-        this.ubicacion = ubicacion;
-    }
-    // --- getters ---
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public String getDescripcion() {
-        return descripcion;
-    }
-
-    public Date getFecha() {
-        return fecha;
-    }
-
-    public String getColor() {
-        return color;
-    }
-
-    public List<Foto> getFotos() {
-        return fotos;
-    }
-
-    public List<Avistamiento> getAvistamientos() {
-        return avistamientos;
-    }
-
-    public List<EstadoPublicacion> getEstados() {
-        return estados;
-    }
-
     public void addFoto(Foto foto) {
         if (foto != null && !fotos.contains(foto)) {
             fotos.add(foto);

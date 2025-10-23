@@ -1,0 +1,92 @@
+[
+  {
+    "nombre": "Gato Siamés Perdido",
+    "especie": "Gato",
+    "raza": "Siamés",
+    "color": "Crema/Marrón",
+    "tamanio": "Pequeño",
+    "descripcion": "Se perdió cerca del supermercado.",
+    "dias_atras": 5
+  },
+  {
+    "nombre": "Perro Labrador Macho",
+    "especie": "Perro",
+    "raza": "Labrador",
+    "color": "Negro",
+    "tamanio": "Grande",
+    "descripcion": "Visto por última vez en la plaza central.",
+    "dias_atras": 1
+  },
+  {
+    "nombre": "Gatita Tricolor",
+    "especie": "Gato",
+    "raza": "Mestizo",
+    "color": "Tricolor",
+    "tamanio": "Mediano",
+    "descripcion": "Tiene un cascabel azul, es muy asustadiza.",
+    "dias_atras": 10
+  },
+  {
+    "nombre": "Perro Caniche Gris",
+    "especie": "Perro",
+    "raza": "Caniche",
+    "color": "Gris",
+    "tamanio": "Pequeño",
+    "descripcion": "Con corte de pelo reciente. Necesita medicación.",
+    "dias_atras": 3
+  },
+  {
+    "nombre": "Gato Común Naranja",
+    "especie": "Gato",
+    "raza": "Común Europeo",
+    "color": "Naranja",
+    "tamanio": "Mediano",
+    "descripcion": "Muy sociable, suele rondar por la calle 50.",
+    "dias_atras": 7
+  },
+  {
+    "nombre": "Cachorro Pitbull",
+    "especie": "Perro",
+    "raza": "Pitbull",
+    "color": "Blanco",
+    "tamanio": "Mediano",
+    "descripcion": "Lleva un collar de cuero roto.",
+    "dias_atras": 2
+  },
+  {
+    "nombre": "Perro Ovejero Alemán",
+    "especie": "Perro",
+    "raza": "Ovejero Alemán",
+    "color": "Negro/Marrón",
+    "tamanio": "Grande",
+    "descripcion": "Se perdió mientras paseaba por el parque.",
+    "dias_atras": 1
+  },
+  {
+    "nombre": "Gato Persa",
+    "especie": "Gato",
+    "raza": "Persa",
+    "color": "Blanco",
+    "tamanio": "Mediano",
+    "descripcion": "Pelo largo, cara chata, muy peludo.",
+    "dias_atras": 4
+  },
+  {
+    "nombre": "Perro Beagle",
+    "especie": "Perro",
+    "raza": "Beagle",
+    "color": "Tricolor",
+    "tamanio": "Mediano",
+    "descripcion": "Amigable, se escapó del patio trasero.",
+    "dias_atras": 6
+  },
+  {
+    "nombre": "Gato Negro Callejero",
+    "especie": "Gato",
+    "raza": "Mestizo",
+    "color": "Negro",
+    "tamanio": "Pequeño",
+    "descripcion": "Es un gato joven, con un ojo lastimado.",
+    "dias_atras": 2
+  }
+]
