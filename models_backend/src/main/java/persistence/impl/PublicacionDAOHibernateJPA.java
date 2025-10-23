@@ -57,7 +57,7 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
         try {
             String jpql = "SELECT p FROM Publicacion p WHERE 1=1";
 
-            // 1. Agregar condiciones
+            //  Agregar condiciones
             if (nombre != null && !nombre.isEmpty()) {
                 jpql += " AND LOWER(p.nombre) LIKE LOWER(:nombreParam)";
             }

@@ -2,11 +2,15 @@ package domain.models;
 
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 @Entity
+@Getter
+@Setter
 public class Avistamiento extends IdentifiableEntity {
 
     @Column(length = 500) private String descripcion;

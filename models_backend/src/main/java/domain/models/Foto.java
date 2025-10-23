@@ -2,11 +2,15 @@ package domain.models;
 
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 
 /** FOTO: puede usarse en publicaciones y/o avistamientos */
 @Entity
+@Getter
+@Setter
 public class Foto extends IdentifiableEntity {
 
 

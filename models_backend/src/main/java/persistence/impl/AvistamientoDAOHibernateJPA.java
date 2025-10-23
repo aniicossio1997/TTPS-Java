@@ -5,7 +5,7 @@ import domain.models.Ubicacion;
 import persistence.dao.AvistamientoDAO;
 
 public class AvistamientoDAOHibernateJPA extends GenericDAOHibernateJPA<Avistamiento> implements AvistamientoDAO {
-    public AvistamientoDAOHibernateJPA(Class<Avistamiento> clase) {
+    public AvistamientoDAOHibernateJPA() {
         super(Avistamiento.class);
     }
 }
