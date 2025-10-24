@@ -5,15 +5,23 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity // Indica que esta clase es una entidad persistente
 public class Ubicacion  extends IdentifiableEntity {
 
     private String idExterno;
+
     private String provincia;
+
     private String ciudad;
+
     private String barrio;
+
+    @Column(nullable = false)
     private Double latitud;
+
+    @Column(nullable = false)
     private Double longitud;
 
 
@@ -89,5 +97,17 @@ public class Ubicacion  extends IdentifiableEntity {
 
     public void setLongitud(Double longitud) {
         this.longitud = longitud;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Ubicacion ubicacion)) return false;
+        if (!super.equals(o)) return false;
+        return Objects.equals(idExterno, ubicacion.idExterno) && Objects.equals(provincia, ubicacion.provincia) && Objects.equals(ciudad, ubicacion.ciudad) && Objects.equals(barrio, ubicacion.barrio) && Objects.equals(latitud, ubicacion.latitud) && Objects.equals(longitud, ubicacion.longitud);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), idExterno, provincia, ciudad, barrio, latitud, longitud);
     }
 }

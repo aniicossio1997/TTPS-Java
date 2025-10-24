@@ -6,25 +6,24 @@ import jakarta.persistence.PersistenceException;
 
 /**
  * Clase utilitaria para gestionar el EntityManagerFactory (Singleton).
- * Basado en la teoría, página 7[cite: 246, 248].
+ * 
  */
 public  class EMF {
 
-    private static EntityManagerFactory em = null; // [cite: 249]
+    private static EntityManagerFactory em = null;
 
-    static { // [cite: 250]
+    static {
         try {
-            // "unlp" es el nombre de la persistence-unit en persistence.xml [cite: 255, 283]
             em = Persistence.createEntityManagerFactory("miUP");
-        } catch (PersistenceException e) { // [cite: 256]
-            System.err.println("Error al crear EntityManagerFactory: " + e.getMessage()); // [cite: 257, 259]
-            e.printStackTrace(); // [cite: 258]
+        } catch (PersistenceException e) { 
+            System.err.println("Error al crear EntityManagerFactory: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
-    public static EntityManagerFactory getEMF() { // [cite: 260]
-        return em; // [cite: 262]
+    public static EntityManagerFactory getEMF() { 
+        return em;
     }
 
-    private EMF() {} // [cite: 263]
+    private EMF() {}
 }

@@ -6,11 +6,12 @@ import domain.models.Ubicacion;
 import domain.models.Usuario;
 import domain.enums.RolUsuarioEnum;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 
-import persistence.dao.UbicacionDAO;
-import persistence.dao.UsuarioDAO;
+import persistence.dao.*;
 import persistence.FactoryDAO;
+import persistence.impl.*;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,7 @@ class UsuarioDAOTestImpl {
 
     @BeforeEach
     public void setUp() {
+
         // Antes de CADA test, se crea una Ubicacion .
         ubicacionDePrueba = new Ubicacion("123", "Buenos Aires", "La Plata", "Tolosa", 34.8833, 57.9667);
         ubicacionDAO.persist(ubicacionDePrueba);
@@ -42,7 +44,7 @@ class UsuarioDAOTestImpl {
     @Test
     @DisplayName("Persistir")
     void testPersist() {
-        Usuario nuevoUsuario = new Usuario("nuevo", "Test", "test@mail.com", "123",10, 0, 0, RolUsuarioEnum.USUARIO_COMUN, ubicacionDePrueba, null);
+        Usuario nuevoUsuario = new Usuario("nuevo", "Test", "test1@mail.com", "123",10, 0, 0, RolUsuarioEnum.USUARIO_COMUN, ubicacionDePrueba, null);
         usuarioDAO.persist(nuevoUsuario);
 
         assertNotNull(nuevoUsuario.getId(), "El ID no debería ser nulo después de persistir");
@@ -100,6 +102,7 @@ class UsuarioDAOTestImpl {
     @Test
     @DisplayName("Recuperar todos los Usuarios")
     void testGetAll() {
+
         Usuario u1 = new Usuario("User", "Uno", "user1@mail.com", "123",10, 0, 0, RolUsuarioEnum.USUARIO_COMUN, ubicacionDePrueba, null);
         usuarioDAO.persist(u1);
 
@@ -165,4 +168,6 @@ class UsuarioDAOTestImpl {
             System.err.println("Error limpiando ubicación: " + e.getMessage());
         }
     }
+
+
 }

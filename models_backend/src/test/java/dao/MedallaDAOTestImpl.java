@@ -22,26 +22,19 @@ import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class MedallaDAOTestImpl {
+class MedallaDAOTestImpl  extends CleanBaseBD {
 
-    //DAOs
-    private static MedallaDAO medallaDAO;
-    private static UsuarioDAO usuarioDAO;
-    private static UbicacionDAO ubicacionDAO;
+
 
     // Datos de Prueb
     private Ubicacion ubicacionDePrueba;
     private Usuario usuarioDePrueba;
 
-    @BeforeAll
-    public static void setUpClass() {
-        medallaDAO = FactoryDAO.getMedallaDAO();
-        usuarioDAO = FactoryDAO.getUsuarioDAO();
-        ubicacionDAO = FactoryDAO.getUbicacionDAO();
-    }
+
 
     @BeforeEach
     public void setUp() {
+        super.setup();
         // Se crea la Ubicacion
         ubicacionDePrueba = new Ubicacion("123", "Buenos Aires", "La Plata", "Tolosa", 34.8833, 57.9667);
         ubicacionDAO.persist(ubicacionDePrueba);

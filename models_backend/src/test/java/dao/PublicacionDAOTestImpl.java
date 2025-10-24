@@ -3,9 +3,8 @@ package dao;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import domain.models.Publicacion;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.*;
 import persistence.FactoryDAO;
 import persistence.dao.PublicacionDAO;
 
@@ -13,16 +12,26 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.*;
 
+
 public class PublicacionDAOTestImpl extends DAOBaseTest {
 
-    private final PublicacionDAO publicacionDAO = FactoryDAO.getPublicacionDAO();
+    private static PublicacionDAO publicacionDAO = FactoryDAO.getPublicacionDAO();
 
-    @BeforeAll
-    public static void setupPublicaciones() {
+    @BeforeEach
+    public  void setupPublicaciones() {
         cargarPublicacionesDesdeJson();
     }
 
-    private static void cargarPublicacionesDesdeJson() {
+    @AfterEach void tearDownPublicaciones() {
+        // Limpiamos todas las publicaciones después de cada test
+        List<Publicacion> todasLasPublicaciones = publicacionDAO.getAll();
+        for (Publicacion pub : todasLasPublicaciones) {
+            publicacionDAO.delete(pub.getId());
+        }
+    }
+
+
+    private void cargarPublicacionesDesdeJson() {
         // Cargamos 20 publicaciones iniciales desde un json, para que no quede super largo el test
         Gson gson = new Gson();
         PublicacionDAO publicacionDAO = FactoryDAO.getPublicacionDAO();

@@ -5,8 +5,8 @@ import persistence.impl.*;
 
 public class FactoryDAO {
 
-    public static UbicacionDAO getUbicacionDAO() { // [cite: 266]
-        return new UbicacionDAOHibernateJPA(); // [cite: 268]
+    public static UbicacionDAO getUbicacionDAO() { 
+        return new UbicacionDAOHibernateJPA(); 
     }
 
     public static PublicacionDAO getPublicacionDAO() {
@@ -26,5 +26,9 @@ public class FactoryDAO {
 
     public static MedallaDAO getMedallaDAO() {
        return new MedallaDAOHibernateJPA();
+    }
+
+    public static EstadoPublicacionDAO getEstadoPublicacionDAO() {
+        return new EstadoPublicacionDAOHibernateJPA();
     }
 }

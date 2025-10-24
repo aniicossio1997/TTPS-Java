@@ -2,6 +2,7 @@ package persistence.impl;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import persistence.EMF;
@@ -11,67 +12,66 @@ import java.util.List;
 
 /**
  * Implementación genérica del DAO usando Hibernate y JPA.
- * Basado en la teoría, página 5[cite: 99].
  */
 public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
 
-    protected Class<T> persistentClass; // [cite: 102]
+    protected Class<T> persistentClass; 
 
     public GenericDAOHibernateJPA(Class<T> clase) {
-        this.persistentClass = clase; // [cite: 103]
+        this.persistentClass = clase; 
     }
 
-    public Class<T> getPersistentClass() { // [cite: 104]
-        return persistentClass; // [cite: 106]
+    public Class<T> getPersistentClass() { 
+        return persistentClass; 
     }
 
     @Override
-    public T persist(T entity) { // [cite: 108]
+    public T persist(T entity) { 
         EntityManager em = EMF.getEMF().createEntityManager();
         EntityTransaction tx = null;
         try {
             tx = em.getTransaction();
-            tx.begin(); // [cite: 112]
-            em.persist(entity); // [cite: 113]
-            tx.commit(); // [cite: 114]
+            tx.begin(); 
+            em.persist(entity); 
+            tx.commit(); 
         } catch (RuntimeException e) {
-            if (tx != null && tx.isActive()) tx.rollback(); // [cite: 116]
+            if (tx != null && tx.isActive()) tx.rollback(); 
             throw e;
         } finally {
-            em.close(); // [cite: 118]
+            em.close(); 
         }
-        return entity; // [cite: 119]
+        return entity; 
     }
 
     @Override
-    public T update(T entity) { // [cite: 123]
+    public T update(T entity) { 
         EntityManager em = EMF.getEMF().createEntityManager();
         EntityTransaction etx = em.getTransaction();
         T entityMerged = null;
         try {
-            etx.begin(); // [cite: 126]
-            entityMerged = em.merge(entity); // [cite: 127]
-            etx.commit(); // [cite: 128]
+            etx.begin(); 
+            entityMerged = em.merge(entity); 
+            etx.commit(); 
         } catch (RuntimeException e) {
             if (etx != null && etx.isActive()) etx.rollback();
             throw e;
         } finally {
-            em.close(); // [cite: 129]
+            em.close(); 
         }
-        return entityMerged; // [cite: 130]
+        return entityMerged; 
     }
 
     @Override
-    public void delete(T entity) { // [cite: 132]
+    public void delete(T entity) { 
         EntityManager em = EMF.getEMF().createEntityManager();
         EntityTransaction tx = null;
         try {
             tx = em.getTransaction();
-            tx.begin(); // [cite: 138]
-            em.remove(em.merge(entity)); // [cite: 139]
-            tx.commit(); // [cite: 140]
+            tx.begin(); 
+            em.remove(em.merge(entity)); 
+            tx.commit(); 
         } catch (RuntimeException e) {
-            if (tx != null && tx.isActive()) tx.rollback(); // [cite: 142]
+            if (tx != null && tx.isActive()) tx.rollback(); 
             throw e;
         } finally {
             em.close();
@@ -83,7 +83,13 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
         T entity = this.get(id);
         if (entity != null) {
             this.delete(entity);
+        } else {
+            // ¡NUEVO! Lanza un error si no se encuentra la entidad
+            throw new EntityNotFoundException(
+                    "No se encontró la entidad " + persistentClass.getSimpleName() + " con ID: " + id
+            );
         }
+
     }
 
     @Override
@@ -97,15 +103,15 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
     }
 
     @Override
-    public List<T> getAll(String columnOrder) { // [cite: 153]
+    public List<T> getAll(String columnOrder) { 
         EntityManager em = EMF.getEMF().createEntityManager();
         try {
-            String queryString = "SELECT e FROM " + getPersistentClass().getSimpleName() + " e"; // [cite: 158, 159]
+            String queryString = "SELECT e FROM " + getPersistentClass().getSimpleName() + " e";
             if (columnOrder != null && !columnOrder.isEmpty()) {
-                queryString += " order by e." + columnOrder; // [cite: 160]
+                queryString += " order by e." + columnOrder; 
             }
             Query consulta = em.createQuery(queryString);
-            return (List<T>) consulta.getResultList(); // [cite: 161]
+            return (List<T>) consulta.getResultList(); 
         } finally {
             em.close();
         }

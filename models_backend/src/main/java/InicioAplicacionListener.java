@@ -4,6 +4,7 @@ import jakarta.servlet.annotation.WebListener;
 import jakarta.servlet.http.*;
 import persistence.FactoryDAO;
 import persistence.dao.UbicacionDAO;
+import persistence.impl.UbicacionDAOHibernateJPA;
 
 import java.util.List;
 
@@ -20,7 +21,6 @@ public class InicioAplicacionListener implements ServletContextListener, HttpSes
         ServletContext context = sce.getServletContext();
 
         System.out.println("--- HOLA-INICIO V1---");
-        // (2) Imprimimos en la consola (como pediste)
         System.out.println("--- Aplicación Iniciada: Cargando datos iniciales ---");
 
         try {
@@ -32,22 +32,9 @@ public class InicioAplicacionListener implements ServletContextListener, HttpSes
 
             // (5) ¡Simplemente imprime la lista!
                         System.out.println("--- Listado de Ubicaciones Cargadas ANTES ---");
-                        System.out.println(listaUbicaciones);
+                       // System.out.println(listaUbicaciones);
             System.out.println("----------------------------------------");
 
-            //creamos una ubicacion nueva
-/*            Ubicacion nuevaUbicacion = new  Ubicacion();
-            nuevaUbicacion.setBarrio("Altos");
-            nuevaUbicacion.setCiudad("Moreno");
-            nuevaUbicacion.setIdExterno("ID-EXT-PRUEBA-001");
-            nuevaUbicacion.setLatitud(-90.0);
-            nuevaUbicacion.setLongitud(-90.0);
-            nuevaUbicacion.setProvincia("San Luis");
-
-            ubicacionDAO.persist(nuevaUbicacion);*/
-
-
-            System.out.println("OK: " + listaUbicaciones.size() + " ubicaciones cargadas en el ServletContext.");
 
         } catch (Exception e) {
             System.err.println("ERROR al cargar la lista de ubicaciones: " + e.getMessage());
