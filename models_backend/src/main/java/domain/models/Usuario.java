@@ -76,31 +76,41 @@ public class Usuario extends IdentifiableEntity {
     public String getNombre() {
         return nombre;
     }
+    public void setNombre(String nombre) { this.nombre = nombre; }
 
     public String getApellido() {
         return apellido;
     }
+    public void setApellido(String apellido) { this.apellido = apellido; }
 
     public String getEmail() {
         return email;
     }
+    public void setEmail(String email) { this.email = email; }
+
 
     public String getPassword() {
         return password;
     }
+    public void setPassword(String password) { this.password = password; }
 
 
     public Integer getPuntos() {
         return puntos;
     }
+    public void setPuntos(int puntos) { this.puntos = puntos; }
 
     public Integer getAyudadosEnZona() {
         return ayudadosEnZona;
+    }
+    public void setAyudadosEnZona(int ayudadosEnZona) {
+        this.ayudadosEnZona = ayudadosEnZona;
     }
 
     public RolUsuarioEnum getRol() {
         return rol;
     }
+    public void setRol(RolUsuarioEnum rol) { this.rol = rol; }
 
 
 
