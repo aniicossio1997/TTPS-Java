@@ -1,4 +1,4 @@
-package dao.AvistamientoDAOHibernateJPATest;
+package dao.avistamientoDAOHibernateJPATest;
 
 import domain.models.Avistamiento;
 import jakarta.persistence.PersistenceException;

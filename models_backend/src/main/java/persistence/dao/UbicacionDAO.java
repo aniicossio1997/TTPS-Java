@@ -13,4 +13,5 @@ public interface UbicacionDAO extends GenericDAO<Ubicacion> {
     // Ejemplo de método específico [cite: 56]
     public List<Ubicacion> findByProvincia(String provincia);
 
+    public List<Ubicacion> findByCriteriaLike(String idExterno, String provincia, String ciudad, String barrio );
 }

@@ -1,24 +1,19 @@
-package dao.AvistamientoDAOHibernateJPATest;
+package dao.avistamientoDAOHibernateJPATest;
 
-import dao.DAOBaseTest;
+import dao.CleanBaseBD;
 import domain.enums.RolUsuarioEnum;
 import domain.models.Publicacion;
 import domain.models.Ubicacion;
 import domain.models.Usuario;
 import jakarta.persistence.EntityNotFoundException;
-import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import persistence.EMF;
+import persistence.FactoryDAO;
 import persistence.dao.AvistamientoDAO;
 import persistence.dao.PublicacionDAO;
 import persistence.dao.UbicacionDAO;
 import persistence.dao.UsuarioDAO;
-import persistence.impl.AvistamientoDAOHibernateJPA;
-import persistence.impl.PublicacionDAOHibernateJPA;
-import persistence.impl.UbicacionDAOHibernateJPA;
-import persistence.impl.UsuarioDAOHibernateJPA;
 
 import java.util.Date;
 
@@ -28,15 +23,10 @@ import java.util.Date;
  * y de crear las dependENCIAS (Usuario, Ubicacion, Publicacion).
  * Los tests específicos (Create, Get, Update, Delete) HEREDARÁN de esta clase.
  */
-public class BaseAvistamientoDAOTest  {
+public class BaseAvistamientoDAOTest  extends CleanBaseBD {
 
     // --- DAOs ---
     // Son 'protected' para que las clases hijas puedan usarlos
-// --- DAOs ---
-    protected static AvistamientoDAO avistamientoDAO;
-    protected static PublicacionDAO publicacionDAO;
-    protected static UbicacionDAO ubicacionDAO;
-    protected static UsuarioDAO usuarioDAO; // <-- 2. AÑADE EL DAO FALTANTE
 
     // --- Entidades Base ---
     // Entidades de prueba que se crean antes de cada test
@@ -45,16 +35,6 @@ public class BaseAvistamientoDAOTest  {
     protected Publicacion pubTest2; // Para pruebas de getByIdPublicacion
     protected Usuario usuarioBase;
 
-    @BeforeAll
-    static void setUpAll() {
-        // 1. Inicializamos los DAOs una sola vez
-
-        avistamientoDAO = new AvistamientoDAOHibernateJPA();
-        publicacionDAO = new PublicacionDAOHibernateJPA();
-        ubicacionDAO = new UbicacionDAOHibernateJPA();
-        usuarioDAO = new UsuarioDAOHibernateJPA(); // <-- 3. INICIALIZA EL DAO FALTANTE
-
-    }
 
 
     /**

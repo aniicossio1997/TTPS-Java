@@ -29,4 +29,35 @@ public class EstadoPublicacion extends IdentifiableEntity {
                 ", fecha=" + fecha +
                 '}';
     }
+
+    public EstadoPublicacion(){}
+    public EstadoPublicacion(Date fecha, EstadoPublicacionEnum estado, Publicacion publicacion) {
+        this.fecha = fecha;
+        this.estado = estado;
+        this.publicacion = publicacion;
+    }
+
+    public Date getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(Date fecha) {
+        this.fecha = fecha;
+    }
+
+    public EstadoPublicacionEnum getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPublicacionEnum estado) {
+        this.estado = estado;
+    }
+
+    public Publicacion getPublicacion() {
+        return publicacion;
+    }
+
+    public void setPublicacion(Publicacion publicacion) {
+        this.publicacion = publicacion;
+    }
 }

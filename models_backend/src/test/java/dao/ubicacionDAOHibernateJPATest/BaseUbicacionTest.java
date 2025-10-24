@@ -5,6 +5,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Order;
+import persistence.FactoryDAO;
 import persistence.dao.*;
 import persistence.impl.*;
 
@@ -18,16 +19,15 @@ public class BaseUbicacionTest {
     void tearDown() {
         _ubicacionDAO= new UbicacionDAOHibernateJPA();
         // 1. LIMPIAMOS SOLO LOS AVISTAMIENTOS
-        // Esto asegura que la tabla de avistamientos esté vacía
         // antes de que el @BeforeEach de la clase hija (setUpGet) se ejecute.
 
         try{
-            UsuarioDAO usuarioDAO = new UsuarioDAOHibernateJPA();
-            UbicacionDAO ubicacionDAO = new UbicacionDAOHibernateJPA();
-            PublicacionDAO publicacionDAO = new PublicacionDAOHibernateJPA();
-            AvistamientoDAO avistamientoDAO = new AvistamientoDAOHibernateJPA();
-            FotoDAO fotoDAO = new FotoDAOHibernateJPA();
-            MedallaDAO medallaDAO = new MedallaDAOHibernateJPA();
+            UsuarioDAO usuarioDAO = FactoryDAO.getUsuarioDAO();
+            UbicacionDAO ubicacionDAO =FactoryDAO.getUbicacionDAO();
+            PublicacionDAO publicacionDAO = FactoryDAO.getPublicacionDAO();
+            AvistamientoDAO avistamientoDAO = FactoryDAO.getAvistamientoDAO();
+            FotoDAO fotoDAO =  FactoryDAO.getFotoDAO();
+            MedallaDAO medallaDAO =  FactoryDAO.getMedallaDAO();
 
             // 1. Borramos Foto (los más dependientes)
             fotoDAO.getAll(null).forEach(e -> fotoDAO.delete(e.getId()));
