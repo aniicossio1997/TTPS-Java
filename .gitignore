@@ -1,0 +1,3 @@
+# Configuraciones específicas de IntelliJ IDEA (rutas locales, versiones del IDE, etc.).
+.idea
+.vscode/

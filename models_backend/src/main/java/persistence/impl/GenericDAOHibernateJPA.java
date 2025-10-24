@@ -2,6 +2,7 @@ package persistence.impl;
 
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.Query;
 import persistence.EMF;
@@ -83,7 +84,13 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
         T entity = this.get(id);
         if (entity != null) {
             this.delete(entity);
+        } else {
+            // ¡NUEVO! Lanza un error si no se encuentra la entidad
+            throw new EntityNotFoundException(
+                    "No se encontró la entidad " + persistentClass.getSimpleName() + " con ID: " + id
+            );
         }
+
     }
 
     @Override

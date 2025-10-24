@@ -33,21 +33,29 @@ public class UbicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Ubicacion> 
         }
     }
 
+
     @Override
-    public Ubicacion findByIdExterno(String idExterno) {
-        EntityManager em = EMF.getEMF().createEntityManager();
-        Ubicacion ubi = null;
-        try {
-            // Lógica similar a getByEmail de la teoría [cite: 196, 199]
-            Query consulta = em.createQuery("SELECT u FROM " + getPersistentClass().getSimpleName() +
-                    " u WHERE u.idExterno = :idExt");
-            consulta.setParameter("idExt", idExterno);
-            ubi = (Ubicacion) consulta.getSingleResult(); // [cite: 199]
-        } catch (NoResultException e) {
-            ubi = null; // [cite: 201]
-        } finally {
-            em.close(); // [cite: 203]
+    public Ubicacion update(Ubicacion u) {
+        _validarParaCrear(u); // misma validación que en create
+        return super.update(u); // si todo OK, usa la lógica genérica de actualización
+    }
+    // --------- VALIDACIÓN DE CREATE ---------
+    @Override
+    public Ubicacion persist(Ubicacion u) {
+        _validarParaCrear(u);
+        return super.persist(u); // si todo OK, usa la lógica genérica de persistencia
+    }
+    private void _validarParaCrear(Ubicacion u) {
+        if (u == null) {
+            throw new IllegalArgumentException("La ubicación no puede ser null.");
         }
-        return ubi; // [cite: 205]
+        // Solo lat/long son obligatorios en tu entidad actual
+        if (u.getLatitud() == null) {
+            throw new IllegalArgumentException("Latitud obligatoria (no puede ser null).");
+        }
+        if (u.getLongitud() == null) {
+            throw new IllegalArgumentException("Longitud obligatoria (no puede ser null).");
+        }
+
     }
 }
