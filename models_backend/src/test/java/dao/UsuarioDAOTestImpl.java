@@ -35,37 +35,6 @@ class UsuarioDAOTestImpl {
 
     @BeforeEach
     public void setUp() {
-        try{
-            UsuarioDAO usuarioDAO = new UsuarioDAOHibernateJPA();
-            UbicacionDAO ubicacionDAO = new UbicacionDAOHibernateJPA();
-            PublicacionDAO publicacionDAO = new PublicacionDAOHibernateJPA();
-            AvistamientoDAO avistamientoDAO = new AvistamientoDAOHibernateJPA();
-            FotoDAO fotoDAO = new FotoDAOHibernateJPA();
-            MedallaDAO medallaDAO = new MedallaDAOHibernateJPA();
-
-            // 1. Borramos Foto (los más dependientes)
-            fotoDAO.getAll(null).forEach(e -> fotoDAO.delete(e.getId()));
-
-            // (Añade Medalla aquí si la usas)
-            medallaDAO.getAll(null).forEach(e -> medallaDAO.delete(e.getId()));
-
-            // 2. Borramos Avistamiento
-            avistamientoDAO.getAll(null).forEach(e -> avistamientoDAO.delete(e.getId()));
-
-            // 3. Borramos Publicacion
-            publicacionDAO.getAll(null).forEach(e -> publicacionDAO.delete(e.getId()));
-
-            // 4. Borramos Usuario
-            usuarioDAO.getAll(null).forEach(e -> usuarioDAO.delete(e.getId()));
-
-            // 5. Borramos Ubicacion (al final)
-            ubicacionDAO.getAll(null).forEach(e -> ubicacionDAO.delete(e.getId()));
-
-            System.out.println("--- Base de datos limpiada ---");
-        } catch (Exception e) {
-
-        }
-
 
         // Antes de CADA test, se crea una Ubicacion .
         ubicacionDePrueba = new Ubicacion("123", "Buenos Aires", "La Plata", "Tolosa", 34.8833, 57.9667);
@@ -200,20 +169,5 @@ class UsuarioDAOTestImpl {
         }
     }
 
-    @AfterAll
-    public static void cleanupPublicaciones() {
-        try {
-            UbicacionDAO ubicacionDAO = FactoryDAO.getUbicacionDAO();
-            UsuarioDAO usuarioDAO = FactoryDAO.getUsuarioDAO();
-
-            usuarioDAO.getAll(null).forEach(u -> usuarioDAO.delete(u.getId()));
-
-            // 4. Borramos Ubicaciones (al final, cuando nadie las usa)
-            ubicacionDAO.getAll(null).forEach(u -> ubicacionDAO.delete(u.getId()));
-
-        } catch (EntityNotFoundException e) {
-            // Ignorar si ya estaba limpio
-        }
-    }
 
 }
