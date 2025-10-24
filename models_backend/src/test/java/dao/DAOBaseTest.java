@@ -28,6 +28,8 @@ public class DAOBaseTest {
     protected static PublicacionDAO publicacionDAO;
     protected static AvistamientoDAO avistamientoDAO;
     protected static FotoDAO fotoDAO;
+    protected static MedallaDAO medallaDAO;
+    protected static EstadoPublicacionDAO estadoPublicacionDAO;
 
     /**
      * Se ejecuta UNA SOLA VEZ al principio.
@@ -42,17 +44,19 @@ public class DAOBaseTest {
         publicacionDAO = FactoryDAO.getPublicacionDAO();
         avistamientoDAO = FactoryDAO.getAvistamientoDAO();
         fotoDAO = FactoryDAO.getFotoDAO();
+        estadoPublicacionDAO = FactoryDAO.getEstadoPublicacionDAO();
     }
 
     @BeforeEach
     public void setup() {
         System.out.println("--- Limpiando la base de datos al final de todos los tests ---");
         try {
+            estadoPublicacionDAO.getAll(null).forEach(e -> estadoPublicacionDAO.delete(e.getId()));
             // 1. Borramos Foto (los más dependientes)
             fotoDAO.getAll(null).forEach(e -> fotoDAO.delete(e.getId()));
 
             // (Añade Medalla aquí si la usas)
-            // medallaDAO.getAll(null).forEach(e -> medallaDAO.delete(e.getId()));
+             medallaDAO.getAll(null).forEach(e -> medallaDAO.delete(e.getId()));
 
             // 2. Borramos Avistamiento
             avistamientoDAO.getAll(null).forEach(e -> avistamientoDAO.delete(e.getId()));

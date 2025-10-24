@@ -27,4 +27,8 @@ public class FactoryDAO {
     public static MedallaDAO getMedallaDAO() {
        return new MedallaDAOHibernateJPA();
     }
+
+    public static EstadoPublicacionDAO getEstadoPublicacionDAO() {
+        return new EstadoPublicacionDAOHibernateJPA();
+    }
 }
