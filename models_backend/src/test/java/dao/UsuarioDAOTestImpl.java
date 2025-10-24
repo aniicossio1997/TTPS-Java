@@ -6,11 +6,12 @@ import domain.models.Ubicacion;
 import domain.models.Usuario;
 import domain.enums.RolUsuarioEnum;
 
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*;
 
-import persistence.dao.UbicacionDAO;
-import persistence.dao.UsuarioDAO;
+import persistence.dao.*;
 import persistence.FactoryDAO;
+import persistence.impl.*;
 
 import java.util.Date;
 import java.util.List;
@@ -34,6 +35,38 @@ class UsuarioDAOTestImpl {
 
     @BeforeEach
     public void setUp() {
+        try{
+            UsuarioDAO usuarioDAO = new UsuarioDAOHibernateJPA();
+            UbicacionDAO ubicacionDAO = new UbicacionDAOHibernateJPA();
+            PublicacionDAO publicacionDAO = new PublicacionDAOHibernateJPA();
+            AvistamientoDAO avistamientoDAO = new AvistamientoDAOHibernateJPA();
+            FotoDAO fotoDAO = new FotoDAOHibernateJPA();
+            MedallaDAO medallaDAO = new MedallaDAOHibernateJPA();
+
+            // 1. Borramos Foto (los más dependientes)
+            fotoDAO.getAll(null).forEach(e -> fotoDAO.delete(e.getId()));
+
+            // (Añade Medalla aquí si la usas)
+            medallaDAO.getAll(null).forEach(e -> medallaDAO.delete(e.getId()));
+
+            // 2. Borramos Avistamiento
+            avistamientoDAO.getAll(null).forEach(e -> avistamientoDAO.delete(e.getId()));
+
+            // 3. Borramos Publicacion
+            publicacionDAO.getAll(null).forEach(e -> publicacionDAO.delete(e.getId()));
+
+            // 4. Borramos Usuario
+            usuarioDAO.getAll(null).forEach(e -> usuarioDAO.delete(e.getId()));
+
+            // 5. Borramos Ubicacion (al final)
+            ubicacionDAO.getAll(null).forEach(e -> ubicacionDAO.delete(e.getId()));
+
+            System.out.println("--- Base de datos limpiada ---");
+        } catch (Exception e) {
+
+        }
+
+
         // Antes de CADA test, se crea una Ubicacion .
         ubicacionDePrueba = new Ubicacion("123", "Buenos Aires", "La Plata", "Tolosa", 34.8833, 57.9667);
         ubicacionDAO.persist(ubicacionDePrueba);
@@ -42,7 +75,7 @@ class UsuarioDAOTestImpl {
     @Test
     @DisplayName("Persistir")
     void testPersist() {
-        Usuario nuevoUsuario = new Usuario("nuevo", "Test", "test@mail.com", "123",10, 0, 0, RolUsuarioEnum.USUARIO_COMUN, ubicacionDePrueba, null);
+        Usuario nuevoUsuario = new Usuario("nuevo", "Test", "test1@mail.com", "123",10, 0, 0, RolUsuarioEnum.USUARIO_COMUN, ubicacionDePrueba, null);
         usuarioDAO.persist(nuevoUsuario);
 
         assertNotNull(nuevoUsuario.getId(), "El ID no debería ser nulo después de persistir");
@@ -100,6 +133,7 @@ class UsuarioDAOTestImpl {
     @Test
     @DisplayName("Recuperar todos los Usuarios")
     void testGetAll() {
+
         Usuario u1 = new Usuario("User", "Uno", "user1@mail.com", "123",10, 0, 0, RolUsuarioEnum.USUARIO_COMUN, ubicacionDePrueba, null);
         usuarioDAO.persist(u1);
 
@@ -165,4 +199,21 @@ class UsuarioDAOTestImpl {
             System.err.println("Error limpiando ubicación: " + e.getMessage());
         }
     }
+
+    @AfterAll
+    public static void cleanupPublicaciones() {
+        try {
+            UbicacionDAO ubicacionDAO = FactoryDAO.getUbicacionDAO();
+            UsuarioDAO usuarioDAO = FactoryDAO.getUsuarioDAO();
+
+            usuarioDAO.getAll(null).forEach(u -> usuarioDAO.delete(u.getId()));
+
+            // 4. Borramos Ubicaciones (al final, cuando nadie las usa)
+            ubicacionDAO.getAll(null).forEach(u -> ubicacionDAO.delete(u.getId()));
+
+        } catch (EntityNotFoundException e) {
+            // Ignorar si ya estaba limpio
+        }
+    }
+
 }

@@ -1,6 +1,7 @@
 package dao.AvistamientoDAOHibernateJPATest;
 
 import dao.DAOBaseTest;
+import domain.enums.RolUsuarioEnum;
 import domain.models.Publicacion;
 import domain.models.Ubicacion;
 import domain.models.Usuario;
@@ -27,19 +28,22 @@ import java.util.Date;
  * y de crear las dependENCIAS (Usuario, Ubicacion, Publicacion).
  * Los tests específicos (Create, Get, Update, Delete) HEREDARÁN de esta clase.
  */
-public class BaseAvistamientoDAOTest extends DAOBaseTest {
+public class BaseAvistamientoDAOTest  {
 
     // --- DAOs ---
     // Son 'protected' para que las clases hijas puedan usarlos
-    protected static AvistamientoDAO avistamientoDAO ;
+// --- DAOs ---
+    protected static AvistamientoDAO avistamientoDAO;
     protected static PublicacionDAO publicacionDAO;
     protected static UbicacionDAO ubicacionDAO;
+    protected static UsuarioDAO usuarioDAO; // <-- 2. AÑADE EL DAO FALTANTE
 
     // --- Entidades Base ---
     // Entidades de prueba que se crean antes de cada test
     protected Ubicacion ubicacionTest;
     protected Publicacion pubTest1;
     protected Publicacion pubTest2; // Para pruebas de getByIdPublicacion
+    protected Usuario usuarioBase;
 
     @BeforeAll
     static void setUpAll() {
@@ -48,7 +52,7 @@ public class BaseAvistamientoDAOTest extends DAOBaseTest {
         avistamientoDAO = new AvistamientoDAOHibernateJPA();
         publicacionDAO = new PublicacionDAOHibernateJPA();
         ubicacionDAO = new UbicacionDAOHibernateJPA();
-
+        usuarioDAO = new UsuarioDAOHibernateJPA(); // <-- 3. INICIALIZA EL DAO FALTANTE
 
     }
 
@@ -68,6 +72,17 @@ public class BaseAvistamientoDAOTest extends DAOBaseTest {
         ubicacionTest.setProvincia("Buenos Aires");
         ubicacionDAO.persist(ubicacionTest);
 
+        // Usuario base
+       Ubicacion ubicacionBase = new Ubicacion("1234", "Buenos Aires", "La Plata", "Barrio Norte", 12313D, 123213D);
+       ubicacionBase = ubicacionDAO.persist(ubicacionBase);
+
+        usuarioBase = new Usuario(
+                "TestNombre",
+                "TestApellido",
+                "test_base_all_" + System.currentTimeMillis() + "@mail.com",
+                "pass123", 10, 0, 0, RolUsuarioEnum.USUARIO_COMUN, ubicacionBase, null
+        );
+        usuarioBase = usuarioDAO.persist(usuarioBase);
 
 
         pubTest1 = new Publicacion();
@@ -102,15 +117,34 @@ public class BaseAvistamientoDAOTest extends DAOBaseTest {
     }
 
 
+    /**
+     * Se ejecuta DESPUÉS de CADA test.
+     * Limpia la BD en el orden correcto.
+     */
     @AfterEach
     void tearDown() {
-        // 1. LIMPIAMOS SOLO LOS AVISTAMIENTOS
-        // Esto asegura que la tabla de avistamientos esté vacía
-        // antes de que el @BeforeEach de la clase hija (setUpGet) se ejecute.
         try {
+            // 1. Borramos Avistamientos (los más dependientes)
             avistamientoDAO.getAll(null).forEach(a -> avistamientoDAO.delete(a.getId()));
+
+            // 2. Borramos Publicaciones
+            publicacionDAO.getAll(null).forEach(p -> publicacionDAO.delete(p.getId()));
+
+            // 3. Borramos Usuarios (¡el que te daba el error!)
+            // (Esto asume que 'usuarioBase' se crea en DAOBaseTest y quieres limpiarlo)
+            usuarioDAO.getAll(null).forEach(u -> usuarioDAO.delete(u.getId()));
+
+            // 4. Borramos Ubicaciones (al final, cuando nadie las usa)
+            ubicacionDAO.getAll(null).forEach(u -> ubicacionDAO.delete(u.getId()));
+
         } catch (EntityNotFoundException e) {
             // Ignorar si ya estaba limpio
         }
     }
+
+    /**
+     * Se ejecuta UNA SOLA VEZ al final de todos los tests.
+     * Cierra la conexión a la base de datos.
+     */
+
 }

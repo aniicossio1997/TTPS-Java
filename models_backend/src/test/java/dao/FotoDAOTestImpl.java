@@ -1,20 +1,68 @@
 package dao;
 
-import domain.models.Avistamiento;
-import domain.models.Foto;
-import domain.models.Publicacion;
+import domain.enums.RolUsuarioEnum;
+import domain.models.*;
+import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import persistence.FactoryDAO;
-import persistence.dao.AvistamientoDAO;
-import persistence.dao.FotoDAO;
-import persistence.dao.PublicacionDAO;
+import persistence.dao.*;
 
 import java.util.Date;
 import java.util.List;
 
-public class FotoDAOTestImpl extends DAOBaseTest{
+public class FotoDAOTestImpl {
+
+    // Son estáticos porque solo se inicializan una vez
+    protected static UsuarioDAO usuarioDAO;
+    protected static UbicacionDAO ubicacionDAO;
+
+    // Cada test tendrá su propia instancia de 'usuarioBase'.
+    protected Usuario usuarioBase;
+    protected Ubicacion ubicacionBase;
+
+    /**
+     * Se ejecuta UNA SOLA VEZ al principio.
+     * Solo inicializa los DAOs.
+     */
+    @BeforeAll
+    public static void setupDaos() {
+        usuarioDAO = FactoryDAO.getUsuarioDAO();
+        ubicacionDAO = FactoryDAO.getUbicacionDAO();
+
+        try {
+            UbicacionDAO ubicacionDAO = FactoryDAO.getUbicacionDAO();
+            UsuarioDAO usuarioDAO = FactoryDAO.getUsuarioDAO();
+
+            usuarioDAO.getAll(null).forEach(u -> usuarioDAO.delete(u.getId()));
+
+            // 4. Borramos Ubicaciones (al final, cuando nadie las usa)
+            ubicacionDAO.getAll(null).forEach(u -> ubicacionDAO.delete(u.getId()));
+
+        } catch (EntityNotFoundException e) {
+            // Ignorar si ya estaba limpio
+        }
+    }
+
+    @BeforeEach
+    public void setup() {
+        UbicacionDAO ubiDAO = FactoryDAO.getUbicacionDAO();
+        UsuarioDAO userDAO = FactoryDAO.getUsuarioDAO();
+
+        ubicacionBase = new Ubicacion("1234", "Buenos Aires", "La Plata", "Barrio Norte", 12313D, 123213D);
+        ubicacionBase = ubiDAO.persist(ubicacionBase);
+
+        usuarioBase = new Usuario(
+                "TestNombre",
+                "TestApellido",
+                "test_base_all_" + System.currentTimeMillis() + "@mail.com",
+                "pass123", 10, 0, 0, RolUsuarioEnum.USUARIO_COMUN, ubicacionBase, null
+        );
+        usuarioBase = userDAO.persist(usuarioBase);
+    }
+
     private FotoDAO fotoDAO = FactoryDAO.getFotoDAO();
     private PublicacionDAO publicacionDAO = FactoryDAO.getPublicacionDAO();
     private AvistamientoDAO avistamientoDAO = FactoryDAO.getAvistamientoDAO();

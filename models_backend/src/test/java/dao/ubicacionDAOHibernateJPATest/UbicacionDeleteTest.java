@@ -3,22 +3,19 @@ package dao.ubicacionDAOHibernateJPATest;
 import domain.models.Ubicacion;
 import jakarta.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.*; // Importaciones de JUnit 5
-import persistence.EMF; // Importar tu EMF
-import persistence.dao.UbicacionDAO;
+
 import persistence.impl.UbicacionDAOHibernateJPA;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@TestInstance(TestInstance.Lifecycle.PER_CLASS) // Una instancia para toda la clase
-class UbicacionDeleteTest {
+class UbicacionDeleteTest extends  BaseUbicacionTest {
 
-    private static UbicacionDAO dao;
     private Ubicacion ubicacionDePrueba; // Entidad de prueba
 
     @BeforeAll
     public static void setUpAll() {
         // 1. Creamos el DAO una sola vez
-        dao = new UbicacionDAOHibernateJPA();
+        _ubicacionDAO = new UbicacionDAOHibernateJPA();
     }
 
     @BeforeEach
@@ -27,7 +24,7 @@ class UbicacionDeleteTest {
         ubicacionDePrueba = new Ubicacion();
         ubicacionDePrueba.setLatitud(-32.89);
         ubicacionDePrueba.setLongitud(-68.85);
-        dao.persist(ubicacionDePrueba);
+        _ubicacionDAO.persist(ubicacionDePrueba);
 
     }
 
@@ -42,11 +39,11 @@ class UbicacionDeleteTest {
         Long id = ubicacionDePrueba.getId();
 
         // ACT
-        dao.delete(id);
+        _ubicacionDAO.delete(id);
 
         // ASSERT
         // Verificamos que ya no existe en la BD
-        assertNull(dao.get(id), "La ubicación no fue eliminada");
+        assertNull(_ubicacionDAO.get(id), "La ubicación no fue eliminada");
     }
 
 
@@ -54,7 +51,7 @@ class UbicacionDeleteTest {
     @DisplayName("Debe lanzar EntityNotFoundException al borrar un ID inexistente")
     void delete_by_id_not_found_throws_exception() {
         // ARRANGE
-        Long idInexistente = 9999L; // Un ID que sabemos que no existe
+        Long idInexistente = 99999L; // Un ID que sabemos que no existe
         Long idExistente = ubicacionDePrueba.getId(); // El ID que sí existe
 
         // ACT & ASSERT
@@ -62,7 +59,7 @@ class UbicacionDeleteTest {
         EntityNotFoundException exception = assertThrows(
                 EntityNotFoundException.class, // 1. La excepción que esperamos
                 () -> {
-                    dao.delete(idInexistente); // 2. El código que debe fallar
+                    _ubicacionDAO.delete(idInexistente); // 2. El código que debe fallar
                 },
                 "Debería lanzar EntityNotFoundException si el ID no existe"
         );
@@ -73,7 +70,7 @@ class UbicacionDeleteTest {
         assertTrue(mensaje.contains("9999"));
 
         // Verificar que la entidad original sigue en la BD
-        assertNotNull(dao.get(idExistente), "El borrado fallido eliminó otra entidad");
+        assertNotNull(_ubicacionDAO.get(idExistente), "El borrado fallido eliminó otra entidad");
     }
 
 }

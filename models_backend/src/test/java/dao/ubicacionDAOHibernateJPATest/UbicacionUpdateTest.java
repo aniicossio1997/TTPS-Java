@@ -2,20 +2,20 @@ package dao.ubicacionDAOHibernateJPATest;
 
 import domain.models.Ubicacion;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import persistence.dao.UbicacionDAO;
-import persistence.impl.UbicacionDAOHibernateJPA;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UbicacionUpdateTest {
 
-    private static UbicacionDAO ubicacionDAO = new UbicacionDAOHibernateJPA();
+class UbicacionUpdateTest extends BaseUbicacionTest {
+
     private Ubicacion ubicacionPrueba; // Objeto de prueba
-    private Ubicacion ubicacionPrueba2; // Segundo objeto para pruebas de listas
 
     @BeforeEach
     public void setUp() {
+
         // Creamos un objeto "fresco" ANTES de cada test
         ubicacionPrueba = new Ubicacion();
         ubicacionPrueba.setLatitud(-34.92136);
@@ -31,13 +31,13 @@ class UbicacionUpdateTest {
         // ARRANGE (Organizar)
         // Asumimos que @BeforeEach ya persistió 'ubicacionDePrueba'
         // Guardamos los datos originales para comparar
-        ubicacionDAO.persist(ubicacionPrueba);
+        _ubicacionDAO.persist(ubicacionPrueba);
         Long id = ubicacionPrueba.getId();
         String ciudadOriginal = ubicacionPrueba.getCiudad(); // Ej: "Tigre"
 
         // ACT (Actuar)
         // 1. Obtenemos la entidad que VAMOS a modificar
-        Ubicacion ubiParaActualizar = ubicacionDAO.get(id);
+        Ubicacion ubiParaActualizar = _ubicacionDAO.get(id);
         assertNotNull(ubiParaActualizar, "La entidad a actualizar no se encontró");
 
         // 2. Modificamos el objeto RECUPERADO (ubiParaActualizar)
@@ -50,12 +50,12 @@ class UbicacionUpdateTest {
         ubiParaActualizar.setIdExterno("LP-TEST-001-UPDATED");
 
         // 3. Enviamos las actualizaciones a la BD
-        ubicacionDAO.update(ubiParaActualizar);
+        _ubicacionDAO.update(ubiParaActualizar);
 
         // ASSERT (Verificar)
         // 1. Volvemos a obtener la entidad desde la BD para asegurar
         //    que los cambios se persistieron correctamente.
-        Ubicacion ubiRefrescada = ubicacionDAO.get(id);
+        Ubicacion ubiRefrescada = _ubicacionDAO.get(id);
         assertNotNull(ubiRefrescada, "La entidad no se encontró después de actualizar");
 
         // 2. Comparamos atributo por atributo usando assertAll
@@ -74,22 +74,22 @@ class UbicacionUpdateTest {
     @Test
     void update_sin_latitud() {
         // ARRANGE
-        ubicacionDAO.persist(ubicacionPrueba);
+        _ubicacionDAO.persist(ubicacionPrueba);
         ubicacionPrueba.setLatitud(null);
         ubicacionPrueba.setLongitud(-60.0);
 
-        var ex = assertThrows(IllegalArgumentException.class, () -> ubicacionDAO.update(ubicacionPrueba));
+        var ex = assertThrows(IllegalArgumentException.class, () -> _ubicacionDAO.update(ubicacionPrueba));
         assertTrue(ex.getMessage().toLowerCase().contains("latitud"));
     }
 
     @Test
     void update_sin_longitud() {
         // ARRANGE
-        ubicacionDAO.persist(ubicacionPrueba);
+        _ubicacionDAO.persist(ubicacionPrueba);
         ubicacionPrueba.setLatitud(-10.0);
         ubicacionPrueba.setLongitud(null);
 
-        var ex = assertThrows(IllegalArgumentException.class, () -> ubicacionDAO.update(ubicacionPrueba));
+        var ex = assertThrows(IllegalArgumentException.class, () -> _ubicacionDAO.update(ubicacionPrueba));
         assertTrue(ex.getMessage().toLowerCase().contains("longitud"));
     }
 
