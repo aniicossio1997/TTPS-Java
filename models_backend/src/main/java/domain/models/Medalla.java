@@ -15,7 +15,8 @@ public class Medalla extends IdentifiableEntity {
     @Enumerated(EnumType.STRING) @Column(nullable = false)
     private MedallaEnum tipo;
 
-    @Column(nullable = false) private Date fechaAsignacion;
+    @Column(nullable = false)
+    private Date fechaAsignacion;
     private Date fechaVencimiento;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -27,12 +28,27 @@ public class Medalla extends IdentifiableEntity {
     public MedallaEnum getTipo() {
         return tipo;
     }
+    public void setTipo(MedallaEnum tipo) {
+        this.tipo = tipo; }
 
     public Date getFechaAsignacion() {
         return fechaAsignacion;
     }
+    public void setFechaAsignacion(Date fechaAsignacion) {
+        this.fechaAsignacion = fechaAsignacion;
+    }
 
     public Date getFechaVencimiento() {
         return fechaVencimiento;
+    }
+    public void setFechaVencimiento(Date fechaVencimiento) {
+        this.fechaVencimiento = fechaVencimiento;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 }

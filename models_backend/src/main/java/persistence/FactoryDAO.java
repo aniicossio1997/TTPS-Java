@@ -24,8 +24,7 @@ public class FactoryDAO {
         return new AvistamientoDAOHibernateJPA();
     }
 
-    // Aquí agregarías métodos para otros DAOs
-    // public static MedallaDAO getMedallaDAO() {
-    //    return new MedallaDAOHibernateJPA();
-    // }
+    public static MedallaDAO getMedallaDAO() {
+       return new MedallaDAOHibernateJPA();
+    }
 }
