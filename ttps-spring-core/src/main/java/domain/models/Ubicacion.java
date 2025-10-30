@@ -1,13 +1,17 @@
 package domain.models;
 
 import domain.models.base.IdentifiableEntity;
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Entity // Indica que esta clase es una entidad persistente
+@Component("Ubicacion")
 public class Ubicacion  extends IdentifiableEntity {
 
     private String idExterno;
@@ -109,5 +113,9 @@ public class Ubicacion  extends IdentifiableEntity {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), idExterno, provincia, ciudad, barrio, latitud, longitud);
+    }
+
+    public String hola(){
+        return "UBICACION";
     }
 }

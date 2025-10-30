@@ -1,12 +1,17 @@
 package persistence.impl;
+
 import domain.models.Publicacion;
-import jakarta.persistence.*;
-import persistence.EMF;
+import jakarta.persistence.TypedQuery;
+import org.springframework.stereotype.Repository; // Se agrega esta importación
 import persistence.dao.PublicacionDAO;
+
+// import persistence.EMF; // Ya no se usa
+// import jakarta.persistence.EntityManager; // Ya no se usa
 
 import java.util.Date;
 import java.util.List;
 
+@Repository // Se añade la anotación
 public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicacion> implements PublicacionDAO {
 
     public PublicacionDAOHibernateJPA() {
@@ -15,30 +20,20 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
 
     @Override
     public List<Publicacion> getPublicacionesByNombre(String nombre) {
-        EntityManager em = EMF.getEMF().createEntityManager();
-        try {
-            // Se utiliza LIKE para buscar coincidencias parciales en el nombre
-            TypedQuery<Publicacion> consulta = em.createQuery(
-                    "SELECT p FROM Publicacion p WHERE LOWER(p.nombre) LIKE LOWER(:nombreParam)", Publicacion.class);
-            consulta.setParameter("nombreParam", "%" + nombre + "%");
-            return consulta.getResultList();
-        } finally {
-            em.close();
-        }
+        // Se elimina la creación manual del EntityManager y el try/finally
+        TypedQuery<Publicacion> consulta = getEntityManager().createQuery(
+                "SELECT p FROM Publicacion p WHERE LOWER(p.nombre) LIKE LOWER(:nombreParam)", Publicacion.class);
+        consulta.setParameter("nombreParam", "%" + nombre + "%");
+        return consulta.getResultList();
     }
 
     @Override
     public List<Publicacion> getPublicacionesByUsuario(Long usuarioId) {
-        EntityManager em = EMF.getEMF().createEntityManager();
-        try {
-            // Se busca por el ID de la relación ManyToOne 'usuario'
-            TypedQuery<Publicacion> consulta = em.createQuery(
-                    "SELECT p FROM Publicacion p WHERE p.usuario.id = :usuarioId", Publicacion.class);
-            consulta.setParameter("usuarioId", usuarioId);
-            return consulta.getResultList();
-        } finally {
-            em.close();
-        }
+        // Se elimina la creación manual del EntityManager y el try/finally
+        TypedQuery<Publicacion> consulta = getEntityManager().createQuery(
+                "SELECT p FROM Publicacion p WHERE p.usuario.id = :usuarioId", Publicacion.class);
+        consulta.setParameter("usuarioId", usuarioId);
+        return consulta.getResultList();
     }
 
     @Override
@@ -53,62 +48,57 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
             int offset,
             int maxResults
     ) {
-        EntityManager em = EMF.getEMF().createEntityManager();
-        try {
-            String jpql = "SELECT p FROM Publicacion p WHERE 1=1";
+        // Se elimina la creación manual del EntityManager y el try/finally
+        String jpql = "SELECT p FROM Publicacion p WHERE 1=1";
 
-            //  Agregar condiciones
-            if (nombre != null && !nombre.isEmpty()) {
-                jpql += " AND LOWER(p.nombre) LIKE LOWER(:nombreParam)";
-            }
-            if (especie != null && !especie.isEmpty()) {
-                jpql += " AND p.especie = :especieParam";
-            }
-            if (raza != null && !raza.isEmpty()) {
-                jpql += " AND p.raza = :razaParam";
-            }
-            if (tamanio != null && !tamanio.isEmpty()) {
-                jpql += " AND p.tamanio = :tamanioParam";
-            }
-            if (color != null && !color.isEmpty()) {
-                jpql += " AND p.color = :colorParam";
-            }
-            if (fechaDesde != null && fechaHasta != null) {
-                jpql += " AND p.fecha BETWEEN :fechaDesdeParam AND :fechaHastaParam";
-            }
-
-            jpql += " ORDER BY p.fecha DESC";
-
-            TypedQuery<Publicacion> query = em.createQuery(jpql, Publicacion.class);
-
-            if (nombre != null && !nombre.isEmpty()) {
-                query.setParameter("nombreParam", "%" + nombre + "%");
-            }
-            if (especie != null && !especie.isEmpty()) {
-                query.setParameter("especieParam", especie);
-            }
-            if (raza != null && !raza.isEmpty()) {
-                query.setParameter("razaParam", raza);
-            }
-            if (tamanio != null && !tamanio.isEmpty()) {
-                query.setParameter("tamanioParam", tamanio);
-            }
-            if (color != null && !color.isEmpty()) {
-                query.setParameter("colorParam", color);
-            }
-            if (fechaDesde != null && fechaHasta != null) {
-                query.setParameter("fechaDesdeParam", fechaDesde);
-                query.setParameter("fechaHastaParam", fechaHasta);
-            }
-
-            // Aplicar Paginación
-            query.setFirstResult(offset);
-            query.setMaxResults(maxResults);
-
-            return query.getResultList();
-        } finally {
-            em.close();
+        if (nombre != null && !nombre.isEmpty()) {
+            jpql += " AND LOWER(p.nombre) LIKE LOWER(:nombreParam)";
         }
-    }
+        // ... (resto de condiciones)
+        if (especie != null && !especie.isEmpty()) {
+            jpql += " AND p.especie = :especieParam";
+        }
+        if (raza != null && !raza.isEmpty()) {
+            jpql += " AND p.raza = :razaParam";
+        }
+        if (tamanio != null && !tamanio.isEmpty()) {
+            jpql += " AND p.tamanio = :tamanioParam";
+        }
+        if (color != null && !color.isEmpty()) {
+            jpql += " AND p.color = :colorParam";
+        }
+        if (fechaDesde != null && fechaHasta != null) {
+            jpql += " AND p.fecha BETWEEN :fechaDesdeParam AND :fechaHastaParam";
+        }
 
+        jpql += " ORDER BY p.fecha DESC";
+
+        TypedQuery<Publicacion> query = getEntityManager().createQuery(jpql, Publicacion.class);
+
+        // ... (asignación de parámetros)
+        if (nombre != null && !nombre.isEmpty()) {
+            query.setParameter("nombreParam", "%" + nombre + "%");
+        }
+        if (especie != null && !especie.isEmpty()) {
+            query.setParameter("especieParam", especie);
+        }
+        if (raza != null && !raza.isEmpty()) {
+            query.setParameter("razaParam", raza);
+        }
+        if (tamanio != null && !tamanio.isEmpty()) {
+            query.setParameter("tamanioParam", tamanio);
+        }
+        if (color != null && !color.isEmpty()) {
+            query.setParameter("colorParam", color);
+        }
+        if (fechaDesde != null && fechaHasta != null) {
+            query.setParameter("fechaDesdeParam", fechaDesde);
+            query.setParameter("fechaHastaParam", fechaHasta);
+        }
+
+        query.setFirstResult(offset);
+        query.setMaxResults(maxResults);
+
+        return query.getResultList();
+    }
 }

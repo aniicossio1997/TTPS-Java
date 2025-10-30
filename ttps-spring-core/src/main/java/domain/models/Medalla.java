@@ -1,11 +1,10 @@
 package domain.models;
 
 import domain.enums.MedallaEnum;
-
-import java.util.Date;
-
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
+
+import java.util.Date;
 
 
 @Entity

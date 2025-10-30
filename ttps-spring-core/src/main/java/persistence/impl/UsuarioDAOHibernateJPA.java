@@ -1,14 +1,14 @@
 package persistence.impl;
-import domain.models.Publicacion;
 import domain.models.Usuario;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
-import persistence.EMF;
+import org.springframework.stereotype.Repository; // Se agrega esta importación
 import persistence.dao.UsuarioDAO;
 
-import java.util.List;
+// import persistence.EMF; // Ya no se usa
+// import jakarta.persistence.EntityManager; // Ya no se usa
 
+@Repository // Se añade la anotación
 public class UsuarioDAOHibernateJPA extends GenericDAOHibernateJPA<Usuario> implements UsuarioDAO {
     public UsuarioDAOHibernateJPA() {
         super(Usuario.class);
@@ -16,18 +16,16 @@ public class UsuarioDAOHibernateJPA extends GenericDAOHibernateJPA<Usuario> impl
 
     @Override
     public Usuario findByEmail(String email) {
-        EntityManager em = EMF.getEMF().createEntityManager();
+        // Se elimina la creación manual del EntityManager y el try/finally
         try {
-            TypedQuery<Usuario> consulta = em.createQuery("SELECT u FROM Usuario u WHERE u.email = :emailParam", Usuario.class);
-            consulta.setParameter("emailParam", email); // Asignamos el valor al parámetro
+            TypedQuery<Usuario> consulta = getEntityManager().createQuery( // Se usa getEntityManager()
+                    "SELECT u FROM Usuario u WHERE u.email = :emailParam", Usuario.class);
+            consulta.setParameter("emailParam", email);
 
-            // getSingleResult() lanza NoResultException si no encuentra nada
             return consulta.getSingleResult();
 
         } catch (NoResultException e) {
             return null;
-        } finally {
-            em.close();
         }
     }
 }

@@ -1,81 +1,57 @@
 package persistence.impl;
 
-
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.PersistenceContext; // Importante
 import jakarta.persistence.Query;
-import persistence.EMF;
+import org.springframework.transaction.annotation.Transactional; // Importante
 import persistence.dao.GenericDAO;
 
 import java.util.List;
 
 /**
- * Implementación genérica del DAO usando Hibernate y JPA.
+ * Implementación genérica del DAO gestionada por Spring.
  */
+// 1. Hacemos que todos los métodos públicos de esta clase (y sus hijas)
+//    sean transaccionales. [cite_start]Spring maneja el begin, commit y rollback. [cite: 636, 658]
+@Transactional
 public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
 
-    protected Class<T> persistentClass; 
+    protected Class<T> persistentClass;
+
+    // 2. Inyectamos el EntityManager. Spring lo obtiene del
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public GenericDAOHibernateJPA(Class<T> clase) {
-        this.persistentClass = clase; 
+        this.persistentClass = clase;
     }
 
-    public Class<T> getPersistentClass() { 
-        return persistentClass; 
+    public Class<T> getPersistentClass() {
+        return persistentClass;
+    }
+
+    // --- Métodos CRUD ahora son mucho más simples ---
+    // ¡Ya no necesitas EntityTransaction ni try-catch-finally para la tx!
+
+    @Override
+    public T persist(T entity) {
+        // Spring ya inició la transacción
+        this.entityManager.persist(entity);
+        // Spring hará el commit (o rollback si hay error)
+        return entity;
     }
 
     @Override
-    public T persist(T entity) { 
-        EntityManager em = EMF.getEMF().createEntityManager();
-        EntityTransaction tx = null;
-        try {
-            tx = em.getTransaction();
-            tx.begin(); 
-            em.persist(entity); 
-            tx.commit(); 
-        } catch (RuntimeException e) {
-            if (tx != null && tx.isActive()) tx.rollback(); 
-            throw e;
-        } finally {
-            em.close(); 
-        }
-        return entity; 
+    public T update(T entity) {
+        T entityMerged = this.entityManager.merge(entity);
+        return entityMerged;
     }
 
     @Override
-    public T update(T entity) { 
-        EntityManager em = EMF.getEMF().createEntityManager();
-        EntityTransaction etx = em.getTransaction();
-        T entityMerged = null;
-        try {
-            etx.begin(); 
-            entityMerged = em.merge(entity); 
-            etx.commit(); 
-        } catch (RuntimeException e) {
-            if (etx != null && etx.isActive()) etx.rollback();
-            throw e;
-        } finally {
-            em.close(); 
-        }
-        return entityMerged; 
-    }
-
-    @Override
-    public void delete(T entity) { 
-        EntityManager em = EMF.getEMF().createEntityManager();
-        EntityTransaction tx = null;
-        try {
-            tx = em.getTransaction();
-            tx.begin(); 
-            em.remove(em.merge(entity)); 
-            tx.commit(); 
-        } catch (RuntimeException e) {
-            if (tx != null && tx.isActive()) tx.rollback(); 
-            throw e;
-        } finally {
-            em.close();
-        }
+    public void delete(T entity) {
+        this.entityManager.remove(this.entityManager.merge(entity));
     }
 
     @Override
@@ -84,41 +60,39 @@ public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
         if (entity != null) {
             this.delete(entity);
         } else {
-            // ¡NUEVO! Lanza un error si no se encuentra la entidad
             throw new EntityNotFoundException(
                     "No se encontró la entidad " + persistentClass.getSimpleName() + " con ID: " + id
             );
         }
-
     }
 
+    // 3. Los métodos de consulta no necesitan @Transactional
+    //    pero lo heredan de la clase. Usamos @Transactional(readOnly = true)
+    //    para optimizar la consulta.
     @Override
+    @Transactional(readOnly = true)
     public T get(Long id) {
-        EntityManager em = EMF.getEMF().createEntityManager();
-        try {
-            return em.find(this.getPersistentClass(), id);
-        } finally {
-            em.close();
-        }
+        // Ya no necesitas crear y cerrar el 'em'
+        return this.entityManager.find(this.getPersistentClass(), id);
     }
 
     @Override
-    public List<T> getAll(String columnOrder) { 
-        EntityManager em = EMF.getEMF().createEntityManager();
-        try {
-            String queryString = "SELECT e FROM " + getPersistentClass().getSimpleName() + " e";
-            if (columnOrder != null && !columnOrder.isEmpty()) {
-                queryString += " order by e." + columnOrder; 
-            }
-            Query consulta = em.createQuery(queryString);
-            return (List<T>) consulta.getResultList(); 
-        } finally {
-            em.close();
+    @Transactional(readOnly = true)
+    public List<T> getAll(String columnOrder) {
+        String queryString = "SELECT e FROM " + getPersistentClass().getSimpleName() + " e";
+        if (columnOrder != null && !columnOrder.isEmpty()) {
+            queryString += " order by e." + columnOrder;
         }
+        Query consulta = this.entityManager.createQuery(queryString);
+        return (List<T>) consulta.getResultList();
     }
 
     public List<T> getAll() {
-        // Llama al otro método 'getAll' pasándole null
         return getAll(null);
+    }
+
+    // 4. (Opcional) Un getter para que las clases hijas usen el EM
+    public EntityManager getEntityManager() {
+        return entityManager;
     }
 }

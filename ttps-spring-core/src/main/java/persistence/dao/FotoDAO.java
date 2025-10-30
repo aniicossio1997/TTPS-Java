@@ -1,6 +1,7 @@
 package persistence.dao;
 
 import domain.models.Foto;
+
 import java.util.List;
 
 public interface FotoDAO extends GenericDAO<Foto> {
