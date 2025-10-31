@@ -6,9 +6,6 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository; // Importación clave
 import persistence.dao.FotoDAO;
 
-// import persistence.EMF; // No se usa
-// import jakarta.persistence.EntityManager; // No se usa
-
 import java.util.List;
 
 @Repository // Anotación para que Spring lo gestione

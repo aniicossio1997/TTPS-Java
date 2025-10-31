@@ -1,10 +1,8 @@
 package persistence.impl;
 
 import domain.models.Avistamiento;
-import jakarta.persistence.EntityManager; // Ya no lo importas
 import jakarta.persistence.Query;
 import org.springframework.stereotype.Repository; // Importante
-// import persistence.EMF; // ¡Ya no se usa!
 import persistence.dao.AvistamientoDAO;
 
 import java.util.List;

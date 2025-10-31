@@ -5,9 +5,6 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository; // Se agrega esta importación
 import persistence.dao.PublicacionDAO;
 
-// import persistence.EMF; // Ya no se usa
-// import jakarta.persistence.EntityManager; // Ya no se usa
-
 import java.util.Date;
 import java.util.List;
 

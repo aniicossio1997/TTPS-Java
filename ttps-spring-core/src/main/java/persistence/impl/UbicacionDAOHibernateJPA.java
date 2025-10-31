@@ -6,9 +6,6 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository; // Se agrega esta importación
 import persistence.dao.UbicacionDAO;
 
-// import persistence.EMF; // Ya no se usa
-// import jakarta.persistence.EntityManager; // Ya no se usa
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
