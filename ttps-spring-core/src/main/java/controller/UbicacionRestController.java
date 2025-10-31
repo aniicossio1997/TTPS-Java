@@ -14,7 +14,7 @@ import java.util.List;
  * Controlador REST para gestionar las Ubicaciones.
  * Expone los endpoints de la API para el CRUD y búsquedas.
  */
-@RestController // [cite: 2196, 2244]
+@RestController
 @RequestMapping("/api/ubicaciones") // <-- Asegúrate de que tenga la barra inicial
 public class UbicacionRestController {
 
