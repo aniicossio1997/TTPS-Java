@@ -26,19 +26,18 @@ public class UbicacionRestController {
     public ResponseEntity<List<Ubicacion>> getAllUbicaciones() {
         List<Ubicacion> ubicaciones = ubicacionService.getAllUbicaciones();
         if (ubicaciones.isEmpty()) {
-            // Si no hay ubicaciones, devuelve 204 No Content [cite: 2254, 2258]
+            // Si no hay ubicaciones, devuelve 204 No Content 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
-        // Si hay, devuelve 200 OK y la lista en JSON [cite: 2259]
+        
         return new ResponseEntity<>(ubicaciones, HttpStatus.OK);
     }
 
     // --- Endpoint 2: GET /api/ubicaciones/{id} (Obtener una por ID) ---
     @GetMapping("/{id}")
-    public ResponseEntity<Ubicacion> getUbicacionById(@PathVariable("id") Long id) { // [cite: 2262, 2263]
-        Ubicacion ubicacion = ubicacionService.getUbicacion(id);
+    public ResponseEntity<Ubicacion> getUbicacionById(@PathVariable("id") Long id) { 
         if (ubicacion == null) {
-            // Si no se encuentra, devuelve 404 Not Found [cite: 2266, 2268]
+            // Si no se encuentra, devuelve 404 Not Found 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(ubicacion, HttpStatus.OK);
@@ -46,10 +45,10 @@ public class UbicacionRestController {
 
     // --- Endpoint 3: POST /api/ubicaciones (Crear una nueva) ---
     @PostMapping
-    public ResponseEntity<Ubicacion> createUbicacion(@RequestBody Ubicacion ubicacion) { // [cite: 2184, 2276]
+    public ResponseEntity<Ubicacion> createUbicacion(@RequestBody Ubicacion ubicacion) { 
         try {
             Ubicacion nuevaUbicacion = ubicacionService.crearUbicacion(ubicacion);
-            // Devuelve 201 Created y la ubicación creada [cite: 2227, 2284]
+            // Devuelve 201 Created y la ubicación creada 
             return new ResponseEntity<>(nuevaUbicacion, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             // Si falla la validación del servicio (ej. lat/lon nulas)
@@ -59,7 +58,7 @@ public class UbicacionRestController {
 
     // --- Endpoint 4: PUT /api/ubicaciones/{id} (Actualizar una existente) ---
     @PutMapping("/{id}")
-    public ResponseEntity<Ubicacion> updateUbicacion(@PathVariable("id") Long id, @RequestBody Ubicacion ubicacion) { // [cite: 2288, 2289]
+    public ResponseEntity<Ubicacion> updateUbicacion(@PathVariable("id") Long id, @RequestBody Ubicacion ubicacion) { 
         Ubicacion ubicacionExistente = ubicacionService.getUbicacion(id);
         if (ubicacionExistente == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -67,7 +66,7 @@ public class UbicacionRestController {
 
         try {
             Ubicacion ubicacionActualizada = ubicacionService.actualizarUbicacion(ubicacion);
-            return new ResponseEntity<>(ubicacionActualizada, HttpStatus.OK); // [cite: 2301]
+            return new ResponseEntity<>(ubicacionActualizada, HttpStatus.OK); 
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
@@ -75,7 +74,7 @@ public class UbicacionRestController {
 
     // --- Endpoint 5: DELETE /api/ubicaciones/{id} (Eliminar una por ID) ---
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUbicacion(@PathVariable("id") Long id) { // [cite: 2305, 2306]
+    public ResponseEntity<Void> deleteUbicacion(@PathVariable("id") Long id) { 
         Ubicacion ubicacion = ubicacionService.getUbicacion(id);
         if (ubicacion == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

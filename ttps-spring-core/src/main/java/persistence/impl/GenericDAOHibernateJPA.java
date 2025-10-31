@@ -13,7 +13,7 @@ import java.util.List;
  * Implementación genérica del DAO gestionada por Spring.
  */
 // 1. Hacemos que todos los métodos públicos de esta clase (y sus hijas)
-//    sean transaccionales. [cite_start]Spring maneja el begin, commit y rollback. [cite: 636, 658]
+//    sean transaccionales. 
 @Transactional
 public class GenericDAOHibernateJPA<T> implements GenericDAO<T> {
 
