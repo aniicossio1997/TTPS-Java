@@ -22,15 +22,6 @@ public class AvistamientoDAOHibernateJPA extends GenericDAOHibernateJPA<Avistami
         // 2. Ya no creas un EntityManager, usas el que inyectó Spring
         //    en la clase padre.
 
-        // ---- CÓDIGO ANTIGUO ----
-        // EntityManager em = EMF.getEMF().createEntityManager();
-        // try {
-        //    ...
-        // } finally {
-        //    em.close();
-        // }
-
-        // ---- CÓDIGO NUEVO ----
         String jpql = "SELECT a FROM " + getPersistentClass().getSimpleName() +
                 " a WHERE a.publicacion.id = :pubId";
 
