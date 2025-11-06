@@ -12,12 +12,24 @@ public class AuthService {
     @Autowired
     private UsuarioDAO usuarioDAO; // Inyecta el DAO de usuario
 
-    /**
-     * Valida las credenciales del usuario.
-     * @param email El email (que viene en el header 'usuario')
-     * @param password La password (que viene en el header 'password')
-     * @return El objeto Usuario si la validación es exitosa, null en caso contrario.
-     */
+    @Transactional(readOnly = true) // Es una operación de solo lectura
+    public Usuario validarToken(String token) {
+        String[] parts = token.split("-");
+        if (parts.length > 2) return null;
+        Long userId = Long.parseLong(parts[0]);
+        String password = parts[1];
+        Usuario usuario = usuarioDAO.get(userId);
+        if (usuario.getPassword().equals(password)){
+            return usuario;
+        };
+        return null;
+    }
+        /**
+         * Valida las credenciales del usuario.
+         * @param email El email (que viene en el header 'usuario')
+         * @param password La password (que viene en el header 'password')
+         * @return El objeto Usuario si la validación es exitosa, null en caso contrario.
+         */
     @Transactional(readOnly = true) // Es una operación de solo lectura
     public Usuario validarCredenciales(String email, String password) {
 

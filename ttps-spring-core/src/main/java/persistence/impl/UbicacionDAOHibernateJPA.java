@@ -40,6 +40,14 @@ public class UbicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Ubicacion> 
     }
 
     @Override
+    public Ubicacion getByUsuarioId(Long usuarioId) {
+        TypedQuery<Ubicacion> consulta = getEntityManager().createQuery("SELECT u FROM " + getPersistentClass().getSimpleName() +
+                " u WHERE u.usuario.id = :usuarioId", getPersistentClass());
+        consulta.setParameter("usuarioId", usuarioId);
+        return consulta.getSingleResultOrNull();
+    }
+
+    @Override
     public List<Ubicacion> findByCriteriaLike(String idExterno, String provincia, String ciudad, String barrio ) {
         // Se elimina la creación manual del EntityManager y el try/finally
         StringBuilder jpql = new StringBuilder("SELECT u FROM Ubicacion u WHERE 1=1");

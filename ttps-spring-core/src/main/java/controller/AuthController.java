@@ -29,7 +29,7 @@ public class AuthController {
 
         if (usuarioValidado != null) {
             // 2. Éxito: Generar token y añadirlo al header
-            String token = usuarioValidado.getId() + password;
+            String token = usuarioValidado.getId() + "+" + password;
 
             HttpHeaders headers = new HttpHeaders();
             headers.add("token", token);
