@@ -35,7 +35,8 @@ public class UbicacionRestController {
 
     // --- Endpoint 2: GET /api/ubicaciones/{id} (Obtener una por ID) ---
     @GetMapping("/{id}")
-    public ResponseEntity<Ubicacion> getUbicacionById(@PathVariable("id") Long id) { 
+    public ResponseEntity<Ubicacion> getUbicacionById(@PathVariable("id") Long id) {
+        Ubicacion ubicacion = ubicacionService.getUbicacion(id);
         if (ubicacion == null) {
             // Si no se encuentra, devuelve 404 Not Found 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -4,10 +4,18 @@ import domain.enums.EstadoUsuarioEnum;
 import domain.enums.RolUsuarioEnum;
 import domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
 @Entity
 public class Usuario extends IdentifiableEntity {
 
@@ -67,10 +75,6 @@ public class Usuario extends IdentifiableEntity {
     }
 
     public Usuario(String nombre, String apellido, String email, String password) {
-    }
-
-    public Usuario() {
-
     }
 
     public String getNombre() {

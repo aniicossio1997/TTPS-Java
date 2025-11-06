@@ -1,9 +1,8 @@
 
+import config.AppConfig;
 import domain.models.Ubicacion;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import config.PersistenceConfig;
 
-import javax.sql.DataSource;
 import persistence.dao.UbicacionDAO; // <-- ¡Importa el DAO!
 
 public class SpringTestMain {
@@ -31,7 +30,7 @@ public class SpringTestMain {
 		*/
 
         AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext();
-        ctx.register(PersistenceConfig.class);
+        ctx.register(AppConfig.class);
         ctx.refresh();
 
         System.out.println("Contexto de Spring cargado...");
