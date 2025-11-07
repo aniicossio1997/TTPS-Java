@@ -14,7 +14,7 @@ public class Publicacion extends IdentifiableEntity {
 
     private String nombre;
     private String descripcion;
-    private Date fecha;
+    private Date fecha = new Date();
     private String color;
     private String especie;
     private String raza;

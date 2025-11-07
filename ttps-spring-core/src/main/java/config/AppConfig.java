@@ -29,7 +29,8 @@ import java.util.Properties;
         "domain.models",
         "persistence.impl",
         "services",
-        "controller"
+        "controller",
+        "exceptions"
 })
 public class AppConfig implements WebMvcConfigurer {
 
