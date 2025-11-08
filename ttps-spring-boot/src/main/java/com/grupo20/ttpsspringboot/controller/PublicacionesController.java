@@ -2,8 +2,9 @@ package com.grupo20.ttpsspringboot.controller;
 
 
 import com.grupo20.ttpsspringboot.domain.models.Publicacion;
-import dtos.PublicacionCreateDTO;
-import dtos.PublicacionDTO;
+
+import com.grupo20.ttpsspringboot.dtos.PublicacionDTO;
+import com.grupo20.ttpsspringboot.services.impl.PublicacionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import services.impl.PublicacionService;
 
 @RestController
 @RequestMapping("/api/publicaciones")
