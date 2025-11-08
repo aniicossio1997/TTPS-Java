@@ -17,7 +17,7 @@ public class SpringWebApp implements WebApplicationInitializer {
         // Create the 'root' Spring application context
         AnnotationConfigWebApplicationContext rootContext = new AnnotationConfigWebApplicationContext();
         rootContext.register(AppConfig.class);
-
+        rootContext.register(WebConfig.class);
         //ContextLoaderListener - Manage the lifecycle of the root application context
         container.addListener(new ContextLoaderListener(rootContext));
 

@@ -1,6 +1,7 @@
 package services;
 
 import domain.models.Ubicacion;
+import dtos.UbicacionCreateDTO;
 import persistence.dao.UbicacionDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,12 @@ public class UbicacionService {
      * @return La entidad persistida con su ID.
      */
     public Ubicacion crearUbicacion(Ubicacion u) {
+        _validar(u); // Aplicamos la lógica de negocio
+        return ubicacionDAO.persist(u);
+    }
+
+    public Ubicacion crearUbicacion(UbicacionCreateDTO dto) {
+        Ubicacion u = dto.toEntity();
         _validar(u); // Aplicamos la lógica de negocio
         return ubicacionDAO.persist(u);
     }

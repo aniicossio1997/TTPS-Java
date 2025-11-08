@@ -2,6 +2,7 @@ package controller;
 
 
 import domain.models.Ubicacion;
+import domain.models.Usuario;
 import services.UbicacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/api/ubicaciones") // <-- Asegúrate de que tenga la barra inicial
-public class UbicacionRestController {
+public class UbicacionRestController extends BaseController {
 
     @Autowired
     private UbicacionService ubicacionService; // Inyecta la capa de servicio
