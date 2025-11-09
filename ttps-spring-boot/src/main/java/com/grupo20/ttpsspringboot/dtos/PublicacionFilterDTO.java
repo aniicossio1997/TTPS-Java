@@ -14,6 +14,7 @@ public class PublicacionFilterDTO {
     public String color;
     public Date fechaDesde;
     public Date fechaHasta;
+    public Long usuarioId;
     public int offset = 0;
     public int maxResults = 20;
 }

@@ -1,5 +1,6 @@
 package com.grupo20.ttpsspringboot.domain.models;
 
+import com.grupo20.ttpsspringboot.domain.enums.EstadoPublicacionEnum;
 import com.grupo20.ttpsspringboot.domain.models.base.IdentifiableEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -53,6 +54,12 @@ public class Publicacion extends IdentifiableEntity {
                 .max(Comparator.comparing(EstadoPublicacion::getFecha));
 
         return estadoReciente.orElse(null);
+    }
+
+    public EstadoPublicacionEnum getEstadoEnum() {
+        EstadoPublicacion estado = getEstado();
+        if (estado == null) return null;
+        return estado.getEstado();
     }
 
     public void addAvistamiento(Avistamiento avistamiento) {

@@ -66,6 +66,11 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
         if (filter.color != null && !filter.color.isEmpty()) {
             jpql += " AND p.color = :colorParam";
         }
+
+        if (filter.usuarioId != null) {
+            jpql += " AND p.usuario.id = :usuarioId";
+        }
+
         if (filter.fechaDesde != null && filter.fechaHasta != null) {
             jpql += " AND p.fecha BETWEEN :fechaDesdeParam AND :fechaHastaParam";
         }
@@ -90,6 +95,11 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
         if (filter.color != null && !filter.color.isEmpty()) {
             query.setParameter("colorParam", filter.color);
         }
+
+        if (filter.usuarioId != null) {
+            query.setParameter("usuarioId", filter.usuarioId);
+        }
+
         if (filter.fechaDesde != null && filter.fechaHasta != null) {
             query.setParameter("fechaDesdeParam", filter.fechaDesde);
             query.setParameter("fechaHastaParam", filter.fechaHasta);

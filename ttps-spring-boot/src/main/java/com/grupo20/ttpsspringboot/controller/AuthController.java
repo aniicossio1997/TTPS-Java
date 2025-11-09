@@ -1,8 +1,11 @@
 package com.grupo20.ttpsspringboot.controller;
 
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
+import com.grupo20.ttpsspringboot.dtos.AuthSessionDTO;
+import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
 import com.grupo20.ttpsspringboot.services.AuthService;
 import com.grupo20.ttpsspringboot.utils.JwtUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+@Tag(name = "Auth")
 @RestController
 @RequestMapping("/api/auth") // Este controlador solo responde a "/autenticacion"
 public class AuthController {
@@ -26,7 +30,7 @@ public class AuthController {
     private String jwtSecret;
 
     @PostMapping
-    public ResponseEntity<Object> autenticarUsuario(
+    public ResponseEntity<AuthSessionDTO> login(
             @RequestHeader("usuario") String email,
             @RequestHeader("password") String password) {
 
@@ -38,10 +42,12 @@ public class AuthController {
 
             String token = JwtUtils.generateToken(claims, jwtSecret);
 
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("token", token);
+            AuthSessionDTO dto = new AuthSessionDTO();
 
-            return new ResponseEntity<>(headers, HttpStatus.OK);
+            dto.setToken(token);
+            dto.setUsuario(UsuarioSmallDTO.fromEntity(usuarioValidado));
+
+            return new ResponseEntity<>(dto, HttpStatus.OK);
 
         } else {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);

@@ -1,8 +1,11 @@
 package com.grupo20.ttpsspringboot.persistence.impl;
 
 import com.grupo20.ttpsspringboot.domain.models.Avistamiento;
+import com.grupo20.ttpsspringboot.domain.models.Publicacion;
+import com.grupo20.ttpsspringboot.dtos.AvistamientoFilterDTO;
 import com.grupo20.ttpsspringboot.persistence.dao.AvistamientoDAO;
 import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,16 +19,27 @@ public class AvistamientoDAOHibernateJPA extends GenericDAOHibernateJPA<Avistami
     }
 
     @Override
-    public List<Avistamiento> getByIdPublicacion(Long publicacionId) {
-        // 2. Ya no creas un EntityManager, usas el que inyectó Spring
-        //    en la clase padre.
+    public List<Avistamiento> getByFilters(AvistamientoFilterDTO filter) {
+        String jpql = "SELECT a FROM "  + getPersistentClass().getSimpleName() + " a WHERE 1=1";
 
-        String jpql = "SELECT a FROM " + getPersistentClass().getSimpleName() +
-                " a WHERE a.publicacion.id = :pubId";
+        if (filter.usuarioId != null) {
+            jpql += " AND a.usuario.id = :usuarioId";
+        }
 
-        Query consulta = getEntityManager().createQuery(jpql); // Usas el EM del padre
-        consulta.setParameter("pubId", publicacionId);
+        if (filter.publicacionId != null) {
+            jpql += " AND a.publicacion.id = :publicacionId AND a.publicacion.deletedAt IS NULL";
+        }
 
-        return (List<Avistamiento>) consulta.getResultList();
+        TypedQuery<Avistamiento> query = getEntityManager().createQuery(jpql, getPersistentClass());
+
+        if (filter.usuarioId != null) {
+            query.setParameter("usuarioId", filter.usuarioId);
+        }
+
+        if (filter.publicacionId != null) {
+            query.setParameter("publicacionId", filter.publicacionId);
+        }
+
+        return query.getResultList();
     }
 }

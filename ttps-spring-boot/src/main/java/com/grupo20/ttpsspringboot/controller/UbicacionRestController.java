@@ -2,6 +2,7 @@ package com.grupo20.ttpsspringboot.controller;
 
 
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,56 +11,45 @@ import  com.grupo20.ttpsspringboot.services.UbicacionService;
 
 import java.util.List;
 
-/**
- * Controlador REST para gestionar las Ubicaciones.
- * Expone los endpoints de la API para el CRUD y búsquedas.
- */
+@Tag(name = "Ubicaciones")
 @RestController
-@RequestMapping("/api/ubicaciones") // <-- Asegúrate de que tenga la barra inicial
+@RequestMapping("/api/ubicaciones")
 public class UbicacionRestController extends BaseController {
 
     @Autowired
-    private UbicacionService ubicacionService; // Inyecta la capa de servicio
+    private UbicacionService ubicacionService;
 
-    // --- Endpoint 1: GET /api/ubicaciones (Obtener todas) ---
     @GetMapping
-    public ResponseEntity<List<Ubicacion>> getAllUbicaciones() {
+    public ResponseEntity<List<Ubicacion>> getAll() {
         List<Ubicacion> ubicaciones = ubicacionService.getAllUbicaciones();
         if (ubicaciones.isEmpty()) {
-            // Si no hay ubicaciones, devuelve 204 No Content 
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         
         return new ResponseEntity<>(ubicaciones, HttpStatus.OK);
     }
 
-    // --- Endpoint 2: GET /api/ubicaciones/{id} (Obtener una por ID) ---
     @GetMapping("/{id}")
-    public ResponseEntity<Ubicacion> getUbicacionById(@PathVariable("id") Long id) {
+    public ResponseEntity<Ubicacion> get(@PathVariable("id") Long id) {
         Ubicacion ubicacion = ubicacionService.getUbicacion(id);
         if (ubicacion == null) {
-            // Si no se encuentra, devuelve 404 Not Found 
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(ubicacion, HttpStatus.OK);
     }
 
-    // --- Endpoint 3: POST /api/ubicaciones (Crear una nueva) ---
     @PostMapping
-    public ResponseEntity<Ubicacion> createUbicacion(@RequestBody Ubicacion ubicacion) { 
+    public ResponseEntity<Ubicacion> create(@RequestBody Ubicacion ubicacion) {
         try {
             Ubicacion nuevaUbicacion = ubicacionService.crearUbicacion(ubicacion);
-            // Devuelve 201 Created y la ubicación creada 
             return new ResponseEntity<>(nuevaUbicacion, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
-            // Si falla la validación del servicio (ej. lat/lon nulas)
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    // --- Endpoint 4: PUT /api/ubicaciones/{id} (Actualizar una existente) ---
     @PutMapping("/{id}")
-    public ResponseEntity<Ubicacion> updateUbicacion(@PathVariable("id") Long id, @RequestBody Ubicacion ubicacion) { 
+    public ResponseEntity<Ubicacion> update(@PathVariable("id") Long id, @RequestBody Ubicacion ubicacion) {
         Ubicacion ubicacionExistente = ubicacionService.getUbicacion(id);
         if (ubicacionExistente == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -73,7 +63,6 @@ public class UbicacionRestController extends BaseController {
         }
     }
 
-    // --- Endpoint 5: DELETE /api/ubicaciones/{id} (Eliminar una por ID) ---
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUbicacion(@PathVariable("id") Long id) { 
         Ubicacion ubicacion = ubicacionService.getUbicacion(id);
@@ -85,9 +74,8 @@ public class UbicacionRestController extends BaseController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    // --- Endpoint 6: GET /api/ubicaciones/buscar (Búsqueda por criterios) ---
     @GetMapping("/buscar")
-    public ResponseEntity<List<Ubicacion>> buscarPorCriterios(
+    public ResponseEntity<List<Ubicacion>> getFiltered(
             @RequestParam(required = false) String idExterno,
             @RequestParam(required = false) String provincia,
             @RequestParam(required = false) String ciudad,
