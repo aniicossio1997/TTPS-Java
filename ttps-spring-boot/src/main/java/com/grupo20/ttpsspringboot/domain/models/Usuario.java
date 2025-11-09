@@ -54,15 +54,6 @@ public class Usuario extends IdentifiableEntity {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Medalla> medallas = new ArrayList<>();
 
-    //FIN DE RELACIONES
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-
-    public void setUbicacion(Ubicacion ubicacion) {
-        this.ubicacion = ubicacion;
-    }
-
     public Usuario(String nombre, String apellido, String email, String password, Integer puntos, Integer mascotasEnTransito, Integer ayudadosEnZona, RolUsuarioEnum rol, Ubicacion ubicacion, Foto fotoPerfil) {
         this.nombre = nombre;
         this.apellido = apellido;

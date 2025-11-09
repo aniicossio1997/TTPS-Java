@@ -3,6 +3,7 @@ package com.grupo20.ttpsspringboot.controller;
 
 import com.grupo20.ttpsspringboot.domain.models.Publicacion;
 
+import com.grupo20.ttpsspringboot.dtos.PublicacionCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionDTO;
 import com.grupo20.ttpsspringboot.services.impl.PublicacionService;
 import jakarta.validation.Valid;

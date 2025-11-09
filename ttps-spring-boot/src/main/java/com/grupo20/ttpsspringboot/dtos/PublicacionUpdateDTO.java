@@ -1,6 +1,6 @@
 package com.grupo20.ttpsspringboot.dtos;
 
-import domain.enums.EstadoPublicacionEnum;
+import com.grupo20.ttpsspringboot.domain.enums.EstadoPublicacionEnum;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

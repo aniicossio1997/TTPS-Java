@@ -5,9 +5,7 @@ import com.grupo20.ttpsspringboot.domain.enums.EstadoPublicacionEnum;
 import com.grupo20.ttpsspringboot.domain.models.EstadoPublicacion;
 import com.grupo20.ttpsspringboot.domain.models.Publicacion;
 import jakarta.validation.constraints.NotBlank; // Paquete 'jakarta'
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

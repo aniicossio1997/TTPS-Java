@@ -3,13 +3,13 @@ package com.grupo20.ttpsspringboot.services.impl;
 import com.grupo20.ttpsspringboot.domain.models.Publicacion;
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
-import dtos.PublicacionCreateDTO;
+import com.grupo20.ttpsspringboot.dtos.PublicacionCreateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
 import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
-import services.UbicacionService;
+import com.grupo20.ttpsspringboot.services.UbicacionService;
 
 @Service
 public class PublicacionService {

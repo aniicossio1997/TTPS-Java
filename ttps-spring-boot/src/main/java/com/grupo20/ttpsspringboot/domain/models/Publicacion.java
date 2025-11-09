@@ -46,6 +46,13 @@ public class Publicacion extends IdentifiableEntity {
         }
     }
 
+    public EstadoPublicacion getEstado() {
+        Optional<EstadoPublicacion> estadoReciente = this.estados.stream()
+                .max(Comparator.comparing(EstadoPublicacion::getFecha));
+
+        return estadoReciente.orElse(null);
+    }
+
     public void addAvistamiento(Avistamiento avistamiento) {
         if (avistamiento != null && !avistamientos.contains(avistamiento)) {
             avistamientos.add(avistamiento);

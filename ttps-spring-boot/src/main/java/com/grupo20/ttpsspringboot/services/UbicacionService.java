@@ -1,7 +1,7 @@
 package com.grupo20.ttpsspringboot.services;
 
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
-import dtos.UbicacionCreateDTO;
+import com.grupo20.ttpsspringboot.dtos.UbicacionCreateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
