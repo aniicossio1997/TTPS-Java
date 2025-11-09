@@ -5,6 +5,7 @@ import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
 import jakarta.persistence.TypedQuery;
 import org.springframework.stereotype.Repository;
 import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,10 +17,21 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public Publicacion get(Long id) {
+        TypedQuery<Publicacion> consulta = getEntityManager().createQuery(
+                "SELECT p FROM Publicacion p WHERE p.id = :id AND p.deletedAt IS NULL",
+                Publicacion.class
+        );
+        consulta.setParameter("id", id);
+        return consulta.getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
     public List<Publicacion> getPublicacionesByNombre(String nombre) {
         // Se elimina la creación manual del EntityManager y el try/finally
         TypedQuery<Publicacion> consulta = getEntityManager().createQuery(
-                "SELECT p FROM Publicacion p WHERE LOWER(p.nombre) LIKE LOWER(:nombreParam)", Publicacion.class);
+                "SELECT p FROM Publicacion p WHERE p.usuario.id = :usuarioId AND p.deletedAt IS NULL", Publicacion.class);
         consulta.setParameter("nombreParam", "%" + nombre + "%");
         return consulta.getResultList();
     }
@@ -28,7 +40,7 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
     public List<Publicacion> getPublicacionesByUsuario(Long usuarioId) {
         // Se elimina la creación manual del EntityManager y el try/finally
         TypedQuery<Publicacion> consulta = getEntityManager().createQuery(
-                "SELECT p FROM Publicacion p WHERE p.usuario.id = :usuarioId", Publicacion.class);
+                "SELECT p FROM Publicacion p WHERE p.usuario.id = :usuarioId AND p.deletedAt IS NULL", Publicacion.class);
         consulta.setParameter("usuarioId", usuarioId);
         return consulta.getResultList();
     }
@@ -36,7 +48,7 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
     @Override
     public List<Publicacion> getPublicacionesByCaracteristicas(PublicacionFilterDTO filter) {
         // Se elimina la creación manual del EntityManager y el try/finally
-        String jpql = "SELECT p FROM Publicacion p WHERE 1=1";
+        String jpql = "SELECT p FROM Publicacion p WHERE p.deletedAt IS NULL";
 
         if (filter.nombre != null && !filter.nombre.isEmpty()) {
             jpql += " AND LOWER(p.nombre) LIKE LOWER(:nombreParam)";

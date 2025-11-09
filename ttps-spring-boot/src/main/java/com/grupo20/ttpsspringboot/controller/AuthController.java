@@ -17,7 +17,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth") // Este controlador solo responde a "/autenticacion"
-
 public class AuthController {
 
     @Autowired

@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
 import com.grupo20.ttpsspringboot.services.UbicacionService;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -79,6 +80,8 @@ public class PublicacionService {
     public void delete(Long id, Usuario usuario) {
         Publicacion publicacion = publicacionDAO.get(id);
         validate(publicacion, usuario);
+        publicacion.setDeletedAt(new Date());
+        publicacionDAO.update(publicacion);
     }
 
     private void validate(Publicacion publicacion, Usuario usuario) {
