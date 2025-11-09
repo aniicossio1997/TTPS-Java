@@ -19,7 +19,7 @@ public class PublicacionUpdateDTO {
     private String raza;
     private String tamanio;
 
-    private UbicacionCreateDTO ubicacion;
+    private UbicacionUpdateDTO ubicacion;
 
     private EstadoPublicacionEnum estado;
 }

@@ -1,20 +1,26 @@
 package com.grupo20.ttpsspringboot.services.impl;
 
+import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
+import com.grupo20.ttpsspringboot.domain.models.EstadoPublicacion;
 import com.grupo20.ttpsspringboot.domain.models.Publicacion;
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.PublicacionCreateDTO;
+import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
+import com.grupo20.ttpsspringboot.dtos.PublicacionUpdateDTO;
+import com.grupo20.ttpsspringboot.exceptions.ForbiddenException;
+import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
-import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
 import com.grupo20.ttpsspringboot.services.UbicacionService;
+
+import java.util.List;
 
 @Service
 public class PublicacionService {
-    @Autowired
-    private UsuarioDAO usuarioDAO;
+
     @Autowired
     private PublicacionDAO publicacionDAO;
 
@@ -35,5 +41,53 @@ public class PublicacionService {
         return publicacion;
     }
 
+    @Transactional
+    public Publicacion get(Long id) {
+        Publicacion publicacion = publicacionDAO.get(id);
+        if (publicacion == null) {
+            throw new NotFoundException();
+        }
+        return publicacion;
+    }
 
+    @Transactional
+    public List<Publicacion> getFiltered(PublicacionFilterDTO filter) {
+        return publicacionDAO.getPublicacionesByCaracteristicas(filter);
+    }
+
+    @Transactional
+    public Publicacion update(Long id, Usuario usuario, PublicacionUpdateDTO dto) {
+        Publicacion publicacion = publicacionDAO.get(id);
+        validate(publicacion, usuario);
+
+        if (dto.getNombre() != null) publicacion.setNombre(dto.getNombre());
+        if (dto.getDescripcion() != null) publicacion.setDescripcion(dto.getDescripcion());
+        if (dto.getColor() != null) publicacion.setColor(dto.getColor());
+        if (dto.getEspecie() != null) publicacion.setEspecie(dto.getEspecie());
+        if (dto.getRaza() != null) publicacion.setRaza(dto.getRaza());
+        if (dto.getTamanio() != null) publicacion.setTamanio(dto.getTamanio());
+        if (dto.getEstado() != null) publicacion.addEstado(new EstadoPublicacion(dto.getEstado(), publicacion));
+
+        if (dto.getUbicacion() != null) {
+            ubicacionService.updateUbicacion(publicacion.getUbicacion().getId(), dto.getUbicacion());
+        }
+
+        return publicacionDAO.update(publicacion);
+    }
+
+    @Transactional
+    public void delete(Long id, Usuario usuario) {
+        Publicacion publicacion = publicacionDAO.get(id);
+        validate(publicacion, usuario);
+    }
+
+    private void validate(Publicacion publicacion, Usuario usuario) {
+        if (publicacion == null) {
+            throw new NotFoundException();
+        }
+
+        if (usuario.getRol() != RolUsuarioEnum.ADMINISTRADOR && !publicacion.getUsuario().getId().equals(usuario.getId())) {
+            throw new ForbiddenException();
+        }
+    }
 }

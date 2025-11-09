@@ -20,6 +20,8 @@ public class Publicacion extends IdentifiableEntity {
     private String raza;
     private String tamanio;
 
+    private Date deletedAt;
+
     //-- Relaciones
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "ubicacion_id", nullable = false)

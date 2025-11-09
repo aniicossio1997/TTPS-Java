@@ -56,4 +56,15 @@ public class GlobalExceptionHandler {
 
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(APIException.class)
+    public ResponseEntity<ErrorDTO> handleApiException(APIException ex) {
+        ErrorDTO error = new ErrorDTO(
+                ex.getStatus().value(),
+                ex.getMessage(),
+                ex.getErrorCode()
+        );
+        return new ResponseEntity<>(error, ex.getStatus());
+    }
+
 }

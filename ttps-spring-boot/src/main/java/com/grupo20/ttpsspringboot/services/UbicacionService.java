@@ -1,7 +1,10 @@
 package com.grupo20.ttpsspringboot.services;
 
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
+import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.UbicacionCreateDTO;
+import com.grupo20.ttpsspringboot.dtos.UbicacionUpdateDTO;
+import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +68,22 @@ public class UbicacionService {
     public Ubicacion actualizarUbicacion(Ubicacion u) {
         _validar(u); // Aplicamos la lógica de negocio
         return ubicacionDAO.update(u);
+    }
+
+    public Ubicacion updateUbicacion(Long id, UbicacionUpdateDTO dto) {
+        Ubicacion ubicacion = ubicacionDAO.get(id);
+        if (ubicacion == null) {
+            throw new NotFoundException();
+        }
+
+        if (dto.getIdExterno() != null) ubicacion.setIdExterno(dto.getIdExterno());
+        if (dto.getProvincia() != null) ubicacion.setProvincia(dto.getProvincia());
+        if (dto.getCiudad() != null) ubicacion.setCiudad(dto.getCiudad());
+        if (dto.getBarrio() != null) ubicacion.setBarrio(dto.getBarrio());
+        if (dto.getLatitud() != null) ubicacion.setLatitud(dto.getLatitud());
+        if (dto.getLongitud() != null) ubicacion.setLongitud(dto.getLongitud());
+
+        return ubicacionDAO.update(ubicacion);
     }
 
     /**

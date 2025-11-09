@@ -1,7 +1,10 @@
 package com.grupo20.ttpsspringboot.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.ErrorDTO;
+import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
+import com.grupo20.ttpsspringboot.services.AuthService;
 import com.grupo20.ttpsspringboot.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -9,6 +12,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,6 +31,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Value("${jwt.secret}")
     private String jwtSecret;
 
+    @Autowired
+    private UsuarioDAO usuarioDAO;
+
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
@@ -43,10 +50,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             Jws<Claims> jws = JwtUtils.validateToken(token, jwtSecret);
             if (jws != null) {
                 Claims claims = jws.getBody();
-                String email = claims.get("email", String.class);
+                Long id = claims.get("id", Long.class);
 
-                var user = new User(email, "", Collections.emptyList());
-                var auth = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                Usuario usuario = usuarioDAO.get(id);
+
+                var auth = new UsernamePasswordAuthenticationToken(usuario, null, Collections.emptyList());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 chain.doFilter(request, response);
