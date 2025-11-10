@@ -1,0 +1,56 @@
+package com.grupo20.ttpsspringboot.controller;
+
+import com.grupo20.ttpsspringboot.domain.models.Usuario;
+import com.grupo20.ttpsspringboot.dtos.AuthSessionDTO;
+import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
+import com.grupo20.ttpsspringboot.services.AuthService;
+import com.grupo20.ttpsspringboot.utils.JwtUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Map;
+
+@Tag(name = "Auth")
+@RestController
+@RequestMapping("/api/auth") // Este controlador solo responde a "/autenticacion"
+public class AuthController {
+
+    @Autowired
+    private AuthService authService;
+
+    @Value("${jwt.secret}")
+    private String jwtSecret;
+
+    @PostMapping
+    public ResponseEntity<AuthSessionDTO> login(
+            @RequestHeader("usuario") String email,
+            @RequestHeader("password") String password) {
+
+        Usuario usuarioValidado = authService.validarCredenciales(email, password);
+
+        if (usuarioValidado != null) {
+
+            Map claims = Map.of("email", usuarioValidado.getEmail(), "id", usuarioValidado.getId(), "rol", usuarioValidado.getRol());
+
+            String token = JwtUtils.generateToken(claims, jwtSecret);
+
+            AuthSessionDTO dto = new AuthSessionDTO();
+
+            dto.setToken(token);
+            dto.setUsuario(UsuarioSmallDTO.fromEntity(usuarioValidado));
+
+            return new ResponseEntity<>(dto, HttpStatus.OK);
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }
+    }
+}
