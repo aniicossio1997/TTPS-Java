@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -18,6 +20,8 @@ public class PublicacionUpdateDTO {
     private String especie;
     private String raza;
     private String tamanio;
+
+    private List<Long> agradecimientos;
 
     private UbicacionUpdateDTO ubicacion;
 

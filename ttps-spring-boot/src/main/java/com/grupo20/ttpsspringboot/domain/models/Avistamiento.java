@@ -34,6 +34,8 @@ public class Avistamiento extends IdentifiableEntity {
     @OneToMany(mappedBy = "avistamiento", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Foto> fotos = new ArrayList<>();
 
+    @Column(nullable = false)
+    private boolean agradecimiento = false;
 
     //--FIN RELACIONES
 

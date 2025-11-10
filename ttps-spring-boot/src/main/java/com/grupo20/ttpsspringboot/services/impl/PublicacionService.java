@@ -1,15 +1,15 @@
 package com.grupo20.ttpsspringboot.services.impl;
 
+import com.grupo20.ttpsspringboot.domain.constants.Puntuacion;
+import com.grupo20.ttpsspringboot.domain.enums.EstadoPublicacionEnum;
 import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
-import com.grupo20.ttpsspringboot.domain.models.EstadoPublicacion;
-import com.grupo20.ttpsspringboot.domain.models.Publicacion;
-import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
-import com.grupo20.ttpsspringboot.domain.models.Usuario;
+import com.grupo20.ttpsspringboot.domain.models.*;
 import com.grupo20.ttpsspringboot.dtos.PublicacionCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionUpdateDTO;
 import com.grupo20.ttpsspringboot.exceptions.ForbiddenException;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
+import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,13 @@ public class PublicacionService {
     private PublicacionDAO publicacionDAO;
 
     @Autowired
+    private UsuarioDAO usuarioDAO;
+
+    @Autowired
     private UbicacionService ubicacionService;
+
+    @Autowired
+    private PuntuacionService puntuacionService;
 
     @Transactional
     public Publicacion create(Usuario usuario, PublicacionCreateDTO dto) {
@@ -38,6 +44,8 @@ public class PublicacionService {
         publicacion.setUbicacion(ubicacion);
 
         publicacionDAO.persist(publicacion);
+
+        puntuacionService.otorgarPuntosPorReporte(usuario);
 
         return publicacion;
     }
@@ -67,7 +75,16 @@ public class PublicacionService {
         if (dto.getEspecie() != null) publicacion.setEspecie(dto.getEspecie());
         if (dto.getRaza() != null) publicacion.setRaza(dto.getRaza());
         if (dto.getTamanio() != null) publicacion.setTamanio(dto.getTamanio());
-        if (dto.getEstado() != null) publicacion.addEstado(new EstadoPublicacion(dto.getEstado(), publicacion));
+        if (dto.getEstado() != null && dto.getEstado() != publicacion.getEstadoEnum()) {
+            publicacion.addEstado(new EstadoPublicacion(dto.getEstado(), publicacion));
+            if (dto.getEstado() == EstadoPublicacionEnum.ADOPTADO) {
+                puntuacionService.otorgarPuntajePorAdopcion(usuario);
+            }
+
+            if (dto.getEstado() == EstadoPublicacionEnum.RECUPERADO) {
+                puntuacionService.otorgarPuntajesPorHallazgo(publicacion, dto.getAgradecimientos());
+            }
+        }
 
         if (dto.getUbicacion() != null) {
             ubicacionService.updateUbicacion(publicacion.getUbicacion().getId(), dto.getUbicacion());
@@ -93,4 +110,5 @@ public class PublicacionService {
             throw new ForbiddenException();
         }
     }
+
 }

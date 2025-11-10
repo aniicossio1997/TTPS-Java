@@ -30,7 +30,6 @@ public class Usuario extends IdentifiableEntity {
     private Integer puntos;
     private Integer ayudadosEnZona;
 
-
     //CONFIG DE BASE
     @Enumerated(EnumType.STRING) @Column(nullable = false)
     private EstadoUsuarioEnum estado = EstadoUsuarioEnum.HABILITADO;
@@ -66,23 +65,8 @@ public class Usuario extends IdentifiableEntity {
         this.fotoPerfil = fotoPerfil;
     }
 
-    public Integer getAyudadosEnZona() {
-        return ayudadosEnZona;
+    public void addPuntos(Integer puntos) {
+        this.puntos = this.puntos + puntos;
     }
-    public void setAyudadosEnZona(int ayudadosEnZona) {
-        this.ayudadosEnZona = ayudadosEnZona;
-    }
-
-    public RolUsuarioEnum getRol() {
-        return rol;
-    }
-    public void setRol(RolUsuarioEnum rol) { this.rol = rol; }
-
-
-
-
-
-
-
 
 }

@@ -24,13 +24,11 @@ public class Medalla extends IdentifiableEntity {
     private MedallaEnum tipo;
 
     @Column(nullable = false)
-    private Date fechaAsignacion;
+    private Date fechaAsignacion = new Date();
     private Date fechaVencimiento;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
-
-    // --- getters ---
 
 }

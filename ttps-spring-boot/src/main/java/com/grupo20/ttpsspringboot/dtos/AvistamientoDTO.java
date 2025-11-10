@@ -10,6 +10,7 @@ public class AvistamientoDTO {
 
     private Long id;
     private String descripcion;
+    private boolean agradecimiento;
     private Date fecha;
     private UbicacionDTO ubicacion;
     private Long publicacionId;
@@ -21,6 +22,7 @@ public class AvistamientoDTO {
         dto.setId(entity.getId());
         dto.setDescripcion(entity.getDescripcion());
         dto.setFecha(entity.getFecha());
+        dto.setAgradecimiento(entity.isAgradecimiento());
 
         if (entity.getUbicacion() != null)
             dto.setUbicacion(UbicacionDTO.fromEntity(entity.getUbicacion()));
