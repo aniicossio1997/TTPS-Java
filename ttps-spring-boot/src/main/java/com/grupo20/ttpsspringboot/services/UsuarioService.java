@@ -7,6 +7,7 @@ import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioUpdateDTO;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
+import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -28,6 +30,8 @@ public class UsuarioService {
     @Autowired
     private PasswordEncoder passwordEncoder; // Dependencia para hashear contraseñas
 
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     /**
      * Crea un nuevo usuario a partir del DTO.
@@ -38,7 +42,7 @@ public class UsuarioService {
      */
     @Transactional
     public UsuarioSmallDTO createUsuario(UsuarioCreateDTO usuarioDto) {
-        if (usuarioDAO.findByEmail(usuarioDto.getEmail()) != null) {
+        if (usuarioRepository.findByEmail(usuarioDto.getEmail()) != null) {
             throw new IllegalArgumentException("El email '" + usuarioDto.getEmail() + "' ya está en uso.");
         }
         // Crea la ubicacion proporcionado en el DTO
@@ -47,12 +51,12 @@ public class UsuarioService {
             throw new NotFoundException();
         }
 
-        Usuario nuevoUsuario = usuarioDto.toEntity(ubicacion);
+        Usuario nuevoUsuario = new Usuario();
 
         String hashedPassword = passwordEncoder.encode(usuarioDto.getPassword());
         nuevoUsuario.setPassword(hashedPassword);
 
-        Usuario savedUsuario = usuarioDAO.persist(nuevoUsuario);
+        Usuario savedUsuario = usuarioRepository.save(nuevoUsuario);;
 
         // Devolver la respuesta en formato DTO
         return UsuarioSmallDTO.fromEntity(savedUsuario);
@@ -65,7 +69,9 @@ public class UsuarioService {
      */
     @Transactional(readOnly = true)
     public List<UsuarioSmallDTO> getAllUsuarios() {
-        return usuarioDAO.getAll().stream()
+        List<Usuario> usuarios;
+        usuarios = usuarioRepository.findAll();
+        return usuarios.stream()
                 .map(UsuarioSmallDTO::fromEntity)
                 .collect(Collectors.toList());
     }
@@ -77,10 +83,10 @@ public class UsuarioService {
      */
     @Transactional(readOnly = true)
     public UsuarioSmallDTO getUsuarioById(Long id) {
-        Usuario usuario = usuarioDAO.get(id);
-        if (usuario == null) {
-            throw new NotFoundException();
-        }
+        Optional<Usuario> usuarioOpt;
+        usuarioOpt = usuarioRepository.findById(id);
+        Usuario usuario = usuarioOpt.orElseThrow(() ->
+                new EntityNotFoundException("Usuario no encontrado con ID: " + id));
         return UsuarioSmallDTO.fromEntity(usuario);
     }
 
@@ -92,7 +98,8 @@ public class UsuarioService {
      */
     @Transactional
     public UsuarioSmallDTO updateUsuario(Long id, UsuarioUpdateDTO dto) {
-        Usuario existingUsuario = usuarioDAO.get(id);
+        Usuario existingUsuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para actualizar con ID: " + id));
 
         if (dto.getNombre() != null) {
             existingUsuario.setNombre(dto.getNombre());
@@ -112,7 +119,7 @@ public class UsuarioService {
             existingUsuario.setUbicacion(nuevaUbicacion);
         }
 
-        Usuario updatedUsuario = usuarioDAO.update(existingUsuario);
+        Usuario updatedUsuario = usuarioRepository.save(existingUsuario);
         return UsuarioSmallDTO.fromEntity(updatedUsuario);
     }
 
