@@ -22,7 +22,9 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
 
     List<Publicacion> findByUsuarioIdAndDeletedAtIsNull(Long usuarioId);
 
-    List<Publicacion> findActiveById(@Param("id") Long id);
+    @Query("SELECT p FROM Publicacion p WHERE p.deletedAt IS NULL AND p.id = :id")
+    Optional<Publicacion> findActiveById(@Param("id") Long id);
+
     // ...otros métodos simples...
 
     // --- MÉTODO COMPLEJO (Todo en @Query) ---

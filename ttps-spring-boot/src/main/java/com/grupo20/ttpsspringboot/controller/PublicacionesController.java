@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+//Buscar excepciones handle en spring
 @Tag(name = "Publicaciones")
 @RestController
 @RequestMapping("/api/publicaciones")
