@@ -107,4 +107,5 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
 
         return query.getResultList();
     }
+
 }

@@ -11,6 +11,9 @@ import com.grupo20.ttpsspringboot.persistence.dao.AvistamientoDAO;
 import com.grupo20.ttpsspringboot.persistence.dao.MedallaDAO;
 import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
 import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
+import com.grupo20.ttpsspringboot.persistence.repository.AvistamientoRepository;
+import com.grupo20.ttpsspringboot.persistence.repository.MedallaRepository;
+import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
 import com.grupo20.ttpsspringboot.services.UbicacionService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,16 +27,16 @@ import java.util.stream.Collectors;
 public class PuntuacionService {
 
     @Autowired
-    private PublicacionDAO publicacionDAO;
+    private PublicacionRepository publicacionRepository;
 
     @Autowired
     private UsuarioDAO usuarioDAO;
 
     @Autowired
-    private AvistamientoDAO avistamientoDAO;
+    private AvistamientoRepository avistamientoRepository;
 
     @Autowired
-    private MedallaDAO medallaDAO;
+    private MedallaRepository medallaRepository;
 
     @Autowired
     private UbicacionService ubicacionService;
@@ -56,7 +59,7 @@ public class PuntuacionService {
 
             for (Avistamiento avistamiento : avistamientos) {
                 avistamiento.setAgradecimiento(true);
-                avistamientoDAO.update(avistamiento);
+                avistamientoRepository.save(avistamiento);
             }
 
             // Obtener los usuarios únicos de esos avistamientos
@@ -83,7 +86,7 @@ public class PuntuacionService {
     }
 
     private void evaluarMedallasPorAdopcion(Usuario usuario) {
-        List<Medalla> medallas = medallaDAO.getByUsuarioId(usuario.getId());
+        List<Medalla> medallas = medallaRepository.findByUsuarioId(usuario.getId());
         Optional<Medalla> medallaExistente = medallas.stream()
                 .filter(m -> m.getTipo() == MedallaEnum.NUEVO_TUTOR)
                 .findFirst();
@@ -99,14 +102,14 @@ public class PuntuacionService {
             Medalla medalla = medallaExistente.get();
             medalla.setFechaAsignacion(ahora);
             medalla.setFechaVencimiento(vencimiento);
-            medallaDAO.update(medalla);
+            medallaRepository.save(medalla);
         } else {
             Medalla nueva = new Medalla();
             nueva.setTipo(MedallaEnum.NUEVO_TUTOR);
             nueva.setFechaAsignacion(ahora);
             nueva.setFechaVencimiento(vencimiento);
             nueva.setUsuario(usuario);
-            medallaDAO.persist(nueva);
+            medallaRepository.save(nueva);
         }
     }
 
@@ -124,7 +127,7 @@ public class PuntuacionService {
 
         if (tipo == null) return; // No califica para ninguna medalla
 
-        List<Medalla> medallas = medallaDAO.getByUsuarioId(usuario.getId());
+        List<Medalla> medallas = medallaRepository.findByUsuarioId(usuario.getId());
         Optional<Medalla> medallaExistente = medallas.stream()
                 .filter(m -> m.getTipo().name().startsWith("RESCATISTA"))
                 .findFirst();
@@ -134,7 +137,7 @@ public class PuntuacionService {
             // Si ya tiene una medalla de colaborador, actualizala solo si es de menor nivel
             if (medalla.getTipo().compareTo(tipo) < 0) {
                 medalla.setTipo(tipo);
-                medallaDAO.update(medalla);
+                medallaRepository.save(medalla);
             }
         } else {
             // Crear nueva si no tiene
@@ -142,7 +145,7 @@ public class PuntuacionService {
             nueva.setTipo(tipo);
             nueva.setFechaAsignacion(new Date());
             nueva.setUsuario(usuario);
-            medallaDAO.persist(nueva);
+            medallaRepository.save(nueva);
         }
     }
 }

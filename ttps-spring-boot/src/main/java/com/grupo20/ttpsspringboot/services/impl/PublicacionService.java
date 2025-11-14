@@ -63,7 +63,7 @@ public class PublicacionService {
 
     @Transactional
     public Publicacion get(Long id) {
-        return publicacionRepository.findById(id)
+        return publicacionRepository.findActiveById(id)
                 .orElseThrow(() -> new NotFoundException("Publicación no encontrada"));
     }
 
@@ -77,8 +77,8 @@ public class PublicacionService {
 
         // 2. Crear el objeto Pageable a partir de tu DTO
         Pageable pageable = PageRequest.of(
-                filter.getPage(),
-                filter.getSize() -1,
+                filter.getPage()-1,
+                filter.getSize(),
                 sort
         );
 
@@ -87,7 +87,7 @@ public class PublicacionService {
 
         // 4. Mapear el Page a tu PaginateBaseDTO
         PaginateBaseDTO<PublicacionDTO> response = new PaginateBaseDTO<>();
-        response.setPage(pageResult.getNumber());
+        response.setPage(pageResult.getNumber() +1);
         response.setSize(pageResult.getSize());
         response.setTotalElements(pageResult.getTotalElements());
         response.setElements(pageResult.getContent().stream().map(PublicacionDTO::fromEntity).toList());
@@ -128,10 +128,11 @@ public class PublicacionService {
 
     @Transactional
     public void delete(Long id, Usuario usuario) {
-        Publicacion publicacion = publicacionDAO.get(id);
+        Publicacion publicacion = publicacionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Publicación no encontrada"));
         validate(publicacion, usuario);
         publicacion.setDeletedAt(new Date());
-        publicacionDAO.update(publicacion);
+        publicacionRepository.save(publicacion);
     }
 
     private void validate(Publicacion publicacion, Usuario usuario) {

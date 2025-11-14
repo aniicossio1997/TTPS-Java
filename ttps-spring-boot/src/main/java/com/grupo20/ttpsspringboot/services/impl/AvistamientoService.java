@@ -9,6 +9,8 @@ import com.grupo20.ttpsspringboot.dtos.AvistamientoFilterDTO;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.dao.AvistamientoDAO;
 import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
+import com.grupo20.ttpsspringboot.persistence.repository.AvistamientoRepository;
+import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
 import com.grupo20.ttpsspringboot.services.UbicacionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,10 +23,10 @@ import java.util.List;
 public class AvistamientoService {
 
     @Autowired
-    private PublicacionDAO publicacionDAO;
+    private PublicacionRepository publicacionRepository;
 
     @Autowired
-    private AvistamientoDAO avistamientoDAO;
+    private AvistamientoRepository avistamientoRepository;
 
     @Autowired
     private UbicacionService ubicacionService;
@@ -36,10 +38,9 @@ public class AvistamientoService {
 
         avistamiento.setFecha(new Date());
 
-        Publicacion publicacion = publicacionDAO.get(dto.getPublicacionId());
-        if (publicacion == null) {
-            throw new NotFoundException();
-        }
+        Publicacion publicacion = publicacionRepository.findById(dto.getPublicacionId())
+                .orElseThrow(() -> new NotFoundException("Publicación no encontrada"));
+
 
         avistamiento.setPublicacion(publicacion);
 
@@ -47,22 +48,21 @@ public class AvistamientoService {
 
         avistamiento.setUbicacion(ubicacion);
 
-        avistamientoDAO.persist(avistamiento);
+        avistamientoRepository.save(avistamiento);
 
         return avistamiento;
     }
 
     @Transactional
     public List<Avistamiento> getFiltered(AvistamientoFilterDTO dto) {
-       return avistamientoDAO.getByFilters(dto);
+       return avistamientoRepository.getByFilters(dto);
     }
 
     @Transactional
     public Avistamiento get(Long id) {
-        Avistamiento avistamiento = avistamientoDAO.get(id);
-        if (avistamiento == null) {
-            throw new NotFoundException();
-        }
+        Avistamiento avistamiento = avistamientoRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Avistamiento no encontrado"));;
+
         return  avistamiento;
     }
 
