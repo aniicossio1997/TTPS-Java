@@ -1,22 +1,8 @@
 package com.grupo20.ttpsspringboot.domain.enums;
 
 public enum TamanioMascotaEnum {
-  CHICO("Chico"),
-  MEDIANO("Mediano"),
-  GRANDE("Grande");
+  CHICO
+  ,MEDIANO
+  ,GRANDE;
 
-  private final String valor;
-
-  TamanioMascotaEnum(String valor) {
-    this.valor = valor;
-  }
-
-  public String getValor() {
-    return valor;
-  }
-
-  @Override
-  public String toString() {
-        return valor;
-  }
 }

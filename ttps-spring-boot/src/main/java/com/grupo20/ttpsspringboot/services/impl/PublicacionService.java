@@ -5,18 +5,25 @@ import com.grupo20.ttpsspringboot.domain.enums.EstadoPublicacionEnum;
 import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
 import com.grupo20.ttpsspringboot.domain.models.*;
 import com.grupo20.ttpsspringboot.dtos.PublicacionCreateDTO;
+import com.grupo20.ttpsspringboot.dtos.PublicacionDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionUpdateDTO;
+import com.grupo20.ttpsspringboot.dtos.bases.PaginateBaseDTO;
 import com.grupo20.ttpsspringboot.exceptions.ForbiddenException;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
+import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
 import com.grupo20.ttpsspringboot.services.UbicacionService;
-
+import org.springframework.data.domain.Pageable; // <--- BUENO (para Spring Data)
 import java.util.Date;
+
 import java.util.List;
 
 @Service
@@ -34,6 +41,10 @@ public class PublicacionService {
     @Autowired
     private PuntuacionService puntuacionService;
 
+    @Autowired
+    private PublicacionRepository publicacionRepository;
+
+
     @Transactional
     public Publicacion create(Usuario usuario, PublicacionCreateDTO dto) {
         Publicacion publicacion = dto.toEntity();
@@ -43,7 +54,7 @@ public class PublicacionService {
 
         publicacion.setUbicacion(ubicacion);
 
-        publicacionDAO.persist(publicacion);
+        this.publicacionRepository.save(publicacion);
 
         puntuacionService.otorgarPuntosPorReporte(usuario);
 
@@ -52,21 +63,43 @@ public class PublicacionService {
 
     @Transactional
     public Publicacion get(Long id) {
-        Publicacion publicacion = publicacionDAO.get(id);
-        if (publicacion == null) {
-            throw new NotFoundException();
-        }
-        return publicacion;
+        return publicacionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Publicación no encontrada"));
     }
 
     @Transactional
-    public List<Publicacion> getFiltered(PublicacionFilterDTO filter) {
-        return publicacionDAO.getPublicacionesByCaracteristicas(filter);
+    public PaginateBaseDTO<PublicacionDTO> getFiltered(PublicacionFilterDTO filter) {
+        // 1. Crear el objeto Sort a partir de tu DTO
+        Sort sort = Sort.by(
+                filter.getSortDir().equalsIgnoreCase("ASC") ? Sort.Direction.ASC : Sort.Direction.DESC,
+                filter.getSortBy()
+        );
+
+        // 2. Crear el objeto Pageable a partir de tu DTO
+        Pageable pageable = PageRequest.of(
+                filter.getPage(),
+                filter.getSize() -1,
+                sort
+        );
+
+        // 3. Llamar al repositorio. Spring se encarga del resto.
+        var pageResult = publicacionRepository.findByCaracteristicas(filter, pageable);
+
+        // 4. Mapear el Page a tu PaginateBaseDTO
+        PaginateBaseDTO<PublicacionDTO> response = new PaginateBaseDTO<>();
+        response.setPage(pageResult.getNumber());
+        response.setSize(pageResult.getSize());
+        response.setTotalElements(pageResult.getTotalElements());
+        response.setElements(pageResult.getContent().stream().map(PublicacionDTO::fromEntity).toList());
+
+        return response;
     }
 
     @Transactional
     public Publicacion update(Long id, Usuario usuario, PublicacionUpdateDTO dto) {
-        Publicacion publicacion = publicacionDAO.get(id);
+        Publicacion publicacion = publicacionRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Publicación no encontrada"));
+
         validate(publicacion, usuario);
 
         if (dto.getNombre() != null) publicacion.setNombre(dto.getNombre());
@@ -90,7 +123,7 @@ public class PublicacionService {
             ubicacionService.updateUbicacion(publicacion.getUbicacion().getId(), dto.getUbicacion());
         }
 
-        return publicacionDAO.update(publicacion);
+        return publicacionRepository.save(publicacion);
     }
 
     @Transactional

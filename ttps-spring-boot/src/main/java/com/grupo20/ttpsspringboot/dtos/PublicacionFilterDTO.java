@@ -1,12 +1,13 @@
 package com.grupo20.ttpsspringboot.dtos;
 
 
+import com.grupo20.ttpsspringboot.dtos.bases.FilterPaginateBaseDTO;
 import lombok.Data;
 
 import java.util.Date;
 
 @Data
-public class PublicacionFilterDTO {
+public class PublicacionFilterDTO extends FilterPaginateBaseDTO {
     public String nombre;
     public String especie;
     public String raza;
@@ -15,6 +16,6 @@ public class PublicacionFilterDTO {
     public Date fechaDesde;
     public Date fechaHasta;
     public Long usuarioId;
-    public int offset = 0;
-    public int maxResults = 20;
+
+
 }

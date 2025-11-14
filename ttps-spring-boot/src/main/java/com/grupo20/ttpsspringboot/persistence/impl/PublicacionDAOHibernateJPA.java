@@ -27,13 +27,10 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
         return consulta.getResultList().stream().findFirst().orElse(null);
     }
 
+
     @Override
     public List<Publicacion> getPublicacionesByNombre(String nombre) {
-        // Se elimina la creación manual del EntityManager y el try/finally
-        TypedQuery<Publicacion> consulta = getEntityManager().createQuery(
-                "SELECT p FROM Publicacion p WHERE p.usuario.id = :usuarioId AND p.deletedAt IS NULL", Publicacion.class);
-        consulta.setParameter("nombreParam", "%" + nombre + "%");
-        return consulta.getResultList();
+        return List.of();
     }
 
     @Override
@@ -105,8 +102,8 @@ public class PublicacionDAOHibernateJPA extends GenericDAOHibernateJPA<Publicaci
             query.setParameter("fechaHastaParam", filter.fechaHasta);
         }
 
-        query.setFirstResult(filter.offset);
-        query.setMaxResults(filter.maxResults);
+        //query.setFirstResult(filter.offset);
+        //query.setMaxResults(filter.maxResults);
 
         return query.getResultList();
     }

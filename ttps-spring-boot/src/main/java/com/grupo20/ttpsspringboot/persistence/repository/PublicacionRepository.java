@@ -1,0 +1,64 @@
+package com.grupo20.ttpsspringboot.persistence.repository;
+
+import com.grupo20.ttpsspringboot.domain.models.Publicacion;
+import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+import java.util.Optional;
+
+@Repository
+public interface PublicacionRepository extends JpaRepository<Publicacion, Long> {
+
+    // --- MÉTODOS SIMPLES (Estos quedan igual) ---
+
+    @Query("SELECT p FROM Publicacion p WHERE p.id = :id AND p.deletedAt IS NULL")
+    Optional<Publicacion> findByIdAndDeletedAtIsNull(@Param("id") Long id);
+
+    List<Publicacion> findByUsuarioIdAndDeletedAtIsNull(Long usuarioId);
+
+    List<Publicacion> findActiveById(@Param("id") Long id);
+    // ...otros métodos simples...
+
+    // --- MÉTODO COMPLEJO (Todo en @Query) ---
+
+    /**
+     * Filtro dinámico que usa SpEL (:#{#...}) para leer el DTO.
+     * La paginación y el orden vienen en el objeto 'pageable'.
+     */
+    @Query(value = """
+        SELECT p FROM Publicacion p
+        WHERE
+            p.deletedAt IS NULL
+            AND (:#{#filter.nombre} IS NULL OR :#{#filter.nombre} = '' OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', :#{#filter.nombre}, '%')))
+            AND (:#{#filter.especie} IS NULL OR :#{#filter.especie} = '' OR p.especie = :#{#filter.especie})
+            AND (:#{#filter.raza} IS NULL OR :#{#filter.raza} = '' OR p.raza = :#{#filter.raza})
+            AND (:#{#filter.tamanio} IS NULL OR :#{#filter.tamanio} = '' OR p.tamanio = :#{#filter.tamanio})
+            AND (:#{#filter.color} IS NULL OR :#{#filter.color} = '' OR p.color = :#{#filter.color})
+            AND (:#{#filter.usuarioId} IS NULL OR p.usuario.id = :#{#filter.usuarioId})
+            AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
+        """,
+            // Esta consulta es OBLIGATORIA para que 'Page' funcione.
+            // Es la misma consulta de arriba, pero con COUNT(p).
+            countQuery = """
+        SELECT COUNT(p) FROM Publicacion p
+        WHERE
+            p.deletedAt IS NULL
+            AND (:#{#filter.nombre} IS NULL OR :#{#filter.nombre} = '' OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', :#{#filter.nombre}, '%')))
+            AND (:#{#filter.especie} IS NULL OR :#{#filter.especie} = '' OR p.especie = :#{#filter.especie})
+            AND (:#{#filter.raza} IS NULL OR :#{#filter.raza} = '' OR p.raza = :#{#filter.raza})
+            AND (:#{#filter.tamanio} IS NULL OR :#{#filter.tamanio} = '' OR p.tamanio = :#{#filter.tamanio})
+            AND (:#{#filter.color} IS NULL OR :#{#filter.color} = '' OR p.color = :#{#filter.color})
+            AND (:#{#filter.usuarioId} IS NULL OR p.usuario.id = :#{#filter.usuarioId})
+            AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
+        """)
+    Page<Publicacion> findByCaracteristicas(
+            @Param("filter") PublicacionFilterDTO filter,
+            Pageable pageable // <-- Spring se encarga de paginar y ordenar por esto
+    );
+}

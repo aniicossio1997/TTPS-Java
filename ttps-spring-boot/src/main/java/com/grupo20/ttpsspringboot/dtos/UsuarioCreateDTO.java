@@ -28,7 +28,7 @@ public class UsuarioCreateDTO {
     private RolUsuarioEnum rol;
 
     @NotNull(message = "La ubicación es obligatoria")
-    private Long ubicacionId;
+    public UbicacionCreateDTO ubicacion;
 
     /**
      * Convierte el DTO a la entidad Usuario.

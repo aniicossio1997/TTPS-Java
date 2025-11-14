@@ -23,24 +23,6 @@ public class UsuarioController {
     @Autowired
     private UsuarioService usuarioService;
 
-    /**
-     * Crea un nuevo usuario recibiendo el DTO.
-     */
-    @PostMapping
-    public ResponseEntity<UsuarioSmallDTO> createUsuario(
-            @Valid @RequestBody UsuarioCreateDTO usuarioDto) {
-
-        try {
-            // Llama al servicio con el DTO
-            UsuarioSmallDTO createdUsuario = usuarioService.createUsuario(usuarioDto);
-            return new ResponseEntity<>(createdUsuario, HttpStatus.CREATED); // Código 201
-        } catch (EntityNotFoundException | IllegalArgumentException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
-    }
-
 
     @GetMapping
     public ResponseEntity<List<UsuarioSmallDTO>> getAllUsuarios() {

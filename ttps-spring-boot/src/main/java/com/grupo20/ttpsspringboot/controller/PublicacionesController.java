@@ -7,6 +7,7 @@ import com.grupo20.ttpsspringboot.dtos.PublicacionCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionUpdateDTO;
+import com.grupo20.ttpsspringboot.dtos.bases.PaginateBaseDTO;
 import com.grupo20.ttpsspringboot.services.impl.PublicacionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -46,9 +47,9 @@ public class PublicacionesController extends BaseController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<PublicacionDTO>> getFiltered(@ModelAttribute PublicacionFilterDTO filter) {
-        List<Publicacion> publicaciones = service.getFiltered(filter);
-        return ResponseEntity.ok(publicaciones.stream().map(PublicacionDTO::fromEntity).toList());
+    public ResponseEntity<PaginateBaseDTO<PublicacionDTO>> getFiltered(@ModelAttribute PublicacionFilterDTO filter) {
+        PaginateBaseDTO<PublicacionDTO> publicaciones = service.getFiltered(filter);
+        return ResponseEntity.ok(publicaciones);
     }
 
     @PutMapping("/{id}")

@@ -2,6 +2,7 @@ package com.grupo20.ttpsspringboot.services;
 
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
@@ -11,6 +12,10 @@ public class AuthService {
 
     @Autowired
     private UsuarioDAO usuarioDAO; // Inyecta el DAO de usuario
+
+    @Autowired
+    private PasswordEncoder passwordEncoder; // Dependencia para hashear contraseñas
+
 
     @Transactional(readOnly = true) // Es una operación de solo lectura
     public Usuario validarToken(String token) {
@@ -33,17 +38,18 @@ public class AuthService {
     @Transactional(readOnly = true) // Es una operación de solo lectura
     public Usuario validarCredenciales(String email, String password) {
 
-        // 1. Buscar al usuario por email usando el DAO
         Usuario usuario = usuarioDAO.findByEmail(email);
 
-        // 2. Comprobar si el usuario existe y la password coincide
-        //    (¡IMPORTANTE! En un proyecto real, la password estaría "hasheada"
-        //    y aquí usarías un "passwordEncoder.matches(password, usuario.getClave())")
-        if (usuario != null && usuario.getPassword().equals(password)) {
+        // --- AQUI ESTÁ EL CAMBIO ---
+        // Ya no usamos .equals()
+
+        // 2. Compara la contraseña de texto plano del login
+        //    con el hash guardado en la base de datos.
+        if (usuario != null && passwordEncoder.matches(password, usuario.getPassword())) {
             return usuario; // Credenciales correctas
         }
+        // -------------------------
 
-        // 3. Si no coincide o no existe, devolver null
-        return null;
+        return null; // Email no encontrado o contraseña incorrecta
     }
 }

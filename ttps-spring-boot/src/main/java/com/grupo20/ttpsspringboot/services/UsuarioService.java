@@ -41,8 +41,8 @@ public class UsuarioService {
         if (usuarioDAO.findByEmail(usuarioDto.getEmail()) != null) {
             throw new IllegalArgumentException("El email '" + usuarioDto.getEmail() + "' ya está en uso.");
         }
-        // Buscar la entidad Ubicacion usando el ID proporcionado en el DTO
-        Ubicacion ubicacion = ubicacionService.getUbicacion(usuarioDto.getUbicacionId());
+        // Crea la ubicacion proporcionado en el DTO
+        Ubicacion ubicacion = ubicacionService.crearUbicacion(usuarioDto.getUbicacion());
         if (ubicacion == null) {
             throw new NotFoundException();
         }
@@ -88,7 +88,6 @@ public class UsuarioService {
      * Actualiza completamente un usuario existente.
      * NOTA: Idealmente, usaría un UsuarioUpdateDTO.
      * @param id ID del usuario a actualizar.
-     * @param usuario Details Entidad Usuario con los datos nuevos (solo para copiar campos).
      * @return El UsuarioSmallDTO del usuario actualizado.
      */
     @Transactional

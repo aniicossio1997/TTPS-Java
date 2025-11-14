@@ -5,6 +5,7 @@ import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.UbicacionCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.UbicacionUpdateDTO;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
+import com.grupo20.ttpsspringboot.persistence.repository.UbicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,7 @@ import java.util.List;
 /**
  * Capa de Servicio para la entidad Ubicacion.
  * * Anotada con @Service para que Spring la detecte y la inyecte
- * donde se necesite (ej. en el UbicacionRestController).
+ * donde se necesite (ej. en el UbicacionController).
  *
  * Anotada con @Transactional para que Spring maneje las transacciones
  * a nivel de servicio.
@@ -26,7 +27,7 @@ public class UbicacionService {
 
     // 1. Inyectamos la interfaz del DAO, no la implementación
     @Autowired
-    private UbicacionDAO ubicacionDAO;
+    private UbicacionRepository ubicacionRepository;
 
     // 2. Lógica de negocio (validación)
     //    Esto estaba en tu DAO y lo movimos aquí, que es donde corresponde.
@@ -43,35 +44,17 @@ public class UbicacionService {
     }
 
     // --- Métodos CRUD básicos ---
-
-    /**
-     * Crea una nueva ubicación previa validación.
-     * @param u La entidad Ubicacion a persistir.
-     * @return La entidad persistida con su ID.
-     */
-    public Ubicacion crearUbicacion(Ubicacion u) {
-        _validar(u); // Aplicamos la lógica de negocio
-        return ubicacionDAO.persist(u);
-    }
-
+    @Transactional
     public Ubicacion crearUbicacion(UbicacionCreateDTO dto) {
-        Ubicacion u = dto.toEntity();
-        _validar(u); // Aplicamos la lógica de negocio
-        return ubicacionDAO.persist(u);
+        Ubicacion ubicacion = dto.toEntity();
+        _validar(ubicacion); // Aplicamos la lógica de negocio
+        return ubicacionRepository.save(ubicacion);
     }
 
-    /**
-     * Actualiza una ubicación existente previa validación.
-     * @param u La entidad Ubicacion a actualizar.
-     * @return La entidad actualizada.
-     */
-    public Ubicacion actualizarUbicacion(Ubicacion u) {
-        _validar(u); // Aplicamos la lógica de negocio
-        return ubicacionDAO.update(u);
-    }
-
+    @Transactional
     public Ubicacion updateUbicacion(Long id, UbicacionUpdateDTO dto) {
-        Ubicacion ubicacion = ubicacionDAO.get(id);
+        Ubicacion ubicacion = ubicacionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Ubicacion no encontrada"));
         if (ubicacion == null) {
             throw new NotFoundException();
         }
@@ -83,8 +66,10 @@ public class UbicacionService {
         if (dto.getLatitud() != null) ubicacion.setLatitud(dto.getLatitud());
         if (dto.getLongitud() != null) ubicacion.setLongitud(dto.getLongitud());
 
-        return ubicacionDAO.update(ubicacion);
+        return ubicacionRepository.save(ubicacion);
     }
+
+
 
     /**
      * Busca una ubicación por su ID.
@@ -94,7 +79,7 @@ public class UbicacionService {
      */
     @Transactional(readOnly = true)
     public Ubicacion getUbicacion(Long id) {
-        return ubicacionDAO.get(id);
+        return this.ubicacionRepository.getById(id);
     }
 
     /**
@@ -103,19 +88,7 @@ public class UbicacionService {
      */
     @Transactional(readOnly = true)
     public List<Ubicacion> getAllUbicaciones() {
-        return ubicacionDAO.getAll();
-    }
-
-    /**
-     * Elimina una ubicación por su ID.
-     * @param id El ID de la ubicación a eliminar.
-     */
-    public void eliminarUbicacion(Long id) {
-        // Aquí podrías agregar lógica de negocio, por ejemplo:
-        // 1. Verificar que el ID existe (aunque el DAO ya lo hace)
-        // 2. Verificar que la ubicación no esté siendo usada por un Usuario
-        //    o Publicacion antes de borrar (regla de integridad de negocio).
-        ubicacionDAO.delete(id);
+        return ubicacionRepository.findAll();
     }
 
     // --- Métodos Específicos (del UbicacionDAO) ---
@@ -127,7 +100,7 @@ public class UbicacionService {
      */
     @Transactional(readOnly = true)
     public List<Ubicacion> buscarPorProvincia(String provincia) {
-        return ubicacionDAO.findByProvincia(provincia);
+        return ubicacionRepository.findByProvincia(provincia);
     }
 
     /**
@@ -140,6 +113,6 @@ public class UbicacionService {
      */
     @Transactional(readOnly = true)
     public List<Ubicacion> buscarPorCriterio(String idExterno, String provincia, String ciudad, String barrio) {
-        return ubicacionDAO.findByCriteriaLike(idExterno, provincia, ciudad, barrio);
+        return this.ubicacionRepository.findByCriteriaLike(idExterno, provincia, ciudad, barrio);
     }
 }
