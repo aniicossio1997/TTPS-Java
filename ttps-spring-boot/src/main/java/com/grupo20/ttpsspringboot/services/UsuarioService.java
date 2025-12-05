@@ -6,16 +6,15 @@ import com.grupo20.ttpsspringboot.dtos.UsuarioCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioUpdateDTO;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionMapperService;
-import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioMapperService;
-import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
+import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionUpdateMapper;
+import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioCreateMapperService;
+import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioUpdateMapper;
 import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.grupo20.ttpsspringboot.domain.enums.EstadoUsuarioEnum;
-import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,7 +37,13 @@ public class UsuarioService {
     private UbicacionMapperService ubicacionMapper;
 
     @Autowired
-    private UsuarioMapperService usuarioMapper;
+    private UsuarioCreateMapperService usuarioCreateMapper;
+
+    @Autowired
+    private UsuarioUpdateMapper usuarioUpdateMapper;
+
+    @Autowired
+    private UbicacionUpdateMapper ubicacionUpdateMapper;
 
     /**
      * Crea un nuevo usuario a partir del DTO.
@@ -65,7 +70,7 @@ public class UsuarioService {
         usuarioDto.setPassword(hashedPassword);
 
         // 2) Mapear DTO -> Usuario (incluyendo Ubicacion anidada)
-        Usuario nuevoUsuario = usuarioMapper.toEntity(usuarioDto);
+        Usuario nuevoUsuario = usuarioCreateMapper.toEntity(usuarioDto);
 
         // 3) Guardar usuario -> cascada guarda también la Ubicacion
         Usuario savedUsuario = usuarioRepository.save(nuevoUsuario);
@@ -113,20 +118,22 @@ public class UsuarioService {
         Usuario existingUsuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para actualizar con ID: " + id));
 
-        if (dto.getNombre() != null) {
-            existingUsuario.setNombre(dto.getNombre());
-        }
-        if (dto.getApellido() != null) {
-            existingUsuario.setApellido(dto.getApellido());
-        }
-        if (dto.getEmail() != null) {
-            existingUsuario.setEmail(dto.getEmail());
+        // 1) Actualizar campos del usuario (nombre, apellido, email, rol, etc.)
+        usuarioUpdateMapper.updateFromDto(dto, existingUsuario);
+
+        // 2) Actualizar la ubicación asociada (el usuario SIEMPRE tiene una ubicación)
+        if (dto.getUbicacion() != null) {
+            Ubicacion ubicacion = existingUsuario.getUbicacion();
+            if (ubicacion == null) {
+                // por seguridad, pero según tu modelo siempre debería existir
+                throw new IllegalStateException("El usuario no tiene ubicación asociada");
+            }
+            ubicacionUpdateMapper.updateFromDto(dto.getUbicacion(), ubicacion);
         }
 
-
-        ubicacionService.updateUbicacion(existingUsuario.getUbicacion().getId(),dto.getUbicacion());
-
+        // 3) Guardar usuario (la ubicación se guarda también porque es la misma entidad manejada)
         Usuario updatedUsuario = usuarioRepository.save(existingUsuario);
+
         return UsuarioSmallDTO.fromEntity(updatedUsuario);
     }
 

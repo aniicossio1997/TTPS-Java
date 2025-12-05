@@ -7,7 +7,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface UsuarioMapperService {
+public interface UsuarioCreateMapperService {
 
     // De entidad a DTO chico
     UsuarioSmallDTO toSmallDto(Usuario usuario);
