@@ -14,7 +14,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     /** * Implementación del login y búsquedas. Spring Data infiere la consulta:
      * SELECT u FROM Usuario u WHERE u.email = ?1
      */
-    Usuario findByEmail(String email);
+    Optional<Usuario> findByEmail(String email);
 
     // --- Métodos necesarios para el Borrado Lógico y la funcionalidad Admin ---
 
