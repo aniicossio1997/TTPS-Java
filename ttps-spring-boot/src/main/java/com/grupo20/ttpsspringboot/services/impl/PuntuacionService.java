@@ -7,14 +7,11 @@ import com.grupo20.ttpsspringboot.domain.models.Avistamiento;
 import com.grupo20.ttpsspringboot.domain.models.Medalla;
 import com.grupo20.ttpsspringboot.domain.models.Publicacion;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
-import com.grupo20.ttpsspringboot.persistence.dao.AvistamientoDAO;
-import com.grupo20.ttpsspringboot.persistence.dao.MedallaDAO;
-import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
-import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
 import com.grupo20.ttpsspringboot.persistence.repository.AvistamientoRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.MedallaRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
-import com.grupo20.ttpsspringboot.services.UbicacionService;
+import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
+import com.grupo20.ttpsspringboot.services.IPuntuacionService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,15 +19,14 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
 @Service
-public class PuntuacionService {
+public class PuntuacionService implements IPuntuacionService {
 
     @Autowired
     private PublicacionRepository publicacionRepository;
 
     @Autowired
-    private UsuarioDAO usuarioDAO;
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private AvistamientoRepository avistamientoRepository;
@@ -82,7 +78,7 @@ public class PuntuacionService {
     private void otorgarPuntos(Usuario usuario, Integer puntos) {
         usuario.addPuntos(puntos);
         evaluarMedallasPorPuntaje(usuario);
-        usuarioDAO.update(usuario);
+        usuarioRepository.save(usuario);
     }
 
     private void evaluarMedallasPorAdopcion(Usuario usuario) {

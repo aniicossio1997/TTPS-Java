@@ -1,7 +1,6 @@
-package com.grupo20.ttpsspringboot.services;
+package com.grupo20.ttpsspringboot.services.impl;
 
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
-import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.UbicacionCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.UbicacionUpdateDTO;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
@@ -9,28 +8,17 @@ import com.grupo20.ttpsspringboot.persistence.repository.UbicacionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.grupo20.ttpsspringboot.persistence.dao.UbicacionDAO;
 
 import java.util.List;
 
-/**
- * Capa de Servicio para la entidad Ubicacion.
- * * Anotada con @Service para que Spring la detecte y la inyecte
- * donde se necesite (ej. en el UbicacionController).
- *
- * Anotada con @Transactional para que Spring maneje las transacciones
- * a nivel de servicio.
- */
 @Service
 @Transactional
 public class UbicacionService {
 
-    // 1. Inyectamos la interfaz del DAO, no la implementación
     @Autowired
     private UbicacionRepository ubicacionRepository;
 
     // 2. Lógica de negocio (validación)
-    //    Esto estaba en tu DAO y lo movimos aquí, que es donde corresponde.
     public void _validar(Ubicacion u) {
         if (u == null) {
             throw new IllegalArgumentException("La ubicación no puede ser null.");
@@ -79,7 +67,7 @@ public class UbicacionService {
      */
     @Transactional(readOnly = true)
     public Ubicacion getUbicacion(Long id) {
-        return this.ubicacionRepository.getById(id);
+        return this.ubicacionRepository.findById(id).orElse(null);
     }
 
     /**
@@ -90,8 +78,6 @@ public class UbicacionService {
     public List<Ubicacion> getAllUbicaciones() {
         return ubicacionRepository.findAll();
     }
-
-    // --- Métodos Específicos (del UbicacionDAO) ---
 
     /**
      * Busca ubicaciones por provincia.

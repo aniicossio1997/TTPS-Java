@@ -1,6 +1,5 @@
 package com.grupo20.ttpsspringboot.services.impl;
 
-import com.grupo20.ttpsspringboot.domain.constants.Puntuacion;
 import com.grupo20.ttpsspringboot.domain.enums.EstadoPublicacionEnum;
 import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
 import com.grupo20.ttpsspringboot.domain.models.*;
@@ -11,29 +10,18 @@ import com.grupo20.ttpsspringboot.dtos.PublicacionUpdateDTO;
 import com.grupo20.ttpsspringboot.dtos.bases.PaginateBaseDTO;
 import com.grupo20.ttpsspringboot.exceptions.ForbiddenException;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
-import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
 import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
+import com.grupo20.ttpsspringboot.services.IPublicacionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import com.grupo20.ttpsspringboot.persistence.dao.PublicacionDAO;
-import com.grupo20.ttpsspringboot.services.UbicacionService;
-import org.springframework.data.domain.Pageable; // <--- BUENO (para Spring Data)
+import org.springframework.data.domain.Pageable;
 import java.util.Date;
 
-import java.util.List;
-
 @Service
-public class PublicacionService {
-
-    @Autowired
-    private PublicacionDAO publicacionDAO;
-
-    @Autowired
-    private UsuarioDAO usuarioDAO;
+public class PublicacionService implements IPublicacionService {
 
     @Autowired
     private UbicacionService ubicacionService;

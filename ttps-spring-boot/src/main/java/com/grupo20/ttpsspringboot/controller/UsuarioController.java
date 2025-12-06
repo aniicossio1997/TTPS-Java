@@ -1,10 +1,8 @@
 package com.grupo20.ttpsspringboot.controller;
 
-import com.grupo20.ttpsspringboot.domain.models.Usuario;
-import com.grupo20.ttpsspringboot.dtos.UsuarioCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioUpdateDTO;
-import com.grupo20.ttpsspringboot.services.UsuarioService;
+import com.grupo20.ttpsspringboot.services.impl.UsuarioService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid; // Necesario para validar el DTO
@@ -22,7 +20,6 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioService usuarioService;
-
 
     @GetMapping
     public ResponseEntity<List<UsuarioSmallDTO>> getAllUsuarios() {

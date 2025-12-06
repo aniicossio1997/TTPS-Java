@@ -13,9 +13,6 @@ import java.util.List;
 public interface AvistamientoRepository extends JpaRepository<Avistamiento, Long> {
 
     /**
-     * Equivalente a getByFilters(AvistamientoFilterDTO filter)
-     * de tu AvistamientoDAOHibernateJPA.
-     *
      * Si `usuarioId` es null → no filtra por usuario.
      * Si `publicacionId` es null → no filtra por publicación.
      * Si `publicacionId` NO es null → además exige que la publicación no esté borrada (deletedAt IS NULL).

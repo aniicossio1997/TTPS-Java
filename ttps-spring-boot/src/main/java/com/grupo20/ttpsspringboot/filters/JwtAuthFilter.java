@@ -3,8 +3,8 @@ package com.grupo20.ttpsspringboot.filters;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.ErrorDTO;
-import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
-import com.grupo20.ttpsspringboot.services.AuthService;
+import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
+import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
 import com.grupo20.ttpsspringboot.utils.JwtUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -32,7 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private String jwtSecret;
 
     @Autowired
-    private UsuarioDAO usuarioDAO;
+    private UsuarioRepository  usuarioRepository;
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -63,7 +62,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 Claims claims = jws.getBody();
                 Long id = claims.get("id", Long.class);
 
-                Usuario usuario = usuarioDAO.get(id);
+                Usuario usuario = usuarioRepository.findById(id).orElseThrow(NotFoundException::new);
 
                 var auth = new UsernamePasswordAuthenticationToken(usuario, null, Collections.emptyList());
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

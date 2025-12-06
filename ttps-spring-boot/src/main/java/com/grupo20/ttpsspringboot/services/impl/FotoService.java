@@ -1,4 +1,4 @@
-package com.grupo20.ttpsspringboot.services;
+package com.grupo20.ttpsspringboot.services.impl;
 
 import com.grupo20.ttpsspringboot.domain.models.Foto;
 import com.grupo20.ttpsspringboot.domain.models.Publicacion;
