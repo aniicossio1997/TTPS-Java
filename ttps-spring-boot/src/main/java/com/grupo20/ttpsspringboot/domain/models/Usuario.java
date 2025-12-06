@@ -37,7 +37,11 @@ public class Usuario extends IdentifiableEntity {
     @Enumerated(EnumType.STRING) @Column(nullable = false)
     private RolUsuarioEnum rol;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(
+            fetch = FetchType.LAZY,
+            optional = false,
+            cascade = CascadeType.PERSIST // o CascadeType.ALL si querés más
+    )
     @JoinColumn(name = "ubicacion_id", nullable = false)
     private Ubicacion ubicacion;
 

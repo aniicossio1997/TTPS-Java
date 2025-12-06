@@ -5,8 +5,10 @@ import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.UsuarioCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioUpdateDTO;
-import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
-import com.grupo20.ttpsspringboot.persistence.dao.UsuarioDAO;
+import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionMapperService;
+import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionUpdateMapper;
+import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioCreateMapperService;
+import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioUpdateMapper;
 import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UsuarioService {
-
-    @Autowired
-    private UsuarioDAO usuarioDAO;
 
     @Autowired
     private UbicacionService ubicacionService; // Dependencia para obtener la ubicación
@@ -33,6 +33,18 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    @Autowired
+    private UbicacionMapperService ubicacionMapper;
+
+    @Autowired
+    private UsuarioCreateMapperService usuarioCreateMapper;
+
+    @Autowired
+    private UsuarioUpdateMapper usuarioUpdateMapper;
+
+    @Autowired
+    private UbicacionUpdateMapper ubicacionUpdateMapper;
+
     /**
      * Crea un nuevo usuario a partir del DTO.
      * Implementa: Búsqueda de Ubicación, Hasheo de Contraseña y Mapeo DTO -> Entidad.
@@ -42,23 +54,28 @@ public class UsuarioService {
      */
     @Transactional
     public UsuarioSmallDTO createUsuario(UsuarioCreateDTO usuarioDto) {
-        if (usuarioRepository.findByEmail(usuarioDto.getEmail()) != null) {
+        System.out.println("Usuario recibido: " + usuarioDto);
+        System.out.println("Email: " + usuarioDto.getEmail());
+
+        if(usuarioDto.getEmail() == null){
+            throw new IllegalArgumentException("El email es obligatorio");
+        }
+        var existe = usuarioRepository.findByEmail(usuarioDto.getEmail()).isPresent();
+        if (existe) {
             throw new IllegalArgumentException("El email '" + usuarioDto.getEmail() + "' ya está en uso.");
         }
-        // Crea la ubicacion proporcionado en el DTO
-        Ubicacion ubicacion = ubicacionService.crearUbicacion(usuarioDto.getUbicacion());
-        if (ubicacion == null) {
-            throw new NotFoundException();
-        }
 
-        Usuario nuevoUsuario = new Usuario();
-
+        // 1) Hashear la contraseña en el DTO
         String hashedPassword = passwordEncoder.encode(usuarioDto.getPassword());
-        nuevoUsuario.setPassword(hashedPassword);
+        usuarioDto.setPassword(hashedPassword);
 
-        Usuario savedUsuario = usuarioRepository.save(nuevoUsuario);;
+        // 2) Mapear DTO -> Usuario (incluyendo Ubicacion anidada)
+        Usuario nuevoUsuario = usuarioCreateMapper.toEntity(usuarioDto);
 
-        // Devolver la respuesta en formato DTO
+        // 3) Guardar usuario -> cascada guarda también la Ubicacion
+        Usuario savedUsuario = usuarioRepository.save(nuevoUsuario);
+
+        // 4) Devolver DTO de respuesta
         return UsuarioSmallDTO.fromEntity(savedUsuario);
     }
 
@@ -101,25 +118,22 @@ public class UsuarioService {
         Usuario existingUsuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para actualizar con ID: " + id));
 
-        if (dto.getNombre() != null) {
-            existingUsuario.setNombre(dto.getNombre());
-        }
-        if (dto.getApellido() != null) {
-            existingUsuario.setApellido(dto.getApellido());
-        }
-        if (dto.getEmail() != null) {
-            existingUsuario.setEmail(dto.getEmail());
-        }
-        if (dto.getNuevaUbicacionId() != null) {
-            // Buscar la nueva ubicación y asignarla
-            Ubicacion nuevaUbicacion = ubicacionService.getUbicacion(dto.getNuevaUbicacionId());
-            if (nuevaUbicacion == null) {
-                throw new NotFoundException();
+        // 1) Actualizar campos del usuario (nombre, apellido, email, rol, etc.)
+        usuarioUpdateMapper.updateFromDto(dto, existingUsuario);
+
+        // 2) Actualizar la ubicación asociada (el usuario SIEMPRE tiene una ubicación)
+        if (dto.getUbicacion() != null) {
+            Ubicacion ubicacion = existingUsuario.getUbicacion();
+            if (ubicacion == null) {
+                // por seguridad, pero según tu modelo siempre debería existir
+                throw new IllegalStateException("El usuario no tiene ubicación asociada");
             }
-            existingUsuario.setUbicacion(nuevaUbicacion);
+            ubicacionUpdateMapper.updateFromDto(dto.getUbicacion(), ubicacion);
         }
 
+        // 3) Guardar usuario (la ubicación se guarda también porque es la misma entidad manejada)
         Usuario updatedUsuario = usuarioRepository.save(existingUsuario);
+
         return UsuarioSmallDTO.fromEntity(updatedUsuario);
     }
 

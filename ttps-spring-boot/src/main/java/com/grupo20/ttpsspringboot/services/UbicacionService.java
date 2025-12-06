@@ -31,7 +31,7 @@ public class UbicacionService {
 
     // 2. Lógica de negocio (validación)
     //    Esto estaba en tu DAO y lo movimos aquí, que es donde corresponde.
-    private void _validar(Ubicacion u) {
+    public void _validar(Ubicacion u) {
         if (u == null) {
             throw new IllegalArgumentException("La ubicación no puede ser null.");
         }
