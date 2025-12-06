@@ -1,0 +1,65 @@
+<div class="register-page">
+  <div class="bg-circle bg-circle--left"></div>
+  <div class="bg-circle bg-circle--right"></div>
+
+  <p-card class="register-card">
+    <div class="register-card__avatar">
+      <!-- Podés poner una imagen real acá -->
+      <div class="avatar-circle">
+        <span>🐘</span>
+      </div>
+    </div>
+
+    <h2 class="register-card__title">Registrarme</h2>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form">
+
+      <div class="register-form__row">
+        <div class="register-form__field">
+          <label>Nombre</label>
+          <input pInputText formControlName="firstName" placeholder="Nombre" />
+        </div>
+
+        <div class="register-form__field">
+          <label>Apellido</label>
+          <input pInputText formControlName="lastName" placeholder="Apellido" />
+        </div>
+      </div>
+
+      <div class="register-form__field">
+        <label>Email</label>
+        <input pInputText formControlName="email" placeholder="Email" type="email" [autocomplete]="'none'" />
+      </div>
+
+      <div class="register-form__field">
+        <label>Teléfono</label>
+        <input pInputText formControlName="phone" placeholder="+54 123 456789" />
+      </div>
+
+      <div class="register-form__field">
+        <label style="display: block;">Contraseña</label>
+        <p-password  formControlName="password" [feedback]="false" toggleMask placeholder="Contraseña" [autocomplete]="'none'">
+          <ng-template #footer>
+            <p-divider />
+            <ul class="pl-2 my-0 leading-normal">
+              <li>Como minimo debe tener 6 caracteres</li>
+            </ul>
+          </ng-template>
+        </p-password>
+      </div>
+
+      <div class="register-form__field">
+        <label>Repetir Contraseña</label>
+        <p-password  formControlName="password" [feedback]="false" toggleMask placeholder="Contraseña" [autocomplete]="'none'" >
+        </p-password>
+      </div>
+
+      <button pButton type="submit" label="Continuar"></button>
+
+      <p class="register-form__footer">
+        ¿Ya tienes una cuenta?
+        <a href="#">Iniciar sesión</a>
+      </p>
+    </form>
+  </p-card>
+</div>

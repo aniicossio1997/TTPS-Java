@@ -1,0 +1,18 @@
+/* You can add global styles to this file, and also import other style files */
+/* Theme de PrimeNG */
+/* ✔ Dejá solo primeicons (esto sigue siendo CSS real) */
+@use "primeicons/primeicons.css";
+
+html{
+  background-color: #f6fafb;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+
+:root {
+  --font-family: 'Nunito', sans-serif;
+}
+
+body {
+  font-family: 'Nunito', sans-serif !important;
+}
