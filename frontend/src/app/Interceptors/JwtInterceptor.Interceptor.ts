@@ -12,7 +12,7 @@ export class JwtInterceptor implements HttpInterceptor {
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
       // 1) Excluir URLs específicas
-      const excludedApi = environment.API_URL;
+      const excludedApi = environment.URL_MAP;
 
       if (request.url.startsWith(excludedApi)) {
         return next.handle(request); // <-- NO agrega Authorization
