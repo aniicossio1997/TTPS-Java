@@ -1,0 +1,30 @@
+
+<!-- src/app/features/public/pages/login/login.component.html -->
+<div class="auth-layout">
+  <!-- HEADER SUPERIOR -->
+  <header class="auth-layout__header">
+    <div class="auth-layout__brand">
+      <img
+        class="auth-layout__logo"
+        src="/fotos/icono.png"
+        alt="¿Dónde estás? Volvé a casa"
+      />
+      <span class="auth-layout__brand-text">¿Dónde estás? Volvé a casa</span>
+    </div>
+
+    <nav class="auth-layout__nav">
+      <a class="auth-layout__nav-link" routerLink="/public/publicaciones" routerLinkActive="auth-layout__nav-link--active" [routerLinkActiveOptions]="{ exact: true }">Publicaciones</a>
+
+      <a class="auth-layout__nav-link " routerLink="/public" routerLinkActive="auth-layout__nav-link--active" [routerLinkActiveOptions]="{ exact: true }">Iniciar sesión</a>
+      <a class="auth-layout__nav-link" routerLink="/public/register" routerLinkActive="auth-layout__nav-link--active" [routerLinkActiveOptions]="{ exact: true }">Registrarse</a>
+
+    </nav>
+  </header>
+
+  <!-- FONDO + CARD CENTRAL -->
+  <main class="auth-layout__main">
+  <router-outlet></router-outlet>
+  </main>
+</div>
+
+

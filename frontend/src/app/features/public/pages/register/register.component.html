@@ -1,3 +1,115 @@
-<p>
-  register works!
-</p>
+  <p-card class="register-card">
+    <div class="register-card__avatar">
+      <!-- Podés poner una imagen real acá -->
+      <div class="avatar-circle">
+        <img src="/fotos/icono.png" alt="" />
+      </div>
+    </div>
+
+    <h2 class="register-card__title">Registrarme</h2>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form" autocomplete="off">
+
+      <div class="register-form__row">
+        <div class="register-form__field">
+          <label form="firstName">Nombre</label>
+          <input pInputText formControlName="firstName" placeholder="Nombre"   inputStyleClass="no-autofill"/>
+            @if (isInvalid('firstName')) {
+                <p-message severity="error" size="small" variant="simple">El nombre es obligatorio</p-message>
+            }
+        </div>
+
+        <div class="register-form__field">
+          <label form="lastName">Apellido</label>
+          <input pInputText formControlName="lastName" placeholder="Apellido" />
+                      @if (isInvalid('lastName')) {
+                <p-message severity="error" size="small" variant="simple">El apellido es obligatorio</p-message>
+            }
+        </div>
+      </div>
+
+
+
+      <div class="register-form__field">
+        <label>Email</label>
+        <input pInputText formControlName="email" placeholder="Email" type="email" [autocomplete]="'none'"    inputStyleClass="no-autofill"/>
+            @if (isInvalid('email')) {
+                <p-message severity="error" size="small" variant="simple">El email es obligatorio</p-message>
+            }
+      </div>
+
+     <div class="register-form__field">
+        <div style="display: flex; margin-bottom: 4px; flex-direction: column;">
+          <label for="">
+                      {{
+          hasUbicacionExterna()
+              ? 'Ubicación seleccionada:'
+              : 'Seleccionar ubicación:'
+          }}
+          </label>
+          @if (hasUbicacionExterna()) {
+             <strong style="font-size: 14px;"> {{ubicacionExterna()!.ubicacion!.provincia!.nombre!}}, {{ubicacionExterna()!.ubicacion!.departamento!.nombre!}},
+                {{ubicacionExterna()!.ubicacion!.municipio!.nombre!}}
+              </strong>
+          }
+
+        </div>
+
+            @if (isInvalid('ubicacion')) {
+                <p-message severity="error" size="small" variant="simple">La ubicación es obligatoria</p-message>
+            }
+        <app-location-picker [titleButton]="hasUbicacionExterna() ?  'Cambiar ubicación' : 'Click para elegir una ubicación'" [isInvalid]="isInvalid('ubicacion')!" (locationSelected)="onLocationSelected($event)"></app-location-picker>
+
+
+      </div>
+
+      <div class="register-form__field">
+        <label>Teléfono (opcional) </label>
+        <input pInputText formControlName="phone" placeholder="+54 123 456789" />
+      </div>
+
+      <div class="register-form__field">
+        <label style="display: block;">Contraseña</label>
+        <p-password  formControlName="password" [feedback]="false" toggleMask placeholder="Contraseña" autocomplete="new-password"   inputStyleClass="no-autofill"
+>
+          <ng-template #footer>
+            <p-divider />
+            <ul class="pl-2 my-0 leading-normal">
+              <li>Como minimo debe tener 6 caracteres</li>
+            </ul>
+          </ng-template>
+        </p-password>
+            @if (isInvalid('password')) {
+                <p-message severity="error" size="small" variant="simple">La contraseña es obligatoria</p-message>
+                <p-message severity="error" size="small" variant="simple">La contraseña debe tener al menos 6 caracteres</p-message>
+            }
+      </div>
+
+      <div class="register-form__field">
+        <label>Confirmar Contraseña</label>
+        <p-password  formControlName="confirmPassword" [feedback]="false" toggleMask placeholder="Contraseña" autocomplete="new-password"   inputStyleClass="no-autofill">
+        </p-password>
+        @if (    registerForm.get('confirmPassword')?.hasError('mismatch') &&
+              registerForm.get('confirmPassword')?.touched) {
+                <p-message severity="error" size="small" variant="simple">Las contraseñas no coinciden</p-message>
+        }
+      </div>
+
+      <div class="register-form__field">
+
+      <button pButton type="submit" label="Continuar" style="margin-top: 10px;"></button>
+
+      </div>
+
+      <p class="register-form__footer">
+        ¿Ya tienes una cuenta?
+        <a routerLink="/">Iniciar sesión</a>
+      </p>
+    </form>
+  </p-card>
+
+
+
+
+
+
