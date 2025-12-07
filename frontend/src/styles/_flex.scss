@@ -1,0 +1,326 @@
+@use "sass:map";
+
+// ---------------------------------------------
+// ESCALA DE ESPACIADO (en px)
+// ---------------------------------------------
+$space-scale: 0, 1, 2, 3, 4, 5, 6, 8, 10,
+  12, 14, 16, 20, 24, 28, 32, 36, 40, 44, 48, 50;
+
+// ---------------------------------------------
+// BREAKPOINTS TIPO TAILWIND
+// 👇 OJO: usamos "xxl" en vez de "2xl" para evitar clases que empiecen con número
+// ---------------------------------------------
+$breakpoints: (
+  "sm": 640px,
+  "md": 768px,
+  "lg": 1024px,
+  "xl": 1280px,
+  "xxl": 1536px
+);
+
+// Helper para media queries
+@mixin respond($size) {
+  @media (min-width: map.get($breakpoints, $size)) {
+    @content;
+  }
+}
+
+// ---------------------------------------------
+// FLEX BASE (tipo Tailwind)
+// ---------------------------------------------
+
+/* DISPLAY */
+.flex {
+  display: flex;
+}
+
+.inline-flex {
+  display: inline-flex;
+}
+
+/* DIRECCIÓN */
+.flex-row {
+  flex-direction: row;
+}
+
+.flex-row-reverse {
+  flex-direction: row-reverse;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-col-reverse {
+  flex-direction: column-reverse;
+}
+
+/* WRAP */
+.flex-wrap {
+  flex-wrap: wrap;
+}
+
+.flex-wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
+.flex-nowrap {
+  flex-wrap: nowrap;
+}
+
+/* JUSTIFY-CONTENT */
+.justify-start {
+  justify-content: flex-start;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.justify-end {
+  justify-content: flex-end;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.justify-around {
+  justify-content: space-around;
+}
+
+.justify-evenly {
+  justify-content: space-evenly;
+}
+
+/* ALIGN-ITEMS */
+.items-start {
+  align-items: flex-start;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.items-end {
+  align-items: flex-end;
+}
+
+.items-baseline {
+  align-items: baseline;
+}
+
+.items-stretch {
+  align-items: stretch;
+}
+
+/* ALIGN-SELF */
+.self-auto {
+  align-self: auto;
+}
+
+.self-start {
+  align-self: flex-start;
+}
+
+.self-center {
+  align-self: center;
+}
+
+.self-end {
+  align-self: flex-end;
+}
+
+.self-stretch {
+  align-self: stretch;
+}
+
+/* FLEX GROW / SHRINK / BASIS */
+.flex-1 {
+  flex: 1 1 0%;
+}
+
+.flex-auto {
+  flex: 1 1 auto;
+}
+
+.flex-initial {
+  flex: 0 1 auto;
+}
+
+.flex-none {
+  flex: none;
+}
+
+.grow {
+  flex-grow: 1;
+}
+
+.grow-0 {
+  flex-grow: 0;
+}
+
+.shrink {
+  flex-shrink: 1;
+}
+
+.shrink-0 {
+  flex-shrink: 0;
+}
+
+// ---------------------------------------------
+// GAPS (gap, gap-x, gap-y) tipo Tailwind
+// ---------------------------------------------
+@each $n in $space-scale {
+  .gap-#{$n} {
+    gap: #{$n}px;
+  }
+
+  .gap-x-#{$n} {
+    column-gap: #{$n}px;
+  }
+
+  .gap-y-#{$n} {
+    row-gap: #{$n}px;
+  }
+}
+
+// ---------------------------------------------
+// VERSIONES RESPONSIVE (sm-, md-, lg-, xl-, xxl-)
+// sm-flex, md-flex-row, lg-items-center, xl-gap-20, xxl-gap-40...
+// ---------------------------------------------
+@each $prefix, $bp in $breakpoints {
+
+  // DISPLAY
+  .#{$prefix}-flex {
+    @include respond($prefix) {
+      display: flex;
+    }
+  }
+
+  .#{$prefix}-inline-flex {
+    @include respond($prefix) {
+      display: inline-flex;
+    }
+  }
+
+  // DIRECCIÓN
+  .#{$prefix}-flex-row {
+    @include respond($prefix) {
+      flex-direction: row;
+    }
+  }
+
+  .#{$prefix}-flex-row-reverse {
+    @include respond($prefix) {
+      flex-direction: row-reverse;
+    }
+  }
+
+  .#{$prefix}-flex-col {
+    @include respond($prefix) {
+      flex-direction: column;
+    }
+  }
+
+  .#{$prefix}-flex-col-reverse {
+    @include respond($prefix) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  // JUSTIFY
+  .#{$prefix}-justify-start {
+    @include respond($prefix) {
+      justify-content: flex-start;
+    }
+  }
+
+  .#{$prefix}-justify-center {
+    @include respond($prefix) {
+      justify-content: center;
+    }
+  }
+
+  .#{$prefix}-justify-end {
+    @include respond($prefix) {
+      justify-content: flex-end;
+    }
+  }
+
+  .#{$prefix}-justify-between {
+    @include respond($prefix) {
+      justify-content: space-between;
+    }
+  }
+
+  .#{$prefix}-justify-around {
+    @include respond($prefix) {
+      justify-content: space-around;
+    }
+  }
+
+  .#{$prefix}-justify-evenly {
+    @include respond($prefix) {
+      justify-content: space-evenly;
+    }
+  }
+
+  // ALIGN-ITEMS
+  .#{$prefix}-items-start {
+    @include respond($prefix) {
+      align-items: flex-start;
+    }
+  }
+
+  .#{$prefix}-items-center {
+    @include respond($prefix) {
+      align-items: center;
+    }
+  }
+
+  .#{$prefix}-items-end {
+    @include respond($prefix) {
+      align-items: flex-end;
+    }
+  }
+
+  .#{$prefix}-items-baseline {
+    @include respond($prefix) {
+      align-items: baseline;
+    }
+  }
+
+  .#{$prefix}-items-stretch {
+    @include respond($prefix) {
+      align-items: stretch;
+    }
+  }
+
+  // GAP
+  @each $n in $space-scale {
+    .#{$prefix}-gap-#{$n} {
+      @include respond($prefix) {
+        gap: #{$n}px;
+      }
+    }
+
+    .#{$prefix}-gap-x-#{$n} {
+      @include respond($prefix) {
+        column-gap: #{$n}px;
+      }
+    }
+
+    .#{$prefix}-gap-y-#{$n} {
+      @include respond($prefix) {
+        row-gap: #{$n}px;
+      }
+    }
+  }
+}
+
+// <!-- Mobile: columna, Desktop: fila centrada con gap -->
+// <div class="flex flex-col gap-8 md-flex-row md-items-center md-justify-between md-gap-20">
+//   <div>Bloque 1</div>
+//   <div>Bloque 2</div>
+// </div>

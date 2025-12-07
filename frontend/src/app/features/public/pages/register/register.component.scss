@@ -1,0 +1,123 @@
+.no-autofill {
+  autocomplete: new-password !important;
+}
+
+
+.register-card {
+
+  width: 460px;
+  max-width: 620px;
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+  padding-top: 1.2rem;
+  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-bottom: 0rem;
+  position: relative;
+
+  @media (max-width: 600px) {
+    width: 360px;
+  }
+
+  @media (max-width: 300px) {
+    width: 100%;
+    padding-top: 1.2rem;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-bottom: 0rem;
+  }
+}
+
+.register-card__avatar {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.avatar-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #e6fbf4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+}
+
+.register-card__title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+  color: #333;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register-form__row {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.register-form__field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.85rem;
+    color: #555;
+  }
+
+  :is(input, .p-inputtext, .p-dropdown) {
+    width: 100%;
+  }
+
+}
+
+
+.register-form__submit {
+  margin-top: 0.75rem;
+  width: 100%;
+  background: #00b894;
+  border: none;
+}
+
+.register-form__footer {
+  margin-top: 0.75rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #777;
+
+  a {
+    color: #00b894;
+    text-decoration: none;
+    font-weight: 500;
+  }
+}
+
+:host ::ng-deep p-password {
+ width: 100% !important;
+ input{
+  width: 100% !important;
+ }
+}
+
+
+
+:host ::ng-deep .btn-full {
+  width: 100%;
+  button.p-button-outlined  {
+
+
+  }
+}

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, effect, inject, OnInit } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -12,9 +12,14 @@ import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { AbstractControl } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { DividerModule } from 'primeng/divider';
+import { RouterLink, Router } from '@angular/router';
+import { MessageModule } from 'primeng/message';
+import { AuthService } from '../../../../services/auth.service';
+import { LoginResponse } from '../../../../interfaces/LoginResponse.interface';
+import { AuthStoreService } from '../../../../store/user.stored.service';
+import { CommonModule } from '@angular/common';
 
 
 interface Option {
@@ -22,74 +27,118 @@ interface Option {
   value: string;
 }
 
-type RegisterForm = {
-  firstName: FormControl<string>;
-  lastName: FormControl<string>;
+type LoginForm = {
   email: FormControl<string>;
-  phone: FormControl<string>;
-  city: FormControl<string>;
-  neighborhood: FormControl<string>;
   password: FormControl<string>;
 };
 
 @Component({
   selector: 'app-login',
   imports: [
+    CommonModule,
     ReactiveFormsModule,
     InputTextModule,
+    RouterLink,
 
     PasswordModule,
     ButtonModule,
     CardModule,
     PasswordModule,
     FormsModule,
-    DividerModule
+    DividerModule,
+    MessageModule
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
+
+
   ngOnInit(): void {
 
+
   }
+
+  loading = false;
+  errorMessage = '';
 
   // 🔹 Inyectamos el FormBuilder con el nuevo patrón
   private readonly fb = inject(FormBuilder).nonNullable;
+  private readonly router = inject(Router);
+  public readonly authStore = inject(AuthStoreService);
+  private readonly authService = inject(AuthService);
 
   // 🔹 Creamos el FormGroup con el método group() del FormBuilder
   //    Todos los controles son no-nullable gracias a .nonNullable
-  readonly registerForm: FormGroup<RegisterForm> = this.fb.group({
-    firstName: this.fb.control('', [Validators.required]),
-    lastName: this.fb.control('', [Validators.required]),
-    email: this.fb.control('', [Validators.required, Validators.email]),
-    phone: this.fb.control(''),
-    city: this.fb.control('', [Validators.required]),
-    neighborhood: this.fb.control('', [Validators.required]),
-    password: this.fb.control('', [Validators.required, Validators.minLength(6)]),
-  });
+    readonly loginForm: FormGroup<LoginForm> = this.fb.group({
 
-  readonly cities: Option[] = [
-    { label: 'Buenos Aires', value: 'ba' },
-    { label: 'Córdoba', value: 'cb' },
-    { label: 'Rosario', value: 'ros' }
-  ];
+      email: this.fb.control('', [Validators.required, Validators.email]),
+      password: this.fb.control<string>('', [Validators.required]),
+    });
 
-  readonly neighborhoods: Option[] = [
-    { label: 'Centro', value: 'centro' },
-    { label: 'Norte', value: 'norte' },
-    { label: 'Sur', value: 'sur' }
-  ];
+    constructor() {
 
-  onSubmit(): void {
-    if (this.registerForm.invalid) {
-      this.registerForm.markAllAsTouched();
-      return;
     }
 
-    // getRawValue() para mantener bien el tipo
-    const data = this.registerForm.getRawValue();
-    console.log('Form value', data);
-    // acá llamás al backend
-  }
+    onSubmit(): void {
+      if (this.loginForm.invalid) {
+        this.loginForm.markAllAsTouched();
+        return;
+      }
+
+      this.loading = true;
+      this.errorMessage = '';
+
+      const { email, password } = this.loginForm.getRawValue();
+
+      this.authStore.login(email, password)
+    }
+
+//     onSubmit(): void {
+//   if (this.loginForm.invalid) {
+//     this.loginForm.markAllAsTouched();
+//     return;
+//   }
+
+//   this.loading = true;
+//   this.errorMessage = '';
+
+//   const { email, password } = this.loginForm.getRawValue();
+
+//   this.authService.login(email, password!).subscribe({
+//     next: (response: LoginResponse) => {
+//       this.authService.guardarSesion(response);
+
+//       const rol = response.usuario.rol;
+
+//       if (rol === 'ADMINISTRADOR') {
+//         this.router.navigate(['/admin']); // administrador
+//       } else {
+//         this.router.navigate(['/app']); // usuario normal
+//       }
+//     },
+//     error: (err) => {
+//       console.error('Error en login', err);
+//       if (err.status === 401 || err.status === 400) {
+//         this.errorMessage = 'Credenciales incorrectas.';
+//       } else {
+//         this.errorMessage = 'Ocurrió un error al iniciar sesión. Intenta nuevamente.';
+//       }
+//       this.loading = false;
+//     },
+//     complete: () => {
+//       this.loading = false;
+//     }
+//   });
+// }
+
+
+
+// helper (mucho más cómodo de usar en HTML)
+
+    isInvalid(controlName: string) {
+        const control = this.loginForm.get(controlName);
+        return control?.invalid && (control.touched || control.dirty);
+    }
 
 }

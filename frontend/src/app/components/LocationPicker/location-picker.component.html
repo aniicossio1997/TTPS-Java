@@ -1,0 +1,45 @@
+<p-button [label]="titleButton()" [severity]="isInvalid() ? 'danger' : 'primary'" variant="outlined"
+  styleClass="btn-full" icon="pi pi-map-marker" (click)="showDialogMapa()" />
+
+
+<p-dialog header="Ubicación" [modal]="true" [(visible)]="visibleMapa" [style]="{ width: '40rem' }"
+  [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+  <div class="mb-8">
+
+
+
+    <div class="map-container" #map></div>
+
+    <div class="coords" *ngIf="selectedLat !== undefined && selectedLng !== undefined">
+      <p>
+        Ubicación seleccionada:
+        <strong>{{ selectedLat | number : '1.6-6' }}, {{ selectedLng | number : '1.6-6' }}</strong>
+      </p>
+    </div>
+
+
+
+    @if (ubicacionObtenida()) {
+    <div class="card-ubicacion" style="margin-bottom: 10px;" >
+      <strong class="card-ubicacion card-ubicacion--title">Detalles de la ubicación:</strong>
+      <p>Provincia: <strong >{{ ubicacionObtenida()?.ubicacion?.provincia?.nombre }}</strong></p>
+      <p>Departamento: <strong >{{ ubicacionObtenida()?.ubicacion?.departamento?.nombre }}</strong></p>
+      <p>Municipio: <strong >{{ ubicacionObtenida()?.ubicacion?.municipio?.nombre }}</strong></p>
+
+    </div>
+    <div style="display: flex; justify-content: space-between; border-top: 1px solid #ccc; padding-top: 12px;" >
+
+      <p-button severity="secondary" variant="outlined" label="Cerrar" icon="pi pi-times" styleClass="btn-full" (click)="onDialogHide()"></p-button>
+      <p-button  variant="outlined" label="Guardar" icon="pi pi-check" styleClass="btn-full" (click)="confirmSelection()"></p-button>
+    </div>
+    }@else {
+    <div class="card-ubicacion" >
+      <strong>Selecciones una ubicacion en el mapa</strong>
+
+    </div>
+    }
+
+
+  </div>
+
+</p-dialog>
