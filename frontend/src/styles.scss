@@ -1,10 +1,4 @@
-
-@use "styles/_spacing.scss";
-@use "styles/_flex.scss";
-
-
-
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;600;700&display=swap');
+@use './tailwind.css';
 
 @import "primeicons/primeicons.css";
 @import "leaflet/dist/leaflet.css";
@@ -19,11 +13,6 @@ html, body{
   background-color: #f6fafb;
   margin: 0;
 }
-
-
-
-
-
 
 :root {
   --font-family: 'Nunito', sans-serif;

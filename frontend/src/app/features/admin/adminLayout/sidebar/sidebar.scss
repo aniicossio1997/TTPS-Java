@@ -6,6 +6,10 @@
   padding: 1.5rem 1rem;
   background-color: #FFFFFF; // tono verdoso como en tu UI
   border-right: 1px solid #d4ece2;
+  min-width: 250px;
+  position: sticky;
+  top: 0;
+  left: 0;
 
   &__header {
     margin-bottom: 2rem;
