@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login.component';
 import { RegisterComponent } from './pages/register/register.component';
 import { LayoutComponent } from './layout/layout.component';
+import { PublicacionesComponent } from '../common/publicaciones/publicaciones.component';
 
 // features/public/public.routes.ts
 export const PUBLIC_ROUTES: Routes = [
@@ -11,6 +12,7 @@ export const PUBLIC_ROUTES: Routes = [
     children: [
       { path: '', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'publicaciones', component: PublicacionesComponent}
       //{ path: 'posts/:id', component: PostDetailPageComponent } // ver detalle de publicación
     ]
   }

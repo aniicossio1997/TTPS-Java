@@ -20,7 +20,7 @@ export class JwtInterceptor implements HttpInterceptor {
 
       // 2) Agregar token si corresponde
       const currentUser = this.authenticationService.getCurrentSession();
-
+      console.log({currentUser})
       if (currentUser?.token) {
         request = request.clone({
           setHeaders: {

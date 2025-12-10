@@ -12,9 +12,7 @@ export class AuthService {
   private http = inject(HttpClient);
   private platformId = inject(PLATFORM_ID);
 
-  private readonly apiUrl = `${environment.API_URL}auth`;
-
-
+  private readonly apiUrl = `${environment.API_URL}/auth`;
 
   login(email: string, password: string): Observable<LoginResponse> {
     //    // esto pega a http://localhost:4002/api/auth/login y el proxy lo manda a http://localhost:8081/auth/login
@@ -27,6 +25,5 @@ export class AuthService {
 
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, null, { headers });
   }
-
 
 }

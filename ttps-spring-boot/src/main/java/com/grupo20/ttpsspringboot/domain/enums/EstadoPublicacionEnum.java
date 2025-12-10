@@ -7,5 +7,4 @@ public enum EstadoPublicacionEnum {
     RECUPERADO,
     ADOPTADO;
 
-
 }

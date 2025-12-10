@@ -16,6 +16,4 @@ public class PublicacionFilterDTO extends FilterPaginateBaseDTO {
     public Date fechaDesde;
     public Date fechaHasta;
     public Long usuarioId;
-
-
 }
