@@ -11,12 +11,19 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.http.MediaType;
+import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
+
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import org.springframework.http.MediaType;
 
 @Tag(name = "Usuarios")
 @RestController
 @RequestMapping("/api/usuarios")
-public class UsuarioController {
+public class UsuarioController extends BaseController {
 
     @Autowired
     private UsuarioService usuarioService;
@@ -37,22 +44,34 @@ public class UsuarioController {
         }
     }
 
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UsuarioSmallDTO> updateUsuario(
             @PathVariable Long id,
-            @Valid @RequestBody UsuarioUpdateDTO usuarioDto) { // Usa UsuarioUpdateDTO
+
+            // --- INICIO DEL CAMBIO ---
+            // Esta anotación le dice a Swagger: "La parte 'data' es JSON, no binario"
+            @Parameter(
+                    description = "Datos del usuario",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = UsuarioUpdateDTO.class)
+                    )
+            )
+            @RequestPart("data") @Valid UsuarioUpdateDTO usuarioDto,
+            // --- FIN DEL CAMBIO ---
+
+            @RequestPart(value = "file", required = false) MultipartFile file) {
 
         try {
-            // Llama al servicio con el nuevo DTO
-            UsuarioSmallDTO updatedUsuario = usuarioService.updateUsuario(id, usuarioDto);
+            // Tu lógica sigue igual...
+            UsuarioSmallDTO updatedUsuario = usuarioService.updateUsuario(id, usuarioDto, file);
             return new ResponseEntity<>(updatedUsuario, HttpStatus.OK);
 
         } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Código 404
-
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         } catch (Exception e) {
-            // Puede capturar error si la nueva UbicacionId no existe
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST); // Código 400
+            e.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 }

@@ -49,7 +49,8 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
-                                "/swagger-ui.html"
+                                "/swagger-ui.html",
+                                "/error" // <--- AGREGA ESTO: Permite ver los errores de Spring
                         ).permitAll()
                         .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()

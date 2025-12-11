@@ -3,6 +3,7 @@ package com.grupo20.ttpsspringboot.services;
 import com.grupo20.ttpsspringboot.dtos.UsuarioCreateDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
 import com.grupo20.ttpsspringboot.dtos.UsuarioUpdateDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -14,5 +15,5 @@ public interface IUsuarioService {
 
     UsuarioSmallDTO getUsuarioById(Long id);
 
-    UsuarioSmallDTO updateUsuario(Long id, UsuarioUpdateDTO dto);
+    UsuarioSmallDTO updateUsuario(Long id, UsuarioUpdateDTO dto, MultipartFile file);
 }
