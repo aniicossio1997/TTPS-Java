@@ -1,0 +1,154 @@
+    <div class="min-h-screen bg-slate-50 font-sans text-slate-800 pb-10">
+
+      <!-- Navegación Superior -->
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <button class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m12 19-7-7 7-7"/>
+            <path d="M19 12H5"/>
+          </svg>
+          Atrás
+        </button>
+        <h1 class="text-sm text-slate-500 mt-1">Detalle usuario</h1>
+      </nav>
+
+      <!-- Contenedor Principal (Grid Responsive) -->
+      <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Columna Izquierda (Contenido Principal) -->
+        <div class="lg:col-span-2 space-y-8">
+
+          <!-- Tarjeta Héroe de Barrio -->
+          <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center justify-between relative overflow-hidden">
+            <div class="z-10">
+              <h2 class="text-xl font-bold text-slate-900">Héroe de Barrio</h2>
+              <p class="text-slate-500 mt-1 text-lg">has ayudado a muchos casos de tu zona</p>
+            </div>
+            <!-- Icono Corazón -->
+            <div class="bg-pink-50/50 p-2 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-pink-600 fill-current" viewBox="0 0 24 24">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Tabs de Navegación -->
+          <div class="border-b border-slate-200">
+            <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+              <button
+                class="border-emerald-500 text-emerald-600 whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm uppercase tracking-wide">
+                Perfil
+              </button>
+              <button
+                class="border-emerald-500 text-emerald-600 whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm uppercase tracking-wide">
+                Publicaciones
+              </button>
+               <button
+                class="border-emerald-500 text-emerald-600 whitespace-nowrap py-4 px-1 border-b-2 font-bold text-sm uppercase tracking-wide">
+                Avistamientos
+              </button>
+              <!-- Espacio para más tabs si fuera necesario -->
+            </nav>
+          </div>
+
+          <!-- Sección Publicaciones -->
+          <div>
+            <h3 class="text-2xl font-medium text-slate-800 mb-6">publicaciones</h3>
+
+            <!-- Lista de Posts -->
+            <div class="space-y-6">
+              @for (post of posts(); track post.id) {
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 relative">
+
+                  <!-- Marco punteado decorativo (similar a la imagen) -->
+                  <div class="rounded-xl p-1">
+
+                    <!-- Imagen Mascota -->
+                    <div class="relative h-64 w-full rounded-lg overflow-hidden mb-4 bg-gray-100">
+                      <img [src]="post.imagen" alt="Mascota perdida" class="w-full h-full object-cover">
+                    </div>
+
+                    <!-- Banner Amarillo -->
+                    <div class="bg-yellow-100 rounded-md p-3 flex justify-between items-center mb-4 border-l-4 border-yellow-400">
+                      <span class="font-bold text-slate-800 text-xs sm:text-sm uppercase tracking-wider">{{ post.estado }}</span>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                      </svg>
+                    </div>
+
+                    <!-- Detalles -->
+                    <div class="space-y-2 px-2 mb-6">
+                      <p class="text-sm text-slate-600"><span class="font-bold text-slate-800">Fecha:</span> {{ post.fecha }}</p>
+                      <p class="text-sm text-slate-600"><span class="font-bold text-slate-800">Color:</span> {{ post.color }}</p>
+                      <p class="text-sm text-slate-600"><span class="font-bold text-slate-800">Tamaño:</span> {{ post.tamano }}</p>
+                      <p class="text-sm text-slate-600 mt-2 leading-relaxed">
+                        <span class="font-bold text-slate-800">Comentario:</span> {{ post.comentario }}
+                      </p>
+                    </div>
+
+                    <!-- Botón Acción -->
+                    <button class="w-full sm:w-auto bg-gradient-to-r from-teal-400 to-emerald-400 hover:from-teal-500 hover:to-emerald-500 text-white font-bold py-2.5 px-6 rounded-lg shadow-md transition-all transform hover:-translate-y-0.5 mb-2">
+                      Reportar avistamiento
+                    </button>
+
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Columna Derecha (Perfil) -->
+        <div class="lg:col-span-1">
+          <div class="bg-white rounded-[2rem] shadow-lg shadow-slate-200/50 p-8 sticky top-6">
+            <h2 class="text-3xl font-light text-slate-700 mb-8">Perfil</h2>
+
+            <div class="flex flex-col items-start gap-6">
+              <!-- Avatar -->
+              <div class="relative w-32 h-32 rounded-full overflow-hidden border-4 border-orange-50 shadow-inner mx-auto lg:mx-0">
+                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop" alt="Foto de perfil" class="w-full h-full object-cover">
+              </div>
+
+              <!-- Datos Personales -->
+              <div class="w-full space-y-6 text-slate-600">
+                <div class="grid grid-cols-1 gap-1">
+                  <label class="text-sm text-slate-400 font-light">Nombre</label>
+                  <p class="text-lg font-medium text-slate-700">Juan</p>
+                </div>
+
+                <div class="grid grid-cols-1 gap-1">
+                  <label class="text-sm text-slate-400 font-light">Apellido</label>
+                  <p class="text-lg font-medium text-slate-700">Lopez</p>
+                </div>
+
+                <div class="pt-4 border-t border-slate-100 space-y-4">
+                  <div class="flex items-center gap-2">
+                    <span class="text-slate-400 text-sm w-16">Email:</span>
+                    <a href="mailto:juan@gmail.com" class="text-emerald-500 font-bold hover:underline truncate">juan&#64;gmail.com</a>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <span class="text-slate-400 text-sm w-16">Teléfono:</span>
+                    <span class="text-slate-600">+54 123 456789</span>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <span class="text-slate-400 text-sm w-16">Ciudad:</span>
+                    <span class="text-slate-600">La Plata</span>
+                  </div>
+
+                  <div class="flex items-center gap-2">
+                    <span class="text-slate-400 text-sm w-16">Barrio:</span>
+                    <span class="text-slate-600">San Lorenzo</span>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>

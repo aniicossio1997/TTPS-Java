@@ -47,9 +47,9 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                            "/v3/api-docs/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html"
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
                         ).permitAll()
                         .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/usuarios").permitAll()
@@ -63,11 +63,21 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:4200"));
+
+        // Para desarrollo: permitir todos los orígenes de localhost
+        config.setAllowedOriginPatterns(List.of("http://localhost:*"));
+
+        // Permitir todos los métodos necesarios
         config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
-        config.setAllowedHeaders(List.of("Content-Type", "Authorization", "X-Requested-With", "Accept", "*"));
-        config.setExposedHeaders(List.of("Authorization")); // para devolver token si querés
+
+        // Permitir todos los headers (incluidos usuario, password, etc.)
+        config.setAllowedHeaders(List.of("*"));
+
+        // Si necesitás cookies/autorización entre dominios
         config.setAllowCredentials(true);
+
+        // Si querés exponer el header Authorization
+        config.setExposedHeaders(List.of("Authorization"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

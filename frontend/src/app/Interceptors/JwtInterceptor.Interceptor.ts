@@ -11,12 +11,23 @@ export class JwtInterceptor implements HttpInterceptor {
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 
-      // 1) Excluir URLs específicas
-      const excludedApi = environment.URL_MAP;
+    // Lista de endpoints que NO deben llevar Authorization
+    const publicEndpoints = [
+      `${environment.API_URL}/auth/register`,
+      `${environment.API_URL}/auth/`,
+      `${environment.API_URL}/public/publicaciones`,
+      `${environment.API_URL}/public/`,
+      `${environment.API_URL}/auth/login`,
+      environment.URL_MAP  // por si querés mantenerlo
+    ];
 
-      if (request.url.startsWith(excludedApi)) {
-        return next.handle(request); // <-- NO agrega Authorization
-      }
+    // Si la URL matchea alguno de los endpoints públicos → no agregar Bearer
+    const isPublic = publicEndpoints.some(url => request.url.startsWith(url));
+
+    if (isPublic) {
+      console.log('Endpoint ::PUBLICO detectado, no se agrega token');
+      return next.handle(request);
+    }
 
       // 2) Agregar token si corresponde
       const currentUser = this.authenticationService.getCurrentSession();

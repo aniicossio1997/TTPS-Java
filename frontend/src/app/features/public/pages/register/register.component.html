@@ -58,7 +58,8 @@
             @if (isInvalid('ubicacion')) {
                 <p-message severity="error" size="small" variant="simple">La ubicación es obligatoria</p-message>
             }
-        <app-location-picker [titleButton]="hasUbicacionExterna() ?  'Cambiar ubicación' : 'Click para elegir una ubicación'" [isInvalid]="isInvalid('ubicacion')!" (locationSelected)="onLocationSelected($event)"></app-location-picker>
+        <app-location-picker [titleButton]="hasUbicacionExterna() ?  'Cambiar ubicación' : 'Click para elegir una ubicación'"
+                [isInvalid]="isInvalid('ubicacion')!" (locationSelected)="onLocationSelected($event)"></app-location-picker>
 
 
       </div>

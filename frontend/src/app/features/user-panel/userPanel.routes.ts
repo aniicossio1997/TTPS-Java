@@ -1,7 +1,7 @@
 // features/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { PerfilComponent } from './perfil-component/perfil-component';
 import { LayoutComponent } from './layout-component/layout-component';
+import { PerfilComponent } from '../common/perfil/perfil.component';
 
 
 export const APP_ROUTES: Routes = [
