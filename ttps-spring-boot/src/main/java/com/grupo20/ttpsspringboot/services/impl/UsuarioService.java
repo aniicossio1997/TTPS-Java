@@ -11,6 +11,7 @@ import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionUpdateMapper;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioCreateMapperService;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioUpdateMapper;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
+import com.grupo20.ttpsspringboot.persistence.repository.FotoRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,9 @@ public class UsuarioService {
 
     @Autowired
     private UbicacionUpdateMapper ubicacionUpdateMapper;
+
+    @Autowired
+    private FotoRepository fotoRepository;
 
     /**
      * Crea un nuevo usuario a partir del DTO.
@@ -136,20 +140,33 @@ public class UsuarioService {
         }
 
         // 3) Lógica de la Foto (Solo si viene un archivo y no está vacío)
-        if (file != null && !file.isEmpty()) {
+        // ¿Hay un archivo "real"?
+        boolean hayArchivoNuevo = (file != null && !file.isEmpty());
 
-            // Verificamos si ya tiene foto para actualizarla o creamos una nueva
+        if (hayArchivoNuevo) {
+            // CREAR O PISAR FOTO
             Foto foto = existingUsuario.getFotoPerfil();
-
             if (foto == null) {
                 foto = new Foto();
-                foto.setUsuario(existingUsuario); // Relación bidireccional
-                existingUsuario.setFotoPerfil(foto);
+                foto.setUsuario(existingUsuario);    // lado dueño
+                existingUsuario.setFotoPerfil(foto); // lado inverso
             }
 
-            // Actualizamos el contenido y el nombre
             foto.setNombre(file.getOriginalFilename());
             foto.setContent(file.getBytes());
+        } else {
+            // NO HAY ARCHIVO → ELIMINAR FOTO SI EXISTE
+            Foto foto = existingUsuario.getFotoPerfil();
+            if (foto != null) {
+                // Romper relación
+                existingUsuario.setFotoPerfil(null);
+                foto.setUsuario(null);
+
+                // Gracias a orphanRemoval = true en Usuario.fotoPerfil,
+                // con solo romper la relación Hibernate debería borrar la foto.
+                // Si querés ser explícita, también podés:
+                fotoRepository.delete(foto);
+            }
         }
 
         // 4) Guardar usuario (la cascada guarda/actualiza la ubicación y la foto)
