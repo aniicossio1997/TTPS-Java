@@ -1,0 +1,190 @@
+<div class="max-w-[1000px]">
+  <form [formGroup]="publicacionForm" (ngSubmit)="onSubmit()" class="col-12 p-5">
+    <p-card>
+      <h2 class="m-0 text-2xl font-bold">
+        {{ publicacionId ? 'Editar Publicación #' + publicacionId : 'Crear Nueva Publicación' }}
+      </h2>
+      <p-fieldset legend="1. Tipo de Publicación" [toggleable]="true" class="mb-3">
+        <div class="field">
+          <label class="block mb-2">¿Es tu mascota o la encontraste?</label>
+          <div class="flex gap-3">
+            <p-selectButton
+              formControlName="tipo"
+              [options]="tipoPublicacionOpciones"
+              optionLabel="label"
+              optionValue="value"
+              [disabled]="!!publicacionId"
+              class="w-full"
+            >
+            </p-selectButton>
+          </div>
+        </div>
+      </p-fieldset>
+
+      <p-divider></p-divider>
+
+      <p-fieldset legend="2. Detalles de la Mascota" toggleable>
+        <ng-template #content>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-2">
+              <label for="fechaPerdida">
+                @if(publicacionForm.get('tipo')?.value === 'Propio'){
+                <span>Fecha de Encuentro</span>
+                } @else {
+                <span>Fecha de Pérdida</span>
+                }
+                <span class="required"> *</span></label
+              >
+              <p-date-picker
+                id="fechaPerdida"
+                formControlName="fechaPerdida"
+                dateFormat="dd/mm/yy"
+                placeholder="DD/MM/AAAA"
+              ></p-date-picker>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label for="nombre">
+                Nombre
+                <span *ngIf="publicacionForm.get('tipo')?.value === 'Propio'" class="required"
+                  >*</span
+                >
+                <span *ngIf="publicacionForm.get('tipo')?.value === 'Ajeno'" class="optional"
+                  >(Opcional)</span
+                >
+              </label>
+              <input
+                pInputText
+                id="nombre"
+                formControlName="nombre"
+                placeholder="Nombre de la mascota"
+              />
+              <small
+                class="p-error"
+                *ngIf="
+                  publicacionForm.get('nombre')?.invalid &&
+                  (publicacionForm.get('nombre')?.dirty || publicacionForm.get('nombre')?.touched)
+                "
+              >
+                El nombre es
+                {{ publicacionForm.get('tipo')?.value === 'Propio' ? 'requerido' : 'inválido' }}.
+              </small>
+            </div>
+
+            <div class="col-12">
+              <div class="flex flex-col gap-2">
+                <label for="descripcion">Descripción (Opcional)</label>
+                <textarea
+                  pInputTextarea
+                  id="descripcion"
+                  rows="3"
+                  formControlName="descripcion"
+                  placeholder="Rasgos especiales..."
+                  class="resize-none bg-surface-100 p-2 rounded-md"
+                ></textarea>
+                <small class="p-error" *ngIf="publicacionForm.get('descripcion')?.invalid"
+                  >Máximo 500 caracteres.</small
+                >
+              </div>
+            </div>
+
+            <div class="flex gap-5">
+              <div class="inline-flex flex-col gap-2">
+                <label for="especie">Especie <span class="required">*</span></label>
+                <p-select
+                  id="especie"
+                  formControlName="especie"
+                  [options]="especies"
+                  placeholder="Selecciona una especie"
+                  class="w-[14em]"
+                  [ngClass]="{
+                    'p-invalid':
+                      publicacionForm.get('especie')?.invalid &&
+                      (publicacionForm.get('especie')?.dirty ||
+                        publicacionForm.get('especie')?.touched)
+                  }"
+                ></p-select>
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label>Tamaño (Opcional)</label>
+                <div class="flex gap-3">
+                  <div *ngFor="let t of tamanos; let i = index">
+                    <p-radioButton
+                      [inputId]="'tamanio' + i"
+                      [value]="t.value"
+                      formControlName="tamanio"
+                    ></p-radioButton>
+                    <label [for]="'tamanio' + i" class="ml-2">{{ t.label }}</label>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label>Color principal (Opcional)</label>
+              <div class="flex flex-wrap gap-3">
+                <div *ngFor="let color of getColors(); let i = index" class="flex items-center">
+                  <p-radioButton
+                    [inputId]="'color' + i"
+                    [value]="color[0]"
+                    formControlName="color"
+                    class="no-native-radio"
+                  ></p-radioButton>
+
+                  <label
+                    [for]="'color' + i"
+                    class="color-label ml-2 flex items-center cursor-pointer"
+                    [class.selected]="publicacionForm.get('color')?.value === color[0]"
+                  >
+                    <span
+                      class="color-circle"
+                      [title]="color"
+                      [style.backgroundColor]="color[1]"
+                    ></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-fieldset>
+
+      <p-divider></p-divider>
+
+      <p-fieldset legend="3. Ubicación" toggleable>
+        <p-button icon="pi pi-map-marker" label="Seleccionar Ubicación" class="mr-2"></p-button>
+
+        No se ha seleccionado una ubicación
+      </p-fieldset>
+
+      <p-divider></p-divider>
+
+      <p-fieldset legend="4. Imágenes" toggleable>
+        <p-fileUpload
+          mode="advanced"
+          accept="image/*"
+          [multiple]="true"
+          [maxFileSize]="1000000"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          [customUpload]="true"
+          chooseLabel="Cargar Imágenes"
+          (uploadHandler)="onUpload($event)"
+        ></p-fileUpload>
+        <small class="text-500 mt-2 block">Sube hasta 5 imágenes (máx. 1MB c/u).</small>
+      </p-fieldset>
+
+      <p-divider></p-divider>
+
+      <div class="flex justify-end">
+        <p-button
+          [label]="submitLabel"
+          icon="pi pi-check"
+          [disabled]="publicacionForm.invalid"
+          type="submit"
+        ></p-button>
+      </div>
+    </p-card>
+  </form>
+</div>

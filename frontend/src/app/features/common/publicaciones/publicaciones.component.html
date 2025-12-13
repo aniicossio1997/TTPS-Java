@@ -1,7 +1,13 @@
 <div class="flex items-center justify-between">
   <h1 class="text-2xl font-bold">Publicaciones</h1>
   <div class="flex justify-end gap-4 mb-4">
-    <p-button severity="primary" label="Crear Publicación" size="large" class="block" />
+  <p-button 
+  severity="primary" 
+  label="Crear Publicación" 
+  size="large" 
+  class="block" 
+  [routerLink]="[destinationUrl]" 
+/>
     <p-button
       icon="pi pi-map-marker"
       severity="primary"

@@ -19,6 +19,8 @@ import { catchError, of } from 'rxjs';
 import { PublicService } from '../../../services/public.service';
 import { Publicacion, PublicacionFilter } from '../../../interfaces/publicacion.interface';
 import { PaginatedResult } from '../../../interfaces/pagination.interface';
+import { RouterModule } from '@angular/router';
+import { AuthStoreService } from '../../../store/user.stored.service';
 
 interface PublicacionState {
   data: Publicacion[];
@@ -47,12 +49,14 @@ interface PublicacionState {
     SkeletonModule,
     InputGroupAddonModule,
     PaginatorModule,
+    RouterModule
   ],
   templateUrl: './publicaciones.component.html',
   styleUrl: './publicaciones.component.scss',
 })
 export class PublicacionesComponent {
-  private publicService = inject(PublicService);
+  private readonly publicService = inject(PublicService);
+  private readonly authStore = inject(AuthStoreService);
 
   public readonly tamanioOptions = ['PEQUEÑO', 'MEDIANO', 'GRANDE', 'EXTRAGRANDE'];
   public readonly especieOptions = ['PERRO', 'GATO', 'AVE', 'OTRO'];
@@ -152,5 +156,12 @@ export class PublicacionesComponent {
       [campo]: valor,
       page: 1,
     }));
+  }
+
+  get destinationUrl(): string {
+    if (this.authStore.isAuthenticated()) {
+      return '/app/publicaciones/crear';
+    } 
+    return '/login';
   }
 }
