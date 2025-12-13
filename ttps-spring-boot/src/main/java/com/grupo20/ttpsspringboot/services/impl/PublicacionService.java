@@ -94,7 +94,6 @@ public class PublicacionService implements IPublicacionService {
         if (dto.getDescripcion() != null) publicacion.setDescripcion(dto.getDescripcion());
         if (dto.getColor() != null) publicacion.setColor(dto.getColor());
         if (dto.getEspecie() != null) publicacion.setEspecie(dto.getEspecie());
-        if (dto.getRaza() != null) publicacion.setRaza(dto.getRaza());
         if (dto.getTamanio() != null) publicacion.setTamanio(dto.getTamanio());
         if (dto.getEstado() != null && dto.getEstado() != publicacion.getEstadoEnum()) {
             publicacion.addEstado(new EstadoPublicacion(dto.getEstado(), publicacion));

@@ -18,7 +18,6 @@ public class PublicacionUpdateDTO {
     private String descripcion;
     private String color;
     private String especie;
-    private String raza;
     private String tamanio;
 
     private List<Long> agradecimientos;

@@ -4,7 +4,7 @@ import {
   Publicacion,
   Tamanio,
 } from './../../../../../interfaces/publicacion.interface';
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, signal } from '@angular/core';
 import { CommonModule, NgClass } from '@angular/common';
 import {
   FormBuilder,
@@ -33,6 +33,10 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { SelectModule } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
 import { UbicacionCreate } from '../../../../../interfaces/ubicacion.interface';
+import { FormErrorComponent } from '../../../../../components/form-error/form-error.component';
+import { RouterModule } from '@angular/router';
+import { LocationPickerComponent } from '../../../../../components/LocationPicker/location-picker.component';
+import { UbicacionExternaResponse } from '../../../../../interfaces/ubicacionExternaResponse';
 
 enum TipoPublicacion {
   PROPIO = 'Propio',
@@ -61,6 +65,9 @@ enum TipoPublicacion {
     DatePickerModule,
     SelectButtonModule,
     SelectModule,
+    FormErrorComponent,
+    RouterModule,
+    LocationPickerComponent,
   ],
 })
 export class PublicacionFormComponent implements OnInit {
@@ -70,8 +77,10 @@ export class PublicacionFormComponent implements OnInit {
 
   @Output() formSubmit = new EventEmitter<PublicacionCreate>();
 
+  ubicacionExterna = signal<UbicacionExternaResponse | null>(null);
+
   publicacionForm;
-  tipoPublicacionOpciones: SelectItem<EstadoPublicacionEnum>[];
+  tipoPublicacionOpciones: SelectItem<TipoPublicacion>[];
   especies: Especie[] = ['Perro', 'Gato', 'Otro'];
   tamanos: { value: Tamanio; label: string }[] = [
     { value: 'PEQUENO', label: 'Pequeño' },
@@ -83,19 +92,18 @@ export class PublicacionFormComponent implements OnInit {
 
   constructor(private fb: NonNullableFormBuilder) {
     this.tipoPublicacionOpciones = [
-      { label: 'Mascota Propia', value: 'PERDIDO_AJENO' },
-      { label: 'Mascota Ajena (Encontrada/Vista)', value: 'PERDIDO_PROPIO' },
+      { label: 'Mascota Propia', value: TipoPublicacion.PROPIO },
+      { label: 'Mascota Ajena (Encontrada/Vista)', value: TipoPublicacion.AJENO },
     ];
 
     this.publicacionForm = this.fb.group({
       tipo: this.fb.control<TipoPublicacion>(TipoPublicacion.PROPIO, [Validators.required]),
       especie: this.fb.control<string>('', Validators.required),
-      raza: this.fb.control<string>('', Validators.required),
       nombre: this.fb.control<string>('', Validators.required),
-      descripcion: this.fb.control<string>('', Validators.required),
+      descripcion: this.fb.control<string>('', Validators.maxLength(500)),
       fechaPerdida: this.fb.control<Date>(new Date(), Validators.required),
-      tamanio: this.fb.control<string>('PEQUENO', Validators.required),
-      color: this.fb.control<string>('Negro', Validators.required),
+      tamanio: this.fb.control<string>('PEQUENO'),
+      color: this.fb.control<string>('Negro'),
       ubicacion: this.fb.control<UbicacionCreate>({
         latitud: -1,
         longitud: -1,
@@ -182,7 +190,35 @@ export class PublicacionFormComponent implements OnInit {
     }
   }
 
+  isInvalid(controlName: string): boolean {
+    const control = this.publicacionForm.get(controlName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
+  }
+
+  hasError(controlName: string, error: string): boolean {
+    return !!this.publicacionForm.get(controlName)?.hasError(error);
+  }
+
   onUpload(event: any) {
     console.log('Archivos recibidos para el ID:', this.publicacionId || 'nuevo');
+  }
+
+  onLocationSelected(coords: {
+    lat: number;
+    lng: number;
+    ubicacionExterna: UbicacionExternaResponse;
+  }) {
+    this.publicacionForm.controls['ubicacion'].setValue({
+      latitud: coords.lat,
+      longitud: coords.lng,
+      direccion: '',
+    });
+    this.ubicacionExterna.set(coords.ubicacionExterna);
+  }
+
+  hasUbicacionExterna(): boolean {
+    const ubicacion = this.publicacionForm.get('ubicacion')?.value;
+
+    return !!(ubicacion && ubicacion.latitud && ubicacion.longitud);
   }
 }

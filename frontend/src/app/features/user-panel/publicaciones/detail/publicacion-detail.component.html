@@ -1,0 +1,131 @@
+<nav class="max-w-7xl px-4 sm:px-6 lg:px-8 py-2">
+  <button
+    class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium"
+    routerLink="/app/publicaciones"
+  >
+    <i class="pi pi-arrow-left" style="font-size: 0.8rem"></i>
+    Atrás
+  </button>
+  <h1 class="text-sm text-slate-500 mt-1">Publicaciones</h1>
+</nav>
+<div class="p-4 md:p-8">
+  @if (isLoading()) {
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <p-skeleton height="400px" class="w-full"></p-skeleton>
+    <div class="space-y-4">
+      <p-skeleton width="80%"></p-skeleton>
+      <p-skeleton width="60%"></p-skeleton>
+      <p-skeleton height="100px"></p-skeleton>
+    </div>
+  </div>
+  } @else if (error()) {
+  <p-message severity="error" [text]="error()"></p-message>
+  } @if (publicacion()) {
+  <p-tag
+    [severity]="estadoTag().severity"
+    [rounded]="true"
+    [value]="estadoTag().text"
+    class="mb-4"
+  />
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <p-card class="lg:col-span-2 space-y-6">
+      <div class="flex items-center space-x-4 pb-4 mb-4">
+        <div class="relative w-12 h-12 flex-shrink-0">
+          <img
+            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop"
+            alt="Foto de perfil del autor"
+            class="rounded-full w-full h-full object-cover shadow-md text-transparent"
+          />
+        </div>
+
+        <div>
+          <span class="text-primary-600 hover:text-primary-700 cursor-pointer font-bold">
+            {{ publicacion()!.usuario.nombre }} {{ publicacion()!.usuario.apellido }}
+          </span>
+          <p class="text-xs text-gray-500 mt-1">
+            {{ publicacion()!.fecha | date : 'mediumDate' }}
+          </p>
+        </div>
+      </div>
+
+      @if (fotos().length > 0) {
+      <p-carousel
+        [class.single-image]="fotos().length <= 1"
+        [value]="fotos()"
+        [numVisible]="1"
+        [numScroll]="1"
+        [circular]="false"
+        [showIndicators]="true"
+        [responsiveOptions]="responsiveOptions"
+      >
+        <ng-template let-foto pTemplate="item">
+          <div class="relative w-full h-96 rounded-lg overflow-hidden shadow-lg">
+            <img [src]="foto" alt="Mascota" class="w-full h-full object-cover" />
+          </div>
+        </ng-template>
+      </p-carousel>
+      }
+
+      <h2 class="text-2xl font-bold mb-4">Detalles</h2>
+      <h1 class="text-xl font-bold mb-4">
+        {{ publicacion()!.nombre }}
+      </h1>
+
+      <p class="text-gray-700 whitespace-pre-wrap">
+        {{ publicacion()!.descripcion || 'Sin descripción detallada.' }}
+      </p>
+
+      <h2 class="text-2xl font-bold mt-8 mb-4">Avistamientos</h2>
+    </p-card>
+
+    <div class="lg:col-span-1 space-y-6">
+      <p-card>
+        <div class="flex flex-1 justify-between">
+          <h2 class="text-2xl font-bold mb-4 flex-1">Acciones</h2>
+          @if (isOwner()) {
+          <p-button (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" severity="secondary" />
+          <p-tieredmenu #menu [model]="options" [popup]="true" />
+
+          }
+        </div>
+
+        <div class="flex flex-col gap-3">
+          <p-button
+            label="Ver ubicación"
+            class="w-fit-content"
+            icon="pi pi-map-marker"
+            (click)="verUbicacion(publicacion()!.ubicacion)"
+          />
+        </div>
+      </p-card>
+
+      <p-card>
+        <h2 class="text-2xl font-bold mb-4 flex-1">Características</h2>
+        <ul class="space-y-3">
+          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+            <span class="font-semibold">Especie:</span>
+            <p-tag [value]="publicacion()!.especie" severity="secondary" />
+          </li>
+          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+            <span class="font-semibold">Tamaño:</span>
+            <p-tag [value]="publicacion()!.tamanio" severity="secondary" />
+          </li>
+          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+            <span class="font-semibold">Color:</span>
+            <p-tag [value]="publicacion()!.color" severity="contrast" />
+          </li>
+          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+            <span class="font-semibold">Publicado:</span>
+            <span>{{ publicacion()!.fecha | date : 'mediumDate' }}</span>
+          </li>
+          <li class="flex justify-between items-center">
+            <span class="font-semibold">Ubicación:</span>
+            <span>{{ publicacion()!.ubicacion.direccion || 'Ver en mapa' }}</span>
+          </li>
+        </ul>
+      </p-card>
+    </div>
+  </div>
+  }
+</div>

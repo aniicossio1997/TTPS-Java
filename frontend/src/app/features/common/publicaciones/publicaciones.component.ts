@@ -21,6 +21,7 @@ import { Publicacion, PublicacionFilter } from '../../../interfaces/publicacion.
 import { PaginatedResult } from '../../../interfaces/pagination.interface';
 import { RouterModule } from '@angular/router';
 import { AuthStoreService } from '../../../store/user.stored.service';
+import { PublicacionCardItem } from './card-item/publicacion-card-item';
 
 interface PublicacionState {
   data: Publicacion[];
@@ -49,10 +50,10 @@ interface PublicacionState {
     SkeletonModule,
     InputGroupAddonModule,
     PaginatorModule,
-    RouterModule
+    RouterModule,
+    PublicacionCardItem,
   ],
   templateUrl: './publicaciones.component.html',
-  styleUrl: './publicaciones.component.scss',
 })
 export class PublicacionesComponent {
   private readonly publicService = inject(PublicService);
@@ -161,7 +162,7 @@ export class PublicacionesComponent {
   get destinationUrl(): string {
     if (this.authStore.isAuthenticated()) {
       return '/app/publicaciones/crear';
-    } 
+    }
     return '/login';
   }
 }

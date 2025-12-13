@@ -1,4 +1,14 @@
 <div class="max-w-[1000px]">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+    <button
+      class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium"
+      routerLink="/app/publicaciones"
+    >
+      <i class="pi pi-arrow-left" style="font-size: 0.8rem"></i>
+      Atrás
+    </button>
+    <h1 class="text-sm text-slate-500 mt-1">Publicaciones</h1>
+  </nav>
   <form [formGroup]="publicacionForm" (ngSubmit)="onSubmit()" class="col-12 p-5">
     <p-card>
       <h2 class="m-0 text-2xl font-bold">
@@ -29,11 +39,11 @@
             <div class="flex flex-col gap-2">
               <label for="fechaPerdida">
                 @if(publicacionForm.get('tipo')?.value === 'Propio'){
-                <span>Fecha de Encuentro</span>
-                } @else {
                 <span>Fecha de Pérdida</span>
+                } @else {
+                <span>Fecha de Encuentro</span>
                 }
-                <span class="required"> *</span></label
+                <span class="text-red-500"> *</span></label
               >
               <p-date-picker
                 id="fechaPerdida"
@@ -46,10 +56,12 @@
             <div class="flex flex-col gap-2">
               <label for="nombre">
                 Nombre
-                <span *ngIf="publicacionForm.get('tipo')?.value === 'Propio'" class="required"
+                <span *ngIf="publicacionForm.get('tipo')?.value === 'Propio'" class="text-red-500"
                   >*</span
                 >
-                <span *ngIf="publicacionForm.get('tipo')?.value === 'Ajeno'" class="optional"
+                <span
+                  *ngIf="publicacionForm.get('tipo')?.value === 'Ajeno'"
+                  class="optional text-sm font-light"
                   >(Opcional)</span
                 >
               </label>
@@ -59,38 +71,29 @@
                 formControlName="nombre"
                 placeholder="Nombre de la mascota"
               />
-              <small
-                class="p-error"
-                *ngIf="
-                  publicacionForm.get('nombre')?.invalid &&
-                  (publicacionForm.get('nombre')?.dirty || publicacionForm.get('nombre')?.touched)
-                "
-              >
-                El nombre es
-                {{ publicacionForm.get('tipo')?.value === 'Propio' ? 'requerido' : 'inválido' }}.
-              </small>
+              <app-form-error [control]="publicacionForm.get('nombre')" />
             </div>
 
             <div class="col-12">
               <div class="flex flex-col gap-2">
-                <label for="descripcion">Descripción (Opcional)</label>
+                <label for="descripcion"
+                  >Descripción <span class="text-sm font-light">(Opcional)</span></label
+                >
                 <textarea
-                  pInputTextarea
+                  pTextarea
                   id="descripcion"
                   rows="3"
                   formControlName="descripcion"
                   placeholder="Rasgos especiales..."
                   class="resize-none bg-surface-100 p-2 rounded-md"
                 ></textarea>
-                <small class="p-error" *ngIf="publicacionForm.get('descripcion')?.invalid"
-                  >Máximo 500 caracteres.</small
-                >
+                <app-form-error [control]="publicacionForm.get('descripcion')" />
               </div>
             </div>
 
             <div class="flex gap-5">
               <div class="inline-flex flex-col gap-2">
-                <label for="especie">Especie <span class="required">*</span></label>
+                <label for="especie">Especie <span class="text-red-500">*</span></label>
                 <p-select
                   id="especie"
                   formControlName="especie"
@@ -104,13 +107,15 @@
                         publicacionForm.get('especie')?.touched)
                   }"
                 ></p-select>
+                <app-form-error [control]="publicacionForm.get('especie')" />
               </div>
 
               <div class="flex flex-col gap-2">
-                <label>Tamaño (Opcional)</label>
+                <label>Tamaño <span class="text-sm font-light">(Opcional)</span></label>
                 <div class="flex gap-3">
                   <div *ngFor="let t of tamanos; let i = index">
                     <p-radioButton
+                      name="tamanio"
                       [inputId]="'tamanio' + i"
                       [value]="t.value"
                       formControlName="tamanio"
@@ -118,14 +123,16 @@
                     <label [for]="'tamanio' + i" class="ml-2">{{ t.label }}</label>
                   </div>
                 </div>
+                <app-form-error [control]="publicacionForm.get('tamanio')" />
               </div>
             </div>
 
             <div class="flex flex-col gap-2">
-              <label>Color principal (Opcional)</label>
+              <label>Color principal <span class="text-sm font-light">(Opcional)</span></label>
               <div class="flex flex-wrap gap-3">
                 <div *ngFor="let color of getColors(); let i = index" class="flex items-center">
                   <p-radioButton
+                    name="color"
                     [inputId]="'color' + i"
                     [value]="color[0]"
                     formControlName="color"
@@ -153,9 +160,29 @@
       <p-divider></p-divider>
 
       <p-fieldset legend="3. Ubicación" toggleable>
-        <p-button icon="pi pi-map-marker" label="Seleccionar Ubicación" class="mr-2"></p-button>
+        <div class="flex gap-4">
+          <app-location-picker
+            [titleButton]="!!ubicacionExterna() ? 'Cambiar ubicación' : 'Selecciona una ubicación'"
+            [isInvalid]="isInvalid('ubicacion')!"
+            (locationSelected)="onLocationSelected($event)"
+          ></app-location-picker>
+          <div style="display: flex; margin-bottom: 4px; flex-direction: column">
+            @if (!!ubicacionExterna()) {
+            <label for=""> Ubicación seleccionada: </label>
+            <strong style="font-size: 14px">
+              {{ ubicacionExterna()!.ubicacion!.provincia!.nombre! }},
+              {{ ubicacionExterna()!.ubicacion!.departamento!.nombre! }},
+              {{ ubicacionExterna()!.ubicacion!.municipio!.nombre! }}
+            </strong>
+            }
+          </div>
 
-        No se ha seleccionado una ubicación
+          @if (isInvalid('ubicacion')) {
+          <p-message severity="error" size="small" variant="simple"
+            >La ubicación es obligatoria</p-message
+          >
+          }
+        </div>
       </p-fieldset>
 
       <p-divider></p-divider>
@@ -172,7 +199,7 @@
           chooseLabel="Cargar Imágenes"
           (uploadHandler)="onUpload($event)"
         ></p-fileUpload>
-        <small class="text-500 mt-2 block">Sube hasta 5 imágenes (máx. 1MB c/u).</small>
+        <small class="text-500 mt-2 block">Sube hasta 3 imágenes (máx. 1MB c/u).</small>
       </p-fieldset>
 
       <p-divider></p-divider>

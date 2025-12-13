@@ -5,6 +5,7 @@ import {
   Publicacion,
   PublicacionCreate,
   PublicacionFilter,
+  PublicacionUpdate,
 } from '../interfaces/publicacion.interface';
 import { PaginatedResult } from '../interfaces/pagination.interface';
 
@@ -32,8 +33,8 @@ export class PublicacionesService extends ApiService {
     return this.post<Publicacion, PublicacionCreate>(this.endpoint, publicacion);
   }
 
-  public update(id: number, publicacion: PublicacionCreate): Observable<Publicacion> {
-    return this.put<Publicacion, PublicacionCreate>(`${this.endpoint}/${id}`, publicacion);
+  public update(id: number, publicacion: PublicacionUpdate): Observable<Publicacion> {
+    return this.put<Publicacion, PublicacionUpdate>(`${this.endpoint}/${id}`, publicacion);
   }
 
   public delete(id: number): Observable<void> {

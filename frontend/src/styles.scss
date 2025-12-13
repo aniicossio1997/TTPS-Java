@@ -35,3 +35,9 @@ body {
 .p-error {
   color: #cf0707;
 }
+
+.p-carousel.single-image{
+  button {
+    display: none;
+  }
+}
