@@ -41,41 +41,58 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     FilterChain chain)
             throws IOException, ServletException {
 
-        String header = request.getHeader("Authorization");
-
+        // 1. Ignorar rutas públicas
         String path = request.getServletPath();
-        if (path.startsWith("/api/auth")
-                || path.startsWith("/api/public")
-                || (path.startsWith("/api/usuarios") && request.getMethod().equals("POST"))
-                || path.startsWith("/v3/api-docs")
-                || path.startsWith("/swagger-ui")
-                || path.startsWith("/swagger-ui.html")) {
-            chain.doFilter(request, response);
-            return;
-        }
+        // 1. Rutas que NO requieren token (se saltan la validación)
+                if (path.startsWith("/api/auth")
+                        || path.startsWith("/api/public/")
+                        //|| (path.startsWith("/api/usuarios"))
+                        || path.startsWith("/v3/api-docs")
+                        || path.startsWith("/swagger-ui")
+                        || path.startsWith("/swagger-ui.html")) {
+                    chain.doFilter(request, response);
+                    return;
+                }
+
+        String header = request.getHeader("Authorization");
 
         if (header != null && header.startsWith("Bearer ")) {
             String token = header.substring(7);
-
             Jws<Claims> jws = JwtUtils.validateToken(token, jwtSecret);
+
             if (jws != null) {
-                Claims claims = jws.getBody();
-                Long id = claims.get("id", Long.class);
+                try {
+                    // INTENTAMOS buscar al usuario
+                    Claims claims = jws.getBody();
+                    Long id = claims.get("id", Long.class);
 
-                Usuario usuario = usuarioRepository.findById(id).orElseThrow(NotFoundException::new);
+                    Usuario usuario = usuarioRepository.findById(id)
+                            .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
 
-                var auth = new UsernamePasswordAuthenticationToken(usuario, null, Collections.emptyList());
-                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(auth);
-                chain.doFilter(request, response);
-                return;
+                    // Si existe, autenticamos
+                    var auth = new UsernamePasswordAuthenticationToken(usuario, null, Collections.emptyList());
+                    auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(auth);
+
+                    chain.doFilter(request, response);
+                    return;
+
+                } catch (Exception e) {
+                    // SI FALLA (Usuario no existe, etc), limpiamos contexto y devolvemos JSON
+                    SecurityContextHolder.clearContext();
+                    response.setStatus(HttpStatus.FORBIDDEN.value());
+                    response.setContentType("application/json");
+                    ErrorDTO error = new ErrorDTO(HttpStatus.FORBIDDEN.value(), "El usuario del token no existe o no es válido", "auth_error");
+                    response.getWriter().write(mapper.writeValueAsString(error));
+                    return; // Importante: cortamos ejecución aquí
+                }
             }
         }
 
-        ErrorDTO errorDTO = new ErrorDTO(HttpStatus.UNAUTHORIZED.value(), "Token invalido", "invalid-token");
+        // Si no hay token o es inválido, respondemos 401
+        ErrorDTO errorDTO = new ErrorDTO(HttpStatus.UNAUTHORIZED.value(), "Token inválido o ausente", "invalid-token");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
         response.getWriter().write(mapper.writeValueAsString(errorDTO));
     }
 }

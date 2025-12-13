@@ -22,7 +22,7 @@ public class Foto extends IdentifiableEntity {
     private String nombre;
 
     @Lob
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
     private byte[] content;
     // --- getters/setters ---
 

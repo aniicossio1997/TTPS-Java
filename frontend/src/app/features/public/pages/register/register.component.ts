@@ -4,7 +4,8 @@ import {
   FormBuilder,
   Validators,
   FormGroup,
-  FormsModule
+  FormsModule,
+  ValidationErrors
 } from '@angular/forms';
 
 // PrimeNG
@@ -15,12 +16,17 @@ import { CardModule } from 'primeng/card';
 import { AbstractControl } from '@angular/forms';
 import { FormControl } from '@angular/forms';
 import { DividerModule } from 'primeng/divider';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MessageModule } from 'primeng/message';
 import { LocationPickerComponent } from '../../../../components/LocationPicker/location-picker.component';
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
 import { UbicacionExternaResponse } from '../../../../interfaces/ubicacionExternaResponse';
+import { AuthService } from '../../../../services/auth.service';
+import { ApiStatus } from '../../../../interfaces/local/EnumApiStatus.enum';
+import { RegisterRequest } from '../../../../interfaces/registerRequest.interface';
+import { EnumRolUsuario } from '../../../../interfaces/local/rol-usuario.enum';
+import { ToastrService } from 'ngx-toastr';
 
 
 function passwordMatchValidator(form: AbstractControl) {
@@ -42,6 +48,22 @@ function passwordMatchValidator(form: AbstractControl) {
   return null;
 }
 
+function ubicacionRequeridaValidator(control: AbstractControl): ValidationErrors | null {
+  const value = control.value as { lat?: string; lng?: string } | null;
+
+  if (!value) {
+    return { required: true };
+  }
+
+  const lat = value.lat?.toString().trim();
+  const lng = value.lng?.toString().trim();
+
+  if (!lat || !lng) {
+    return { required: true };
+  }
+
+  return null;
+}
 
 interface Option {
   label: string;
@@ -53,7 +75,10 @@ type RegisterForm = {
   lastName: FormControl<string>;
   email: FormControl<string>;
   phone: FormControl<string>;
-  ubicacion: FormControl<{ lat: string; lng: string }>;
+    ubicacion: FormGroup<{
+    lat: FormControl<string>;
+    lng: FormControl<string>;
+  }>;
   password: FormControl<string>;
   confirmPassword: FormControl<string>;
 };
@@ -81,14 +106,15 @@ type RegisterForm = {
   schemas:[]
 })
 export class RegisterComponent implements OnInit {
-
-  location: { lat: number; lng: number } | null = null;
+  private readonly router = inject(Router);
+  readonly serviceAuth = inject(AuthService);
+  private readonly toastr = inject(ToastrService);
+  private readonly _status  = signal<ApiStatus>(ApiStatus.INIT);
 
   ubicacionExterna= signal<UbicacionExternaResponse|null>(null);
 
   onLocationSelected(coords: { lat: number; lng: number, ubicacionExterna: UbicacionExternaResponse }) {
     console.log('Ubicación seleccionada en el registro:', coords);
-    this.location = coords;
     this.registerForm.controls['ubicacion'].setValue({ lat: coords.lat.toString(), lng: coords.lng.toString() });
     this.ubicacionExterna.set(coords.ubicacionExterna);
    // this.visibleMapa = false;
@@ -110,7 +136,10 @@ export class RegisterComponent implements OnInit {
     lastName: this.fb.control('', [Validators.required]),
     email: this.fb.control('', [Validators.required, Validators.email]),
     phone: this.fb.control(''),
-    ubicacion: this.fb.control({ lat: '', lng: '' }, [Validators.required]),
+      ubicacion: this.fb.group({
+    lat: this.fb.control('', [Validators.required]),
+    lng: this.fb.control('', [Validators.required]),
+  }),
     password: this.fb.control('', [Validators.required, Validators.minLength(6)]),
     confirmPassword: this.fb.control('', [Validators.required])
   },
@@ -119,6 +148,9 @@ export class RegisterComponent implements OnInit {
 
 
   onSubmit(): void {
+
+
+    this.registerForm.markAllAsTouched();
     console.log('Submitting register form', this.registerForm.invalid);
     if (this.registerForm.invalid) {
         this.registerForm.markAllAsTouched();
@@ -129,12 +161,19 @@ export class RegisterComponent implements OnInit {
     // getRawValue() para mantener bien el tipo
     const data = this.registerForm.getRawValue();
     console.log('Form value', data);
+    this._onRegister();
     // acá llamás al backend
   }
 
       // helper (mucho más cómodo de usar en HTML)
     isInvalid(controlName: string) {
+
         const control = this.registerForm.get(controlName);
+
+        if (controlName === 'ubicacion') {
+          return !!control && control.invalid && (control.touched || control.dirty);
+        }
+
         return control?.invalid && (control.touched || control.dirty);
     }
 
@@ -147,6 +186,41 @@ export class RegisterComponent implements OnInit {
         && ubicacion.lng !== '';
     }
 
+    private _onRegister(){
+      this._status.set(ApiStatus.LOADING);
+      const formValue = this.registerForm.getRawValue();
+
+      const request:RegisterRequest={
+        nombre: formValue.firstName,
+        apellido: formValue.lastName,
+        email: formValue.email,
+        password: formValue.password,
+        rol: EnumRolUsuario.USUARIO_COMUN,
+        ubicacion: {
+          idExterno: this.ubicacionExterna()!.ubicacion.departamento.id ?? '',
+          provincia: this.ubicacionExterna()!.ubicacion.provincia.nombre || '',
+          ciudad: this.ubicacionExterna()!.ubicacion.municipio.nombre || '',
+          barrio: this.ubicacionExterna()!.ubicacion.departamento.nombre || '',
+          latitud: Number(formValue.ubicacion.lat),
+          longitud: Number(formValue.ubicacion.lng),
+
+        }
+      }
+      this.serviceAuth.postRegister(request).subscribe({
+            next: (resp) => {
+              console.log('Login successful:', resp);
+              this._status.set(ApiStatus.SUCCESS);
+              this.router.navigate(['/']);
+              this.toastr.success('Inicie sesion.', 'Exito');
+
+            },
+            error: (err) => {
+              console.error('Login error:', err);
+              this._status.set(ApiStatus.ERROR);
+              this.toastr.error('Credenciales incorrectas.', 'Error de Autenticación');
+            }
+      });
+    }
 
 }
 
