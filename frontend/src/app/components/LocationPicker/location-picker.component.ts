@@ -166,7 +166,7 @@ export class LocationPickerComponent implements AfterViewInit {
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
 
-      console.log("MAPA::,",)
+      console.log("MAPA::,",e)
       const temp: UbicacionSeleccionada = {
         lat: String(lat),
         lng: String(lng),

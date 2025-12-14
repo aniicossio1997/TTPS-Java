@@ -1,26 +1,19 @@
 <section class="min-h-screen bg-slate-50/50 font-sans text-slate-800 pb-20">
   <!-- Navegación Superior -->
-  <nav
-    class="sticky top-0 z-50 rounded-3xl backdrop-blur-md bg-white/70 border-b border-slate-200/60 supports-[backdrop-filter]:bg-white/60">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
-      <button
-        class="group flex items-center text-slate-500 hover:text-slate-900 transition-colors gap-2 font-medium text-sm">
-        <div class="p-1.5 rounded-full group-hover:bg-slate-100 transition-colors">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path d="m15 18-6-6 6-6" />
-          </svg>
-        </div>
-        Atrás
-      </button>
-      <h1 class="text-sm font-semibold text-slate-800">Detalle de Usuario</h1>
-      <div class="w-16"></div> <!-- Spacer para centrar el título visualmente -->
-    </div>
-  </nav>
+<nav class="max-w-7xl px-4 sm:px-6 lg:px-8 py-2">
+  <button
+    class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium"
+    routerLink="/app/publicaciones"
+  >
+    <i class="pi pi-arrow-left" style="font-size: 0.8rem"></i>
+    Atrás
+  </button>
+  <h1 class="text-sm text-slate-500 mt-1">Publicaciones</h1>
+</nav>
 
   <!-- Tarjeta Héroe de Barrio -->
 
-  <article class="max-w-6xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
+  <article class="max-w-8xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
     <div
       class="bg-white rounded-3xl pt-2 px-6 shadow-sm border border-slate-100 flex items-center justify-between relative overflow-hidden mb-4">
       <div class="z-10">
@@ -37,7 +30,7 @@
     </div>
   </article>
 
-  <main class="max-w-6xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
+  <main class="max-w-8xl mx-auto px-4 sm:px-6 mt-6 space-y-6">
     <article
       class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 flex items-center justify-between relative overflow-hidden mb-4">
       <p-tabs lazy [value]="activeTab()" (valueChange)="onTabChange($event)" scrollable>
@@ -53,25 +46,25 @@
 
 
               @switch (opcionesDeTAP_0()) {
-              @case (opcionesDeEdicionENUM.EDITAR_PERDIL) {
-              <app-editar-perfil [idUsuario]="idUsuario()"
-                (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-editar-perfil>
-              }
-              @case (opcionesDeEdicionENUM.EDITAR_PASSWORD) {
-              <app-edit-password [idUsuario]="idUsuario()"
-                (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-edit-password>
-              }
-              @default {
-              <app-perfil-card (onEditarPerfil)="onEditarPerfil()" (onEditarPassword)="onEditarPassword()"
-                [idUsuario]="idUsuario()"></app-perfil-card>
-              }
+                @case (opcionesDeEdicionENUM.EDITAR_PERDIL) {
+                <app-editar-perfil [idUsuario]="idUsuario()"
+                  (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-editar-perfil>
+                }
+                @case (opcionesDeEdicionENUM.EDITAR_PASSWORD) {
+                <app-edit-password [idUsuario]="idUsuario()"
+                  (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-edit-password>
+                }
+                @default {
+                <app-perfil-card (onEditarPerfil)="onEditarPerfil()" (onEditarPassword)="onEditarPassword()"
+                  [idUsuario]="idUsuario()"></app-perfil-card>
+                }
               }
 
             }
           </p-tabpanel>
           <p-tabpanel value="1">
             @if(activeTab()=='1'){
-            <app-publicaciones></app-publicaciones>
+            <app-pulicaciones-user></app-pulicaciones-user>
             }
           </p-tabpanel>
           <p-tabpanel value="2">

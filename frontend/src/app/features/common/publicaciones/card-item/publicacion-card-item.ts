@@ -5,6 +5,7 @@ import { CardModule } from 'primeng/card';
 import { Tag, TagModule, TagPassThroughOptions } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { Publicacion } from '../../../../interfaces/publicacion.interface';
+import { AuthService } from '../../../../services/auth.service';
 import { AuthStoreService } from '../../../../store/auth.stored.service';
 
 interface EstadoTag {
