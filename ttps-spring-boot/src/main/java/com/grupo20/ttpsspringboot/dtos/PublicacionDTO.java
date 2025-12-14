@@ -31,7 +31,7 @@ public class PublicacionDTO implements Serializable {
 
     private EstadoPublicacionDTO estado;
 
-    private List<String> fotos = new ArrayList<>();
+    private List<FotoLinkDTO> fotos = new ArrayList<>();
 
     public static PublicacionDTO fromEntity(Publicacion entity) {
         PublicacionDTO dto = new PublicacionDTO();
@@ -55,6 +55,10 @@ public class PublicacionDTO implements Serializable {
 
         if (entity.getEstado() != null) {
             dto.setEstado(EstadoPublicacionDTO.fromEntity(entity.getEstado()));
+        }
+
+        if (!entity.getFotos().isEmpty()) {
+            dto.setFotos(entity.getFotos().stream().map(FotoLinkDTO::fromEntity).toList());
         }
 
         return dto;

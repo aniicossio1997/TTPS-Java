@@ -22,6 +22,7 @@ import { AvistamientoForm } from '../../avistamientos/form/avistamiento-form';
 import { AvistamientosList } from '../../avistamientos/list/avistamientos-list';
 import { ToastrService } from 'ngx-toastr';
 import { EstadoPublicacionTag } from '../../../../components/estado-publicacion-tag/estado-publicacion-tag';
+import { DividerModule } from 'primeng/divider';
 
 interface EstadoTag {
   text: string;
@@ -56,6 +57,7 @@ export interface ActionOption {
     AvistamientoForm,
     AvistamientosList,
     EstadoPublicacionTag,
+    DividerModule
   ],
 })
 export class PublicacionDetailComponent implements OnInit {
@@ -113,10 +115,7 @@ export class PublicacionDetailComponent implements OnInit {
 
   public fotos = computed<string[]>(() => {
     if (!this.publicacion()) return [];
-    if (this.publicacion()?.fotos?.length) return this.publicacion()?.fotos ?? [];
-    return [
-      'https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=800&auto=format&fit=crop',
-    ];
+    return this.publicacion()?.fotos.map((f) => f.url) || [];
   });
 
   public isLoading = signal(true);

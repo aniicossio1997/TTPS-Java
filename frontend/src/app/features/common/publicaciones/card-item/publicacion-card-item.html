@@ -5,17 +5,15 @@
   <ng-template #header>
     <div class="w-full h-56 bg-gray-200 flex items-center justify-center relative">
       <img
-        [src]="publicacion.fotos[0] || defaultImageUrl"
+        [src]="publicacion.fotos[0]?.url  || defaultImageUrl"
         [alt]="'Imagen de ' + publicacion.nombre"
         class="w-full h-full object-cover text-transparent"
         loading="lazy"
       />
 
-
-      <span  class="absolute bottom-2 left-2">
- <app-estado-publicacion-tag [estado]="publicacion.estado?.estado || ''"/>
+      <span class="absolute bottom-2 left-2">
+        <app-estado-publicacion-tag [estado]="publicacion.estado?.estado || ''" />
       </span>
-
 
       <p-button
         aria-label="Ver ubicación"

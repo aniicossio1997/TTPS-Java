@@ -1,3 +1,4 @@
+import { FotoLinkDTO } from './fotoLinkDTO';
 import { PaginationFilter } from './pagination.interface';
 import { Ubicacion, UbicacionCreate, UbicacionUpdate } from './ubicacion.interface';
 import { ubicacionCreateRequest } from './ubicacionCreateRequest.interface';
@@ -29,7 +30,7 @@ export interface Publicacion {
   usuarioId: number;
   estado?: EstadoPublicacion;
   usuario: UsuarioSmall;
-  fotos: string[];
+  fotos: FotoLinkDTO[];
 }
 
 export interface PublicacionCreate {
