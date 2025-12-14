@@ -39,7 +39,7 @@ public class GeorefService {
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<GeorefBaseResponse<DepartamentoDTO>>() {},
-                    idProvincia 
+                    idProvincia
             ).getBody();
         } catch (Exception e) {
             e.printStackTrace();
@@ -54,7 +54,7 @@ public class GeorefService {
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<GeorefBaseResponse<MunicipioDTO>>() {},
-                    idProvincia 
+                    idProvincia
             ).getBody();
         } catch (Exception e) {
             e.printStackTrace();
