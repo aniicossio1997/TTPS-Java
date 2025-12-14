@@ -1,0 +1,34 @@
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.register-form__row {
+  display: flex;
+  gap: 12px;
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+  }
+}
+
+.register-form__field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+
+  label {
+    font-size: 0.85rem;
+    color: #555;
+  }
+
+  :is(input, .p-inputtext, .p-dropdown, .p-inputmask) {
+    width: 100%;
+  }
+
+}
+:host ::ng-deep p-inputmask > input{
+  width: 100%;
+}

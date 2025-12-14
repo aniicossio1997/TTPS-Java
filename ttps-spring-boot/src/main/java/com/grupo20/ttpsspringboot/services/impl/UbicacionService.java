@@ -47,10 +47,16 @@ public class UbicacionService {
             throw new NotFoundException();
         }
 
-        if (dto.getIdExterno() != null) ubicacion.setIdExterno(dto.getIdExterno());
+        if (dto.getIdExternoProvincia() != null) ubicacion.setIdExternoProvincia(dto.getIdExternoProvincia());
         if (dto.getProvincia() != null) ubicacion.setProvincia(dto.getProvincia());
-        if (dto.getCiudad() != null) ubicacion.setCiudad(dto.getCiudad());
-        if (dto.getBarrio() != null) ubicacion.setBarrio(dto.getBarrio());
+
+        if (dto.getIdExternoMunicipio() != null) ubicacion.setIdExternoMunicipio(dto.getIdExternoMunicipio());
+        if (dto.getMunicipio() != null) ubicacion.setMunicipio(dto.getMunicipio());
+
+        if (dto.getIdExternoDepartamento() != null) ubicacion.setIdExternoDepartamento(dto.getIdExternoDepartamento());
+        if (dto.getDepartamento() != null) ubicacion.setDepartamento(dto.getDepartamento());
+
+
         if (dto.getLatitud() != null) ubicacion.setLatitud(dto.getLatitud());
         if (dto.getLongitud() != null) ubicacion.setLongitud(dto.getLongitud());
 
@@ -91,14 +97,16 @@ public class UbicacionService {
 
     /**
      * Búsqueda flexible por múltiples criterios (LIKE).
-     * @param idExterno
+     * @param idExternoProvincia
      * @param provincia
-     * @param ciudad
-     * @param barrio
+     * @param idExternoMunicipio
+     * @param municipio
+     * @param idExternoDepartamento
+     * @param departamento
      * @return Lista de ubicaciones que coinciden.
      */
     @Transactional(readOnly = true)
-    public List<Ubicacion> buscarPorCriterio(String idExterno, String provincia, String ciudad, String barrio) {
-        return this.ubicacionRepository.findByCriteriaLike(idExterno, provincia, ciudad, barrio);
+    public List<Ubicacion> buscarPorCriterio(String idExternoProvincia, String provincia, String idExternoMunicipio, String municipio, String idExternoDepartamento,String departamento) {
+        return this.ubicacionRepository.findByCriteriaLike(idExternoProvincia, provincia, idExternoMunicipio, municipio, idExternoDepartamento, departamento);
     }
 }

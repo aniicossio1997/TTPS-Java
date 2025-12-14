@@ -57,4 +57,27 @@ public class Foto extends IdentifiableEntity {
                 ", content=" + Arrays.toString(content) +
                 '}';
     }
+
+    public String getContentType() {
+        if (nombre == null) return "application/octet-stream";
+
+        String lower = nombre.toLowerCase();
+
+        if (lower.endsWith(".jpg") || lower.endsWith(".jpeg")) {
+            return "image/jpeg";
+        }
+        if (lower.endsWith(".png")) {
+            return "image/png";
+        }
+        if (lower.endsWith(".gif")) {
+            return "image/gif";
+        }
+        if (lower.endsWith(".webp")) {
+            return "image/webp";
+        }
+
+        // tipo por defecto
+        return "application/octet-stream";
+    }
+
 }

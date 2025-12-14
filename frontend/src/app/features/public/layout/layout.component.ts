@@ -13,7 +13,6 @@ export class LayoutComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    console.log('Layouts component initialized');
     // Initialization logic for the layout component
     // This can include loading configuration, setting up routes, etc.
   }

@@ -12,31 +12,39 @@ import java.io.Serializable;
 @Setter
 public class UbicacionCreateDTO implements Serializable {
 
-    private String idExterno;
+    @NotBlank(message = "La latitud es obligatoria.")
+    private Double latitud;
+    @NotBlank(message = "La longitud es obligatoria.")
+    private Double longitud;
+
 
     @NotBlank(message = "La provincia es obligatoria.")
     private String provincia;
+    @NotBlank(message = "El id Externo Provincia es obligatoria.")
+    private String idExternoProvincia;
 
-    @NotBlank(message = "La ciudad es obligatoria.")
-    private String ciudad;
+    @NotBlank(message = "El municipio es obligatoria.")
+    private String municipio;
+    @NotBlank(message = "El id Externo del Municipio es obligatoria.")
+    private String idExternoMunicipio;
 
-    @NotBlank(message = "El barrio es obligatorio.")
-    private String barrio;
-
-    @NotNull(message = "La latitud es obligatoria.")
-    private Double latitud;
-
-    @NotNull(message = "La longitud es obligatoria.")
-    private Double longitud;
+    @NotBlank(message = "El Departamento es obligatoria.")
+    private String departamento;
+    @NotBlank(message = "El Id Externo Departamento es obligatoria.")
+    private String idExternoDepartamento;
 
     public Ubicacion toEntity() {
         Ubicacion ubicacion = new Ubicacion();
-        ubicacion.setIdExterno(this.idExterno);
-        ubicacion.setProvincia(this.provincia);
-        ubicacion.setCiudad(this.ciudad);
-        ubicacion.setBarrio(this.barrio);
-        ubicacion.setLatitud(this.latitud);
-        ubicacion.setLongitud(this.longitud);
+
+        ubicacion.setProvincia(this.getProvincia());
+        ubicacion.setIdExternoProvincia(this.getIdExternoProvincia());
+        ubicacion.setMunicipio(this.getMunicipio());
+        ubicacion.setIdExternoMunicipio(this.getIdExternoMunicipio());
+        ubicacion.setDepartamento(this.getDepartamento());
+        ubicacion.setIdExternoDepartamento(this.getIdExternoDepartamento());
+        ubicacion.setLatitud(this.getLatitud());
+        ubicacion.setLongitud(this.getLongitud());
+
         return ubicacion;
     }
 }

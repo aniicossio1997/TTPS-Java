@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
-import { AuthStoreService } from '../../../../store/user.stored.service';
+import { AuthStoreService } from '../../store/auth.stored.service';
 
 @Component({
   selector: 'app-sidebar',

@@ -1,3 +1,9 @@
-<p>layout-component works!</p>
+<!-- src/app/shared/sidebar/sidebar.component.html -->
 
-<router-outlet></router-outlet>
+<div style="min-height: 100vh;" class="flex">
+  <app-sidebar></app-sidebar>
+
+  <main class="flex-1 p-10 ">
+    <router-outlet></router-outlet>
+  </main>
+</div>

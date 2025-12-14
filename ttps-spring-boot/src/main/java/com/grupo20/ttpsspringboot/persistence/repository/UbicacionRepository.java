@@ -14,17 +14,22 @@ public interface UbicacionRepository extends JpaRepository<Ubicacion, Long> {
 
     // 2) Versión con filtro flexible usando @Query (ejemplo)
     @Query("""
-           SELECT u
-           FROM Ubicacion u
-           WHERE (:idExterno IS NULL OR u.idExterno LIKE %:idExterno%)
-             AND (:provincia IS NULL OR u.provincia LIKE %:provincia%)
-             AND (:ciudad IS NULL OR u.ciudad LIKE %:ciudad%)
-             AND (:barrio IS NULL OR u.barrio LIKE %:barrio%)
-           """)
-    List<Ubicacion> findByCriteriaLike(@Param("idExterno") String idExterno,
-                                       @Param("provincia") String provincia,
-                                       @Param("ciudad") String ciudad,
-                                       @Param("barrio") String barrio);
+          SELECT u
+          FROM Ubicacion u
+          WHERE (:idExternoProvincia IS NULL OR u.idExternoProvincia LIKE %:idExternoProvincia%)
+            AND (:provincia IS NULL OR u.provincia LIKE %:provincia%)
+            AND (:idExternoMunicipio IS NULL OR u.idExternoMunicipio LIKE %:idExternoMunicipio%)
+            AND (:municipio IS NULL OR u.municipio LIKE %:municipio%)
+            AND (:idExternoDepartamento IS NULL OR u.idExternoDepartamento LIKE %:idExternoDepartamento%)
+            AND (:departamento IS NULL OR u.departamento LIKE %:departamento%)
+          """)
+    List<Ubicacion> findByCriteriaLike(@Param("idExternoProvincia") String idExternoProvincia,
+                                        @Param("provincia") String provincia,
+                                        @Param("idExternoMunicipio") String idExternoMunicipio,
+                                        @Param("municipio") String municipio,
+                                        @Param("idExternoDepartamento") String idExternoDepartamento,
+                                        @Param("departamento") String departamento
+  );
 
 
 }

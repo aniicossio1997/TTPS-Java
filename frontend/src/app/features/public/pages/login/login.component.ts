@@ -18,7 +18,7 @@ import { RouterLink, Router } from '@angular/router';
 import { MessageModule } from 'primeng/message';
 import { AuthService } from '../../../../services/auth.service';
 import { LoginResponse } from '../../../../interfaces/LoginResponse.interface';
-import { AuthStoreService } from '../../../../store/user.stored.service';
+import { AuthStoreService } from '../../../../store/auth.stored.service';
 import { CommonModule } from '@angular/common';
 
 

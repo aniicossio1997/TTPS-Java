@@ -3,11 +3,8 @@ import {
   Injectable,
   inject,
   signal,
-  computed,
-  PLATFORM_ID
+  computed
 } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
-import { firstValueFrom } from 'rxjs';
 
 import { AuthService } from '../services/auth.service';
 import { LoginResponse, Usuario } from '../interfaces/LoginResponse.interface';
@@ -59,7 +56,6 @@ export class AuthStoreService {
 
     this.authService.login(email, password).subscribe({
       next: (resp) => {
-        console.log('Login successful:', resp);
         this._session.set(resp);
         this._status.set(ApiStatus.SUCCESS);
         this.saveToStorage(resp);
@@ -111,9 +107,7 @@ export class AuthStoreService {
 
   private saveToStorage(resp: LoginResponse): void {
 
-    console.log('Saving to storage:', resp);
-    console.log('Token:', resp.token);
-    console.log('Usuario:', resp.usuario);
+
     localStorage.setItem('token', resp.token);
     localStorage.setItem('usuario', JSON.stringify(resp.usuario));
   }

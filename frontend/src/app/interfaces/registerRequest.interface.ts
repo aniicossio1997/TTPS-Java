@@ -1,5 +1,5 @@
 import { EnumRolUsuario } from "./local/rol-usuario.enum";
-import { UbicacionRequest} from "./ubicacionRequest.interface";
+import { ubicacionCreateRequest} from "./ubicacionCreateRequest.interface";
 
 export interface RegisterRequest {
   nombre: string;
@@ -7,5 +7,6 @@ export interface RegisterRequest {
   email: string;
   password: string;
   rol: EnumRolUsuario; // Ajustalo a tus roles reales
-  ubicacion: UbicacionRequest;
+  ubicacion: ubicacionCreateRequest;
+  telefono: string;
 }

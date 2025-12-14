@@ -13,6 +13,5 @@ export class App  implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    console.log('App initialized');
   }
 }

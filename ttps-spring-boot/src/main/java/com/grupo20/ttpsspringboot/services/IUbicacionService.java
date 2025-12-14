@@ -18,5 +18,5 @@ public interface IUbicacionService {
 
     List<Ubicacion> buscarPorProvincia(String provincia);
 
-    List<Ubicacion> buscarPorCriterio(String idExterno, String provincia, String ciudad, String barrio);
+    List<Ubicacion> buscarPorCriterio( String idExternoProvincia, String provincia,String idExternoMunicipio, String municipio,  String idExternoDepartamento,String departamento);
 }

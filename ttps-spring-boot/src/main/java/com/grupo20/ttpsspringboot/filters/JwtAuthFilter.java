@@ -46,6 +46,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         // 1. Rutas que NO requieren token (se saltan la validación)
                 if (path.startsWith("/api/auth")
                         || path.startsWith("/api/public/")
+                        || path.startsWith("/api/fotos/")
                         //|| (path.startsWith("/api/usuarios"))
                         || path.startsWith("/v3/api-docs")
                         || path.startsWith("/swagger-ui")

@@ -2,18 +2,15 @@ package com.grupo20.ttpsspringboot.exceptions;
 
 import com.grupo20.ttpsspringboot.dtos.ErrorDTO;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
-@RequestMapping(produces = MediaType.APPLICATION_JSON_VALUE)
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -47,16 +44,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ErrorDTO> handleJsonParseException(HttpMessageNotReadableException ex) {
-
         ErrorDTO errorDTO = new ErrorDTO(
                 HttpStatus.BAD_REQUEST.value(),
                 "Error de formato de la petición.",
                 "json malformado"
         );
-
         return new ResponseEntity<>(errorDTO, HttpStatus.BAD_REQUEST);
     }
 
+    // Este es el método que capturará tu BadRequestException porque hereda de APIException
     @ExceptionHandler(APIException.class)
     public ResponseEntity<ErrorDTO> handleApiException(APIException ex) {
         ErrorDTO error = new ErrorDTO(
@@ -64,7 +60,6 @@ public class GlobalExceptionHandler {
                 ex.getMessage(),
                 ex.getErrorCode()
         );
-        return new ResponseEntity<>(error, ex.getStatus());
+        return ResponseEntity.status(ex.getStatus()).body(error);
     }
-
 }

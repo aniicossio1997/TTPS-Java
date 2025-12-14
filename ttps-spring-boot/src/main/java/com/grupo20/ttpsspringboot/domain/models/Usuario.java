@@ -22,6 +22,7 @@ public class Usuario extends IdentifiableEntity {
 
     private String nombre;
     private String apellido;
+    private String telefono;
 
     @Column(unique = true, nullable = false)
     private String email;

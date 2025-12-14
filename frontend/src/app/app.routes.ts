@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { publicGuard } from './shared/guards/public.guard';
 import { userPanelGuard } from './shared/guards/user-panel.guard';
 import { adminGuard } from './shared/guards/admin.guard';
-import { NotFound } from './features/not-found/not-found';
+import { NotFound } from './features/common/not-found/not-found';
 
 export const routes: Routes = [
   {

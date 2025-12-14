@@ -1,0 +1,12 @@
+.card-actions {
+  position: relative;
+  display: flex;
+  justify-content: flex-end;
+}
+:host ::ng-deep .editando-perfil >*{
+  display: none !important;
+}
+
+:host ::ng-deep .show-perfil{
+  border: 1px solid #37B47D !important;
+}

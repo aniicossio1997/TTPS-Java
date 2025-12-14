@@ -51,12 +51,14 @@ public class UbicacionController extends BaseController {
 
     @GetMapping("/buscar")
     public ResponseEntity<List<UbicacionDTO>> getFiltered(
-            @RequestParam(required = false) String idExterno,
+            @RequestParam(required = false) String idExternoProvincia,
             @RequestParam(required = false) String provincia,
-            @RequestParam(required = false) String ciudad,
-            @RequestParam(required = false) String barrio) {
+            @RequestParam(required = false) String idExternoMunicipio,
+            @RequestParam(required = false) String municipio,
+            @RequestParam(required = false) String idExternoDepartamento,
+            @RequestParam(required = false) String departamento) {
 
-        List<Ubicacion> ubicaciones = ubicacionService.buscarPorCriterio(idExterno, provincia, ciudad, barrio);
+        List<Ubicacion> ubicaciones = ubicacionService.buscarPorCriterio(idExternoProvincia, provincia, idExternoMunicipio, municipio, idExternoDepartamento, departamento);
 
         if (ubicaciones.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

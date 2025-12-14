@@ -1,0 +1,166 @@
+
+
+
+    <form [formGroup]="editForm" class="flex flex-col gap-2" autocomplete="off">
+      <h1 class="mt-4 font-bold text-2xl">Editar perfil</h1>
+
+
+
+      <div class="flex  items-start w-full">
+
+        <!-- PREVIEW -->
+        <div class="w-30 h-30 rounded-full overflow-hidden border-4 border-orange-50 shadow-inner lg:mx-0">
+          <img
+            [src]="previewFoto() ?? '/fotos/sin_imagen.png'"
+            alt="Foto de perfil"
+            class="w-full h-full object-cover"
+          />
+        </div>
+
+        <!-- BOTÓN CAMBIAR FOTO -->
+        <div class="mt-1">
+
+          <div class="flex flex-col flex-wrap">
+            <p-button [icon]="previewFoto() ? 'pi pi-pen-to-square' :  'pi pi-upload'" [label]="previewFoto() ? 'Cambiar foto' : 'Nueva foto'" variant="text" severity="primary" (click)="fileInput.click()" />
+
+            @if (previewFoto()) {
+              <p-button icon="pi pi-trash" label="Eliminar" variant="text" severity="danger" (click)="onEliminarFoto()"  />
+            }
+
+          </div>
+
+          <!-- INPUT FILE OCULTO -->
+          <input
+            #fileInput
+            type="file"
+            accept="image/*"
+            class="hidden"
+            (change)="onFileSelected($event)"
+          />
+        </div>
+
+
+      </div>
+
+
+      <div class="w-full max-w-md">
+      @if(previewFoto()!=perfilStore.perfilDeUsuario()?.fotoLink?.url){
+
+        <div
+          class="flex items-start gap-3 rounded-md border-l-8 border-sky-500 bg-sky-500/30 px-3 py-2 "
+        >
+          <i class="pi pi-info-circle text-sky-700 mt-0.5"></i>
+
+          <p class="text-sm text-sky-900 leading-relaxed">
+            <strong>Importante:</strong>
+            Cambiaste la imagen, no olvides hacer clic en
+            <span class="font-semibold">Guardar</span>
+            que se encuentra
+            <span class="font-semibold">al final del formulario</span>.
+          </p>
+        </div>
+
+
+
+      }
+      </div>
+
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="flex flex-col">
+          <label form="firstName" class="text-sm">Nombre @if(isInvalidTOBTN('firstName')){<span class="text-red-500">*</span>} </label>
+          <input pInputText formControlName="firstName" placeholder="Nombre"   inputStyleClass="no-autofill"/>
+            @if (isInvalid('firstName')) {
+                <p-message severity="error" size="small" variant="simple">El nombre es obligatorio</p-message>
+            }
+        </div>
+
+        <div class="flex flex-col">
+          <label form="lastName" class="text-sm">Apellido @if(isInvalidTOBTN('lastName')){<span class="text-red-500">*</span>} </label>
+          <input pInputText formControlName="lastName" placeholder="Apellido" />
+                      @if (isInvalid('lastName')) {
+                <p-message severity="error" size="small" variant="simple">El apellido es obligatorio</p-message>
+            }
+        </div>
+      </div>
+
+
+
+      <div class="flex flex-col">
+        <label class="text-sm">Email @if(isInvalidTOBTN('email')){<span class="text-red-500">*</span>}</label>
+        <input pInputText formControlName="email" placeholder="Email" type="email" [autocomplete]="'none'"    inputStyleClass="no-autofill"/>
+            @if (isInvalid('email')) {
+                <p-message severity="error" size="small" variant="simple">El email es obligatorio</p-message>
+            }
+      </div>
+
+     <div class="flex flex-col">
+        <div class="flex flex-col">
+          <label for="" class="text-sm">
+
+          {{hasUbicacionExterna() ? 'Ubicación seleccionada:' : 'Seleccionar ubicación:'}}
+
+          @if(!hasUbicacionExterna()) {
+            <span class="text-red-500">*</span>
+          }
+          </label>
+
+
+        </div>
+
+            @if (isInvalid('ubicacion')) {
+                <p-message severity="error" size="small" variant="simple">La ubicación es obligatoria</p-message>
+            }
+
+        <app-location-picker
+        [initialLocation]="ubicacionPrecargada()"
+        [isInvalid]="isInvalid('ubicacion')!"
+        (onLocationSelected)="onLocationSelected($event)"></app-location-picker>
+
+
+      </div>
+
+      <div class="flex flex-col ">
+        <label class="text-sm">Teléfono <span class="text-gray-400">(opcional)</span> </label>
+        <p-inputmask   inputStyleClass="width-full w-full"  mask="(999) 999-9999" formControlName="phone" placeholder="(221) 999-9999" />
+
+      </div>
+
+      <div class="flex justify-between w-full mt-8">
+        <button pButton  size="small" severity="secondary" (click)="onCloseEditarPerfilLocal()">
+          <i class="pi pi-times" pButtonIcon></i>
+          <span pButtonLabel>Cancelar</span>
+        </button>
+
+        <button [loading]="isLoading()" (click)="onSubmit()" pButton size="small" [disabled]="editForm.invalid" [pTooltip]="editForm.invalid ? tooltipContent : undefined!" tooltipPosition="top" >
+          <i class="pi pi-check" pButtonIcon  ></i>
+          <span pButtonLabel>Guardar</span>
+        </button>
+      </div>
+
+      <ng-template #tooltipContent>
+            <div class="flex flex-col">
+                @if (editForm.invalid) {
+                    <span class="text-sm">Campos obligatorios:</span>
+                    <ul class="ml-4 list-disc text-[12px]">
+                        @if (isInvalidTOBTN('firstName')) {
+                            <li>Nombre</li>
+                        }
+                        @if (isInvalidTOBTN('lastName')) {
+                            <li>Apellido</li>
+                        }
+                        @if (isInvalidTOBTN('email')) {
+                            <li>Email</li>
+                        }
+                        @if (isInvalidTOBTN('ubicacion')) {
+                            <li>Ubicación</li>
+                        }
+
+                    </ul>
+                }
+            </div>
+      </ng-template>
+
+
+    </form>
+

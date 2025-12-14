@@ -1,7 +1,7 @@
 package com.grupo20.ttpsspringboot.controller;
 
-import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
-import com.grupo20.ttpsspringboot.dtos.UsuarioUpdateDTO;
+import com.grupo20.ttpsspringboot.dtos.*;
+import com.grupo20.ttpsspringboot.dtos.bases.ApiResponseDTO;
 import com.grupo20.ttpsspringboot.services.impl.UsuarioService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
@@ -35,9 +35,9 @@ public class UsuarioController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UsuarioSmallDTO> getUsuarioById(@PathVariable Long id) {
+    public ResponseEntity<UsuarioDetallelDTO> getUsuarioById(@PathVariable Long id) {
         try {
-            UsuarioSmallDTO usuario = usuarioService.getUsuarioById(id);
+            UsuarioDetallelDTO usuario = usuarioService.getUsuarioById(id);
             return new ResponseEntity<>(usuario, HttpStatus.OK);
         } catch (EntityNotFoundException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Código 404
@@ -74,4 +74,26 @@ public class UsuarioController extends BaseController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
+
+    @GetMapping("/{id}/foto")
+    public ResponseEntity<FotoResponseDTO> getFotoUsuario(@PathVariable Long id) {
+        FotoResponseDTO foto = usuarioService.getFotoByIdUser(id);
+
+        if (foto == null || foto.getContent() == null) {
+            return ResponseEntity.noContent().build(); // 204
+        }
+
+        return ResponseEntity.ok(foto); // application/json
+    }
+
+    @PutMapping("/{id}/password")
+    public ResponseEntity<ApiResponseDTO> cambiarPassword( @PathVariable Long id, @Valid @RequestBody RestablecerPasswordRequestDTO dto) {
+
+        usuarioService.restablecerPassword(id, dto);
+        return ResponseEntity.ok(
+                new ApiResponseDTO(true, 200, "Contraseña actualizada correctamente")
+        );
+    }
+
+
 }

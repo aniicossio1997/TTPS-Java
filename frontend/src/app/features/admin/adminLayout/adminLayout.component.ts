@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
-import { Sidebar } from './sidebar/sidebar';
+import { Sidebar } from '../../../components/sidebar/sidebar';
 
 @Component({
   selector: 'app-adminLayout',
@@ -12,7 +12,8 @@ import { Sidebar } from './sidebar/sidebar';
     Sidebar
 ],
   templateUrl: './adminLayout.component.html',
-  styleUrls: ['./adminLayout.component.scss']
+  styleUrls: ['./adminLayout.component.scss'],
+changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminLayoutComponent implements OnInit {
 

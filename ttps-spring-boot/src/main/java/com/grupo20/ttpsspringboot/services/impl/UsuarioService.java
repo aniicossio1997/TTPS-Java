@@ -3,13 +3,12 @@ package com.grupo20.ttpsspringboot.services.impl;
 import com.grupo20.ttpsspringboot.domain.models.Foto; // Importar Foto
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
-import com.grupo20.ttpsspringboot.dtos.UsuarioCreateDTO;
-import com.grupo20.ttpsspringboot.dtos.UsuarioSmallDTO;
-import com.grupo20.ttpsspringboot.dtos.UsuarioUpdateDTO;
+import com.grupo20.ttpsspringboot.dtos.*;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionMapperService;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionUpdateMapper;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioCreateMapperService;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioUpdateMapper;
+import com.grupo20.ttpsspringboot.exceptions.BadRequestException;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.repository.FotoRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
@@ -63,6 +62,7 @@ public class UsuarioService {
      */
     @Transactional
     public UsuarioSmallDTO createUsuario(UsuarioCreateDTO usuarioDto) {
+
         System.out.println("Usuario recibido: " + usuarioDto);
         System.out.println("Email: " + usuarioDto.getEmail());
 
@@ -108,12 +108,12 @@ public class UsuarioService {
      * @return UsuarioSmallDTO.
      */
     @Transactional(readOnly = true)
-    public UsuarioSmallDTO getUsuarioById(Long id) {
+    public UsuarioDetallelDTO getUsuarioById(Long id) {
         Optional<Usuario> usuarioOpt;
         usuarioOpt = usuarioRepository.findById(id);
         Usuario usuario = usuarioOpt.orElseThrow(() ->
                 new EntityNotFoundException("Usuario no encontrado con ID: " + id));
-        return UsuarioSmallDTO.fromEntity(usuario);
+        return UsuarioDetallelDTO.fromEntity(usuario);
     }
 
     /**
@@ -194,15 +194,18 @@ public class UsuarioService {
      * Obtiene el contenido binario de la foto.
      */
     @Transactional(readOnly = true)
-    public byte[] obtenerFotoPerfil(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+    public FotoResponseDTO getFotoByIdUser(Long id) {
+        Usuario usuario = this.usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado"));
 
-        if (usuario.getFotoPerfil() == null) {
-            throw new NotFoundException("El usuario no tiene foto de perfil");
+        Foto foto = usuario.getFotoPerfil();
+
+        if (foto == null) {
+            return null;
         }
+        FotoResponseDTO fotoResponseDTO = new FotoResponseDTO();
 
-        return usuario.getFotoPerfil().getContent();
+        return  FotoResponseDTO.fromEntity(foto);
     }
 
     @Transactional
@@ -224,6 +227,26 @@ public class UsuarioService {
         foto.setContent(file.getBytes());
 
         // Al guardar usuario, se guarda/actualiza la foto en cascada
+        usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+    public void restablecerPassword(Long id, RestablecerPasswordRequestDTO entityToEdit ) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+
+        // 1) Confirmación
+        if (!entityToEdit.getNuevoPassword().equals(entityToEdit.getConfirmarPassword())) {
+            throw new com.grupo20.ttpsspringboot.exceptions.BadRequestException("La nueva contraseña y la confirmación no coinciden");
+        }
+
+        // 2) Validar password vieja (contra hash)
+        if (!passwordEncoder.matches(entityToEdit.getPasswordOld(), usuario.getPassword())) {
+            throw new BadRequestException("La contraseña actual es incorrecta");
+        }
+
+        // 4) Guardar hash
+        usuario.setPassword(passwordEncoder.encode(entityToEdit.getNuevoPassword()));
         usuarioRepository.save(usuario);
     }
 }

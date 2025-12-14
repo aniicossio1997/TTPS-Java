@@ -79,7 +79,7 @@
     color: #555;
   }
 
-  :is(input, .p-inputtext, .p-dropdown) {
+  :is(input, .p-inputtext, .p-dropdown, .p-inputmask) {
     width: 100%;
   }
 
@@ -121,4 +121,7 @@
 
 
   }
+}
+:host ::ng-deep p-inputmask >input {
+  width: 100% !important;
 }

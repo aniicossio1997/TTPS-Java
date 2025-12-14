@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthStoreService } from '../store/user.stored.service';
+import { AuthStoreService } from '../store/auth.stored.service';
 import { environment } from '../../environments/environment';
 
 
@@ -25,14 +25,14 @@ export class JwtInterceptor implements HttpInterceptor {
     const isPublic = publicEndpoints.some(url => request.url.startsWith(url));
 
     if (isPublic) {
-      console.log('Endpoint ::PUBLICO detectado, no se agrega token');
       return next.handle(request);
     }
 
       // 2) Agregar token si corresponde
       const currentUser = this.authenticationService.getCurrentSession();
-      console.log({currentUser})
+
       if (currentUser?.token) {
+
         request = request.clone({
           setHeaders: {
             Authorization: `Bearer ${currentUser.token}`

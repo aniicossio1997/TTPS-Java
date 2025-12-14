@@ -14,7 +14,7 @@ export class AuthService {
   private readonly apiUrl = `${environment.API_URL}/auth`;
 
   login(email: string, password: string): Observable<LoginResponse> {
-    console.log({ apiUrl: this.apiUrl });
+
     const headers = new HttpHeaders({
       'accept': '*/*',
       'usuario': email,
@@ -30,7 +30,7 @@ export class AuthService {
   //http://localhost:8081/api/auth/register
 
   postRegister(data: RegisterRequest) {
-    ///api/auth/register
+    // api/auth/register
     return this.http.post(`${this.apiUrl}/register`, data);
   }
 }

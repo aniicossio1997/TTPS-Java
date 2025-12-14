@@ -20,6 +20,8 @@ public class UsuarioUpdateDTO {
     @Email(message = "Debe ser un formato de email válido")
     private String email;
 
+    private String telefono;
+
     private UbicacionUpdateDTO ubicacion;
 
 }

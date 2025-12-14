@@ -30,6 +30,7 @@ public class UsuarioCreateDTO {
     @NotNull(message = "La ubicación es obligatoria")
     public UbicacionCreateDTO ubicacion;
 
+    private String telefono;
     /**
      * Convierte el DTO a la entidad Usuario.
      * @param ubicacion La entidad Ubicacion, que debe ser buscada previamente por el servicio usando ubicacionId.
@@ -48,7 +49,9 @@ public class UsuarioCreateDTO {
         usuario.setEstado(EstadoUsuarioEnum.HABILITADO); // Valor por defecto
         usuario.setAyudadosEnZona(0);
         usuario.setUbicacion(ubicacion);
+        usuario.setTelefono(this.telefono);
 
         return usuario;
     }
+
 }

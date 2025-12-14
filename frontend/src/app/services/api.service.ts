@@ -16,7 +16,7 @@ export class ApiService {
 
   protected get<T>(endpoint: string, options?: ApiRequestOptions): Observable<T> {
     const url = `${this.baseUrl}${this.basePath}${endpoint}`;
-    console.log({ url }, environment.API_URL);
+
     return this.http.get<T>(url, options);
   }
 

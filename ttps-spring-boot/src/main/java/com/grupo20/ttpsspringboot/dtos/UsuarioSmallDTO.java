@@ -14,6 +14,7 @@ public class UsuarioSmallDTO {
     private String apellido;
     private String email;
     private RolUsuarioEnum rol;
+    private String telefono;
 
     public static UsuarioSmallDTO fromEntity(Usuario entity) {
         UsuarioSmallDTO dto = new UsuarioSmallDTO();
@@ -23,7 +24,7 @@ public class UsuarioSmallDTO {
         dto.setApellido(entity.getApellido());
         dto.setEmail(entity.getEmail());
         dto.setRol(entity.getRol());
-
+        dto.setTelefono(entity.getTelefono());
         return dto;
     }
 }
