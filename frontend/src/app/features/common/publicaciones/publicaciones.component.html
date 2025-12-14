@@ -1,14 +1,18 @@
+<div class="mb-5">
+  <app-usuarios-ranking />
+</div>
+
 <div class="flex items-center justify-between">
   <h1 class="text-2xl font-bold">Publicaciones</h1>
   <div class="flex justify-end gap-4 mb-4">
-  <p-button
-  severity="primary"
-  icon="pi pi-plus"
-  label="Crear Publicación"
-  size="large"
-  class="block"
-  [routerLink]="[destinationUrl]"
-/>
+    <p-button
+      severity="primary"
+      icon="pi pi-plus"
+      label="Crear Publicación"
+      size="large"
+      class="block"
+      [routerLink]="[destinationUrl]"
+    />
     <p-button
       icon="pi pi-map-marker"
       severity="primary"
@@ -140,15 +144,15 @@
       {{ error() }}
     </p-message>
     } @if (!isLoading() && !error()) { @if (publicaciones().length === 0) {
-      <div class="text-center p-3">
-        <i class="pi pi-info-circle text-5xl text-blue-500 mb-3"></i>
-        <p>No se encontraron publicaciones que coincidan con los filtros.</p>
-      </div>
+    <div class="text-center p-3">
+      <i class="pi pi-info-circle text-5xl text-blue-500 mb-3"></i>
+      <p>No se encontraron publicaciones que coincidan con los filtros.</p>
+    </div>
     }
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-     @for (publicacion of publicaciones(); track publicacion.id) {
-        <app-publicacion-card-item [publicacion]="publicacion" />
+      @for (publicacion of publicaciones(); track publicacion.id) {
+      <app-publicacion-card-item [publicacion]="publicacion" />
       }
     </div>
     }

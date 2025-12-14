@@ -12,6 +12,7 @@ import com.grupo20.ttpsspringboot.exceptions.BadRequestException;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.repository.FotoRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
+import com.grupo20.ttpsspringboot.services.IUsuarioService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Transactional
-public class UsuarioService {
+public class UsuarioService implements IUsuarioService {
 
     @Autowired
     private UbicacionService ubicacionService; // Dependencia para obtener la ubicación
@@ -173,6 +174,11 @@ public class UsuarioService {
         Usuario updatedUsuario = usuarioRepository.save(existingUsuario);
 
         return UsuarioSmallDTO.fromEntity(updatedUsuario);
+    }
+
+    @Override
+    public List<UsuarioSmallDTO> ranking() {
+        return usuarioRepository.ranking().stream().map(UsuarioSmallDTO::fromEntity).collect(Collectors.toList());
     }
 
     /**

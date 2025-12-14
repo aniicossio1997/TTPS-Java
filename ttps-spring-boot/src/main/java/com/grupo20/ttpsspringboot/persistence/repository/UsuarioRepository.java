@@ -3,6 +3,7 @@ package com.grupo20.ttpsspringboot.persistence.repository;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.domain.enums.EstadoUsuarioEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,4 +29,14 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
      * Consulta inferida: SELECT u FROM Usuario u WHERE u.id = ?1 AND u.estado = ?2
      */
     Optional<Usuario> findByIdAndEstado(Long id, EstadoUsuarioEnum estado);
+
+
+
+    @Query("""
+        SELECT u 
+        FROM Usuario u 
+        ORDER BY u.puntos DESC
+        LIMIT 10
+    """)
+    List<Usuario> ranking();
 }

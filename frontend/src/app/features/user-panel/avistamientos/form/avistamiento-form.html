@@ -1,0 +1,57 @@
+<p-dialog
+  [(visible)]="display"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  (onHide)="onHide()"
+  [draggable]="false"
+  header="Reportar avistamiento"
+>
+  <form [formGroup]="avistamientoForm" (ngSubmit)="onSubmit()">
+    <div class="flex flex-col gap-5">
+      <div class="flex flex-col">
+        <label for="descripcion">Descripción</label>
+        <textarea
+          pInputTextarea
+          id="descripcion"
+          formControlName="descripcion"
+          placeholder="Cuéntanos los detalles del avistamiento..."
+          rows="3"
+          class="resize-none bg-surface-100 p-2 rounded-md border border-slate-300"
+          [ngClass]="{
+            'ng-invalid ng-dirty':
+              avistamientoForm.controls.descripcion.invalid &&
+              avistamientoForm.controls.descripcion.touched
+          }"
+        ></textarea>
+        <app-form-error [control]="avistamientoForm.get('descripcion')" />
+      </div>
+
+      <div class="flex flex-col">
+        <p-fileUpload
+          mode="advanced"
+          accept="image/*"
+          [multiple]="true"
+          [maxFileSize]="1000000"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          [customUpload]="true"
+          chooseLabel="Cargar Imágenes"
+          (uploadHandler)="onFileSelect($event)"
+        ></p-fileUpload>
+        <small class="text-500 mt-2 block">
+          Si tienes imágenes de la mascota, no dudes en cargarlas.
+        </small>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button
+      label="Guardar"
+      icon="pi pi-check"
+      class="ml-auto"
+      (onClick)="onSubmit()"
+      [disabled]="avistamientoForm.invalid"
+    ></p-button>
+  </ng-template>
+</p-dialog>

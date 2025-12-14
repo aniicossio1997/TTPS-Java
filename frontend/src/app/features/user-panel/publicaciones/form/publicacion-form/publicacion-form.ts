@@ -1,14 +1,11 @@
 import {
-  Color,
   Especie,
   Publicacion,
   Tamanio,
 } from './../../../../../interfaces/publicacion.interface';
 import { Component, OnInit, Input, Output, EventEmitter, signal, ChangeDetectionStrategy } from '@angular/core';
-import { CommonModule, NgClass } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import {
-  FormBuilder,
-  FormGroup,
   Validators,
   FormsModule,
   ReactiveFormsModule,
@@ -16,7 +13,6 @@ import {
 } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
 import {
-  EstadoPublicacionEnum,
   PublicacionCreate,
 } from '../../../../../interfaces/publicacion.interface';
 import { InputTextModule } from 'primeng/inputtext';
@@ -101,20 +97,11 @@ export class PublicacionFormComponent implements OnInit {
       tipo: this.fb.control<TipoPublicacion>(TipoPublicacion.PROPIO, [Validators.required]),
       especie: this.fb.control<string>('', Validators.required),
       nombre: this.fb.control<string>('', Validators.required),
-      descripcion: this.fb.control<string>('', Validators.maxLength(500)),
+      descripcion: this.fb.control<string>('', Validators.maxLength(256)),
       fechaPerdida: this.fb.control<Date>(new Date(), Validators.required),
       tamanio: this.fb.control<string>('PEQUENO'),
       color: this.fb.control<string>('Negro'),
-      ubicacion: this.fb.control<UbicacionCreate>({
-        latitud: -1,
-        longitud: -1,
-       departamento:'',
-       idExternoDepartamento:'',
-       idExternoMunicipio:'',
-       idExternoProvincia:'',
-       municipio:'',
-       provincia:'',
-      }),
+      ubicacion: this.fb.control<UbicacionCreate | undefined>(undefined, Validators.required),
     });
   }
 
@@ -149,16 +136,7 @@ export class PublicacionFormComponent implements OnInit {
       descripcion: data.descripcion,
       color: data.color,
       tamanio: data.tamanio,
-      ubicacion: {
-        latitud: data.ubicacion.latitud,
-        longitud: data.ubicacion.longitud,
-       departamento:'',
-       idExternoDepartamento:'',
-       idExternoMunicipio:'',
-       idExternoProvincia:'',
-       municipio:'',
-       provincia:'',
-      },
+      ubicacion: data.ubicacion,
     });
 
     this.publicacionForm.get('tipo')?.updateValueAndValidity();
@@ -183,14 +161,26 @@ export class PublicacionFormComponent implements OnInit {
       const { nombre, descripcion, tipo, color, especie, tamanio, ubicacion } = formValue;
       if (!color || !especie || !tamanio || !ubicacion || !nombre || !descripcion || !ubicacion)
         return;
+
+      const estadoActual = this.publicacionExistente?.estado?.estado;
       const publicacionData: PublicacionCreate = {
         nombre: nombre || 'Desconocido',
         descripcion: descripcion,
         color: color,
         especie: especie,
         tamanio: tamanio,
-        ubicacion: ubicacion,
-        estado: tipo === TipoPublicacion.PROPIO ? 'PERDIDO_PROPIO' : 'PERDIDO_AJENO',
+        ubicacion: {
+          latitud: ubicacion.longitud,
+          longitud: ubicacion.longitud,
+          provincia: '',
+          idExternoProvincia: '',
+          municipio: '',
+          idExternoMunicipio: '',
+          departamento: '',
+          idExternoDepartamento: ''
+        },
+        estado:
+          estadoActual || (tipo === TipoPublicacion.PROPIO ? 'PERDIDO_PROPIO' : 'PERDIDO_AJENO'),
       };
       this.formSubmit.emit(publicacionData);
 

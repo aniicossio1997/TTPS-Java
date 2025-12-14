@@ -9,12 +9,17 @@ import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionUpdateDTO;
 import com.grupo20.ttpsspringboot.dtos.bases.PaginateBaseDTO;
 import com.grupo20.ttpsspringboot.services.impl.PublicacionService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -27,10 +32,20 @@ public class PublicacionesController extends BaseController {
     @Autowired
     private PublicacionService service;
 
-    @PostMapping()
-    public ResponseEntity<PublicacionDTO> create(@Valid @RequestBody PublicacionCreateDTO dto) {
+    @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<PublicacionDTO> create(
+            @Parameter(
+                    description = "Datos de la nueva publicación (JSON)",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = PublicacionCreateDTO.class)
+                    )
+            )
+            @RequestPart("data") @Valid PublicacionCreateDTO dto,
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ) {
         try {
-            Publicacion publicacion = service.create(getUsuario(), dto);
+            Publicacion publicacion = service.create(getUsuario(), dto,files);
             return new ResponseEntity<>(PublicacionDTO.fromEntity(publicacion), HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -53,10 +68,21 @@ public class PublicacionesController extends BaseController {
         return ResponseEntity.ok(publicaciones);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<PublicacionDTO> update(@PathVariable("id") Long id, @Valid @RequestBody PublicacionUpdateDTO dto) {
+    @PutMapping(value = "/{id}",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ResponseEntity<PublicacionDTO> update(
+            @PathVariable Long id,
+            @Parameter(
+            description = "Datos de la publicación (JSON)",
+            content = @Content(mediaType = "application/json",
+                    schema = @Schema(implementation = PublicacionUpdateDTO.class)
+            )
+            )
+            @RequestPart("data") @Valid PublicacionUpdateDTO publicacionDto,
+            // Recibe una LISTA de archivos con el mismo nombre de parámetro
+            @RequestPart(value = "files", required = false) List<MultipartFile> files
+    ) {
         try {
-            Publicacion publicacion = service.update(id, getUsuario(), dto);
+            Publicacion publicacion = service.update(id, getUsuario(), publicacionDto,files);
             return new ResponseEntity<>(PublicacionDTO.fromEntity(publicacion), HttpStatus.OK);
         } catch (IllegalArgumentException e) {
             return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
