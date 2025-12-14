@@ -1,0 +1,17 @@
+/* Importar los estilos base de Leaflet */
+@import 'leaflet/dist/leaflet.css';
+
+:host {
+  display: block;
+  width: 100%;
+}
+
+.mapa-publicaciones-container {
+  width: 100%;
+  // **CLAVE:** El mapa necesita un alto definido para funcionar.
+  height: 100%;
+  max-height: 80vh;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

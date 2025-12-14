@@ -23,6 +23,7 @@ import { AvistamientosList } from '../../avistamientos/list/avistamientos-list';
 import { ToastrService } from 'ngx-toastr';
 import { EstadoPublicacionTag } from '../../../../components/estado-publicacion-tag/estado-publicacion-tag';
 import { DividerModule } from 'primeng/divider';
+import { MapaPublicaciones } from '../../../../components/mapa-publicaciones/mapa-publicaciones';
 
 interface EstadoTag {
   text: string;
@@ -57,7 +58,8 @@ export interface ActionOption {
     AvistamientoForm,
     AvistamientosList,
     EstadoPublicacionTag,
-    DividerModule
+    DividerModule,
+    MapaPublicaciones,
   ],
 })
 export class PublicacionDetailComponent implements OnInit {
@@ -116,6 +118,12 @@ export class PublicacionDetailComponent implements OnInit {
   public fotos = computed<string[]>(() => {
     if (!this.publicacion()) return [];
     return this.publicacion()?.fotos.map((f) => f.url) || [];
+  });
+
+  public publicacionArray = computed<Publicacion[]>(() => {
+    const publicacion = this.publicacion();
+    if (!publicacion) return [];
+    return [publicacion];
   });
 
   public isLoading = signal(true);
