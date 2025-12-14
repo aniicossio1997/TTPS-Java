@@ -6,6 +6,6 @@ export interface UsuarioSmall {
   apellido: string;
   email: string;
   rol: EnumRolUsuario;
-
+  puntos: number;
   //foto: string;
 }

@@ -1,9 +1,12 @@
 export interface Ubicacion {
   id: number;
+  idExterno: string;
+  provincia: string;
+  ciudad: string;
+  barrio: string;
   latitud: number;
   longitud: number;
 
-  provincia: string;
   idExternoProvincia: string;
 
   municipio: string;

@@ -11,12 +11,11 @@
         loading="lazy"
       />
 
-      <p-tag
-        [severity]="estadoTag().severity"
-        [rounded]="true"
-        [value]="estadoTag().text"
-        class="absolute bottom-2 left-2"
-      />
+
+      <span  class="absolute bottom-2 left-2">
+ <app-estado-publicacion-tag [estado]="publicacion.estado?.estado || ''"/>
+      </span>
+
 
       <p-button
         aria-label="Ver ubicación"

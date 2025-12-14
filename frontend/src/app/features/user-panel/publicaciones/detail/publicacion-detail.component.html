@@ -19,34 +19,40 @@
     </div>
   </div>
   } @else if (error()) {
-  <p-message severity="error" [text]="error()"></p-message>
+    <span>
+      No se ha encontrado la publicación.
+    </span>
   } @if (publicacion()) {
-  <p-tag
-    [severity]="estadoTag().severity"
-    [rounded]="true"
-    [value]="estadoTag().text"
-    class="mb-4"
-  />
+  <app-estado-publicacion-tag [estado]="publicacion()?.estado?.estado || ''"/>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
     <p-card class="lg:col-span-2 space-y-6">
-      <div class="flex items-center space-x-4 pb-4 mb-4">
-        <div class="relative w-12 h-12 flex-shrink-0">
-          <img
-            src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop"
-            alt="Foto de perfil del autor"
-            class="rounded-full w-full h-full object-cover shadow-md text-transparent"
-          />
+      <div class="flex justify-between gap-3">
+        <div class="flex items-center space-x-4 pb-4 mb-4">
+          <div class="relative w-12 h-12 flex-shrink-0">
+            <img
+              src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop"
+              alt="Foto de perfil del autor"
+              class="rounded-full w-full h-full object-cover shadow-md text-transparent"
+            />
+          </div>
+
+          <div>
+            <span class="text-primary-600 hover:text-primary-700 cursor-pointer font-bold">
+              {{ publicacion()!.usuario.nombre }} {{ publicacion()!.usuario.apellido }}
+            </span>
+            <p class="text-xs text-gray-500 mt-1">
+              {{ publicacion()!.fecha | date : 'mediumDate' }}
+            </p>
+          </div>
         </div>
 
-        <div>
-          <span class="text-primary-600 hover:text-primary-700 cursor-pointer font-bold">
-            {{ publicacion()!.usuario.nombre }} {{ publicacion()!.usuario.apellido }}
-          </span>
-          <p class="text-xs text-gray-500 mt-1">
-            {{ publicacion()!.fecha | date : 'mediumDate' }}
-          </p>
-        </div>
+        <p-button
+          label="Ver ubicación"
+          class="w-fit-content"
+          icon="pi pi-map-marker"
+          (click)="verUbicacion(publicacion()!.ubicacion)"
+        />
       </div>
 
       @if (fotos().length > 0) {
@@ -72,33 +78,41 @@
         {{ publicacion()!.nombre }}
       </h1>
 
-      <p class="text-gray-700 whitespace-pre-wrap">
+      <p class="text-gray-700 whitespace-pre-wrap break-all">
         {{ publicacion()!.descripcion || 'Sin descripción detallada.' }}
       </p>
 
-      <h2 class="text-2xl font-bold mt-8 mb-4">Avistamientos</h2>
+      <div class="flex justify-between items-end">
+        <h2 class="text-2xl font-bold mt-8 mb-4">Avistamientos</h2>
+        <p-button
+          label="Reportar Avistamiento"
+          icon="pi pi-plus"
+          (onClick)="showAvistamientoModal()"
+          styleClass="mb-4"
+        ></p-button>
+      </div>
+
+      <app-avistamientos-list #avistamientosList [publicacionId]="publicacion()!.id" />
     </p-card>
 
     <div class="lg:col-span-1 space-y-6">
+      @if (isOwner()) {
       <p-card>
-        <div class="flex flex-1 justify-between">
-          <h2 class="text-2xl font-bold mb-4 flex-1">Acciones</h2>
-          @if (isOwner()) {
-          <p-button (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" severity="secondary" />
-          <p-tieredmenu #menu [model]="options" [popup]="true" />
+        <h2 class="text-2xl font-bold mb-4 flex-1">Acciones</h2>
 
-          }
-        </div>
-
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-4">
+          @for (option of options; track $index) {
           <p-button
-            label="Ver ubicación"
-            class="w-fit-content"
-            icon="pi pi-map-marker"
-            (click)="verUbicacion(publicacion()!.ubicacion)"
-          />
-        </div>
-      </p-card>
+            [label]="option.label"
+            [icon]="option.icon"
+            [severity]="option.severity"
+            (onClick)="option.command ? option.command() : null"
+            styleClass="p-button-lg p-button-outlined w-full"
+          >
+          </p-button>
+          }
+        </div> </p-card
+      >}
 
       <p-card>
         <h2 class="text-2xl font-bold mb-4 flex-1">Características</h2>
@@ -111,21 +125,40 @@
             <span class="font-semibold">Tamaño:</span>
             <p-tag [value]="publicacion()!.tamanio" severity="secondary" />
           </li>
+          @if (publicacion()!.color) {
           <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
             <span class="font-semibold">Color:</span>
-            <p-tag [value]="publicacion()!.color" severity="contrast" />
+            <div class="flex items-center gap-2">
+              <span class="capitalize">{{ publicacion()!.color }}</span>
+              @if ( COLOR_MAP[publicacion()!.color]){
+              <span
+                class="h-6 w-6 rounded-full shadow-md inline-flex"
+                [title]="publicacion()!.color"
+                [style]="{ background: COLOR_MAP[publicacion()!.color] }"
+              ></span>
+              }
+            </div>
           </li>
+          }
           <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
             <span class="font-semibold">Publicado:</span>
             <span>{{ publicacion()!.fecha | date : 'mediumDate' }}</span>
           </li>
           <li class="flex justify-between items-center">
             <span class="font-semibold">Ubicación:</span>
-            <span>{{ publicacion()!.ubicacion || 'Ver en mapa' }}</span>
+            <span>Ver en mapa</span>
           </li>
         </ul>
       </p-card>
     </div>
   </div>
+
+  <app-avistamiento-form
+    [display]="displayAvistamientoModal"
+    [publicacionId]="publicacion()!.id"
+    (displayChange)="handleAvistamientoDisplayChange($event)"
+    (success)="handleAvistamientoSuccess()"
+  ></app-avistamiento-form>
   }
 </div>
+<p-confirmDialog></p-confirmDialog>

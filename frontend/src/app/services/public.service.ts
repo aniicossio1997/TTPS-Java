@@ -1,11 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
-import {
-  Publicacion,
-  PublicacionFilter,
-} from '../interfaces/publicacion.interface';
+import { Publicacion, PublicacionFilter } from '../interfaces/publicacion.interface';
 import { PaginatedResult } from '../interfaces/pagination.interface';
+import { UsuarioSmall } from '../interfaces/usuario.interface.';
 
 @Injectable({
   providedIn: 'root',
@@ -17,5 +15,9 @@ export class PublicService extends ApiService {
     const params = this.buildParams(filter);
 
     return this.get<PaginatedResult<Publicacion>>('/publicaciones', { params });
+  }
+
+  public getRankingUsuarios(): Observable<UsuarioSmall[]> {
+    return this.get<UsuarioSmall[]>('/ranking');
   }
 }
