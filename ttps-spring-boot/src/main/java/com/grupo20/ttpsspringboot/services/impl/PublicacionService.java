@@ -12,13 +12,19 @@ import com.grupo20.ttpsspringboot.exceptions.ForbiddenException;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
 import com.grupo20.ttpsspringboot.services.IPublicacionService;
+import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PublicacionService implements IPublicacionService {
@@ -34,14 +40,37 @@ public class PublicacionService implements IPublicacionService {
 
 
     @Transactional
-    public Publicacion create(Usuario usuario, PublicacionCreateDTO dto) {
+    public Publicacion create(Usuario usuario, PublicacionCreateDTO dto, List<MultipartFile> files) {
         Publicacion publicacion = dto.toEntity();
         publicacion.setUsuario(usuario);
 
         Ubicacion ubicacion = ubicacionService.crearUbicacion(dto.getUbicacion());
 
         publicacion.setUbicacion(ubicacion);
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    try {
+                        Foto nuevaFoto = new Foto();
 
+                        // Asignar los datos del archivo
+                        nuevaFoto.setNombre(file.getOriginalFilename());
+
+                        // Usando la lógica de guardar bytes:
+                        nuevaFoto.setContent(file.getBytes());
+
+                        // Asignar las relaciones
+                        nuevaFoto.setPublicacion(publicacion);
+
+                        // Añadir la foto a la colección
+                        publicacion.addFoto(nuevaFoto);
+
+                    } catch (IOException | java.io.IOException e) {
+                        throw new RuntimeException("Error al leer el contenido del archivo: " + file.getOriginalFilename(), e);
+                    }
+                }
+            }
+        }
         this.publicacionRepository.save(publicacion);
 
         puntuacionService.otorgarPuntosPorReporte(usuario);
@@ -84,7 +113,7 @@ public class PublicacionService implements IPublicacionService {
     }
 
     @Transactional
-    public Publicacion update(Long id, Usuario usuario, PublicacionUpdateDTO dto) {
+    public Publicacion update(Long id, Usuario usuario, PublicacionUpdateDTO dto, List<MultipartFile> files) {
         Publicacion publicacion = publicacionRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Publicación no encontrada"));
 
@@ -109,7 +138,40 @@ public class PublicacionService implements IPublicacionService {
         if (dto.getUbicacion() != null) {
             ubicacionService.updateUbicacion(publicacion.getUbicacion().getId(), dto.getUbicacion());
         }
+        List<Foto> fotosAEliminar = new ArrayList<>(publicacion.getFotos());
 
+        // Limpiamos la colección. Esto es lo que activa orphanRemoval en la BD.
+        publicacion.getFotos().clear();
+
+        if (files != null && !files.isEmpty()) {
+
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+
+                    try {
+                        // Crear la nueva entidad Foto
+                        Foto nuevaFoto = new Foto();
+
+                        // Asignar datos del archivo
+                        nuevaFoto.setNombre(file.getOriginalFilename());
+                        // Opción A: Guardar los bytes en la DB (Tu lógica anterior)
+                        nuevaFoto.setContent(file.getBytes());
+
+                        // Asignar las relaciones
+                        nuevaFoto.setPublicacion(publicacion);
+
+                        // Añadir la nueva foto a la colección.
+                        // Se guardará automáticamente con el save de Publicacion (por CASCADE).
+                        publicacion.addFoto(nuevaFoto);
+
+                    } catch (IOException e) {
+                        throw new RuntimeException("Error al leer el contenido del archivo: " + file.getOriginalFilename(), e);
+                    } catch (java.io.IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
         return publicacionRepository.save(publicacion);
     }
 
