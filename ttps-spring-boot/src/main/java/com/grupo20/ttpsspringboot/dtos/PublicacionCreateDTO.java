@@ -30,9 +30,6 @@ public class PublicacionCreateDTO {
     private String especie;
 
     @NotBlank
-    private String raza;
-
-    @NotBlank
     private String tamanio;
 
     @NotNull
@@ -47,7 +44,6 @@ public class PublicacionCreateDTO {
         entity.setDescripcion(this.descripcion);
         entity.setColor(this.color);
         entity.setEspecie(this.especie);
-        entity.setRaza(this.raza);
         entity.setTamanio(this.tamanio);
         entity.addEstado(new EstadoPublicacion(estado, entity));
         return entity;

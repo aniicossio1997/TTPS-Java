@@ -1,7 +1,11 @@
 import { PaginationFilter } from './pagination.interface';
 import { Ubicacion, UbicacionCreate, UbicacionUpdate } from './ubicacion.interface';
+import { UsuarioSmall } from './usuario.interface.';
 
 export type EstadoPublicacionEnum = 'PERDIDO_PROPIO' | 'PERDIDO_AJENO' | 'RECUPERADO' | 'ADOPTADO';
+export type Tamanio = 'PEQUENO' | 'MEDIANO' | 'GRANDE';
+export type Color = 'Negro' | 'Blanco' | 'Marrón' | 'Gris' | 'Otro';
+export type Especie = 'Perro' | 'Gato' | 'Ave' | 'Otro';
 
 export interface EstadoPublicacion {
   estado: EstadoPublicacionEnum;
@@ -17,13 +21,13 @@ export interface Publicacion {
   nombre: string;
   descripcion: string;
   fecha: Date;
-  color: string;
-  especie: string;
-  raza: string;
-  tamanio: string;
+  color: Color;
+  especie: Especie;
+  tamanio: Tamanio;
   ubicacion: Ubicacion;
   usuarioId: number;
   estado?: EstadoPublicacion;
+  usuario: UsuarioSmall;
   fotos: string[];
 }
 
@@ -32,7 +36,6 @@ export interface PublicacionCreate {
   descripcion?: string;
   color: string;
   especie: string;
-  raza: string;
   tamanio: string;
   ubicacion: UbicacionCreate;
   estado: EstadoPublicacionEnum;
@@ -45,7 +48,6 @@ export interface PublicacionUpdate extends Partial<Omit<PublicacionCreate, 'ubic
 export interface PublicacionFilter extends PaginationFilter<Publicacion> {
   nombre?: string;
   especie?: string;
-  raza?: string;
   tamanio?: string;
   color?: string;
   fechaDesde?: Date;

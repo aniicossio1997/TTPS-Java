@@ -27,6 +27,8 @@ public class PublicacionDTO implements Serializable {
     private UbicacionDTO ubicacion;
     private Long usuarioId;
 
+    private UsuarioSmallDTO usuario;
+
     private EstadoPublicacionDTO estado;
 
     private List<String> fotos = new ArrayList<>();
@@ -48,6 +50,7 @@ public class PublicacionDTO implements Serializable {
         }
         if (entity.getUsuario() != null) {
             dto.setUsuarioId(entity.getUsuario().getId());
+            dto.setUsuario(UsuarioSmallDTO.fromEntity(entity.getUsuario()));
         }
 
         if (entity.getEstado() != null) {
