@@ -43,9 +43,10 @@
           <p-tabpanel value="0">
             @if (activeTab()==tapEnum.TAP_0) {
 
+                <app-editar-perfil [idUsuario]="idUsuario()"
+                  (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-editar-perfil>
 
-
-              @switch (opcionesDeTAP_0()) {
+              <!-- @switch (opcionesDeTAP_0()) {
                 @case (opcionesDeEdicionENUM.EDITAR_PERDIL) {
                 <app-editar-perfil [idUsuario]="idUsuario()"
                   (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-editar-perfil>
@@ -58,7 +59,7 @@
                 <app-perfil-card (onEditarPerfil)="onEditarPerfil()" (onEditarPassword)="onEditarPassword()"
                   [idUsuario]="idUsuario()"></app-perfil-card>
                 }
-              }
+              } -->
 
             }
           </p-tabpanel>

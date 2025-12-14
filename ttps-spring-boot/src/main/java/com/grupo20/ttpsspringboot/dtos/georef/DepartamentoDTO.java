@@ -6,14 +6,21 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProvinciaExternoDTO {
-    private String id;
+public class DepartamentoDTO {
 
+    private String id;
     private String nombre;
 
+    // Campos "aplanados"
     @JsonProperty("centroide_lat")
     private Double latitud;
 
     @JsonProperty("centroide_lon")
     private Double longitud;
+
+    @JsonProperty("provincia_id")
+    private String provinciaId;
+
+    @JsonProperty("provincia_nombre")
+    private String provinciaNombre;
 }

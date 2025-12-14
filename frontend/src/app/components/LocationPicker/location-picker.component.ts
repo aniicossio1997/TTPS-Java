@@ -21,6 +21,8 @@ import * as L from 'leaflet';
 import { ButtonModule } from 'primeng/button';
 import { GeorefApiExternaService } from '../../services/georefApiExterna.service';
 import { UbicacionExternaResponse } from '../../interfaces/ubicacionExternaResponse';
+import { SelectButton } from 'primeng/selectbutton';
+import { FormsModule } from '@angular/forms';
 
 export type LatLng = { lat: number; lng: number };
 
@@ -45,13 +47,22 @@ export type UbicacionSeleccionada = {
 @Component({
   selector: 'app-location-picker',
   standalone: true,
-  imports: [CommonModule, Dialog, ButtonModule],
+  imports: [CommonModule, Dialog, ButtonModule, SelectButton, FormsModule],
   templateUrl: './location-picker.component.html',
   styleUrls: ['./location-picker.component.scss'],
 })
 export class LocationPickerComponent implements AfterViewInit {
 
   private georef = inject(GeorefApiExternaService);
+
+  // Opciones estáticas (no necesitan ser signal si no cambian)
+    public readonly stateOptions = [
+      { icon: 'pi pi-list', label: 'Lista', value: 'lista' },
+      { icon: 'pi pi-map-marker', label: 'Mapa', value: 'mapa' },
+    ];
+
+    // Tu signal inicializada
+    public vistaOpciones = signal<'lista' | 'mapa'>('lista');
 
 
   // INPUT / OUTPUT

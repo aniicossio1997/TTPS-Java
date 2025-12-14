@@ -6,9 +6,9 @@ import java.util.List;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class GeorefMunicipiosResponse {
+public class GeorefDepartamentosResponse {
 
-    private List<MunicipioDTO> municipios;
+    private List<DepartamentoDTO> departamentos; // Mapea la key "departamentos"
     private int cantidad;
     private int total;
     private int inicio;

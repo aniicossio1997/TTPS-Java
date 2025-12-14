@@ -41,7 +41,7 @@ export class PerfilSection {
 
   private authStore= inject(AuthStoreService)
 
-  activeTab = signal(this.tapEnum.TAP_1.toString());
+  activeTab = signal(this.tapEnum.TAP_0.toString());
 
   opcionesDeTAP_0= signal<OpcionesDeEdicionENUM>(OpcionesDeEdicionENUM.VER_PERFIL)
 
