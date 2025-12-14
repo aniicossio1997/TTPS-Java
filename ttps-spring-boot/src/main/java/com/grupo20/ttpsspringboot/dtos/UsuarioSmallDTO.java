@@ -2,7 +2,6 @@ package com.grupo20.ttpsspringboot.dtos;
 
 
 import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
-import com.grupo20.ttpsspringboot.domain.models.Avistamiento;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import lombok.Data;
 
@@ -15,6 +14,7 @@ public class UsuarioSmallDTO {
     private String email;
     private RolUsuarioEnum rol;
     private String telefono;
+    private Integer puntos;
 
     public static UsuarioSmallDTO fromEntity(Usuario entity) {
         UsuarioSmallDTO dto = new UsuarioSmallDTO();
@@ -25,6 +25,7 @@ public class UsuarioSmallDTO {
         dto.setEmail(entity.getEmail());
         dto.setRol(entity.getRol());
         dto.setTelefono(entity.getTelefono());
+        dto.setPuntos(entity.getPuntos());
         return dto;
     }
 }

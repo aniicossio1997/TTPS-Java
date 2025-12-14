@@ -29,7 +29,8 @@ export class FotoByUserStoreService {
   public _getFoto(idUsuario:number){
     this._status.set(ApiStatus.LOADING);
 
-    this.servicioFoto.getFotoUsuario(idUsuario).subscribe({
+    this.servicioFoto.getFotoUsuario(idUsuario)
+      .subscribe({
       next: (resp) => {
         this._status.set(ApiStatus.SUCCESS);
         this.fotoUsuario.set(resp)

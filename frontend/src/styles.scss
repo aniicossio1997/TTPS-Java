@@ -14,10 +14,15 @@ html,
 body {
   background-color: #f6fafb;
   margin: 0;
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 :root {
   --font-family: 'Nunito', sans-serif;
+
+  width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
@@ -38,7 +43,7 @@ body {
   color: #cf0707;
 }
 
-.p-carousel.single-image{
+.p-carousel.single-image {
   button {
     display: none;
   }

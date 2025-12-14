@@ -17,4 +17,12 @@ export class FotoService {
   }
 
 
+  getFotosByPublicacion(publicacionId: number) {
+    return this.http.get<FotoLinkDTO[]>(`${this.apiUrl}/publicacion/${publicacionId}`);
+  }
+
+  getFotosByVistamiento(vistamientoId: number) {
+    return this.http.get<FotoLinkDTO[]>(`${this.apiUrl}/avistamiento/${vistamientoId}`);
+  }
+
 }

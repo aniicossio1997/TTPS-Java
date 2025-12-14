@@ -1,5 +1,7 @@
+import { FotoLinkDTO } from './fotoLinkDTO';
 import { PaginationFilter } from './pagination.interface';
 import { Ubicacion, UbicacionCreate, UbicacionUpdate } from './ubicacion.interface';
+import { ubicacionCreateRequest } from './ubicacionCreateRequest.interface';
 import { UsuarioSmall } from './usuario.interface.';
 
 export type EstadoPublicacionEnum = 'PERDIDO_PROPIO' | 'PERDIDO_AJENO' | 'RECUPERADO' | 'ADOPTADO';
@@ -28,7 +30,7 @@ export interface Publicacion {
   usuarioId: number;
   estado?: EstadoPublicacion;
   usuario: UsuarioSmall;
-  fotos: string[];
+  fotos: FotoLinkDTO[];
 }
 
 export interface PublicacionCreate {
@@ -37,12 +39,12 @@ export interface PublicacionCreate {
   color: string;
   especie: string;
   tamanio: string;
-  ubicacion: UbicacionCreate;
+  ubicacion: ubicacionCreateRequest;
   estado: EstadoPublicacionEnum;
 }
 
 export interface PublicacionUpdate extends Partial<Omit<PublicacionCreate, 'ubicacion'>> {
-  ubicacion: UbicacionUpdate;
+  ubicacion?: UbicacionUpdate;
 }
 
 export interface PublicacionFilter extends PaginationFilter<Publicacion> {

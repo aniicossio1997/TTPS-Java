@@ -26,7 +26,8 @@ public interface AvistamientoRepository extends JpaRepository<Avistamiento, Long
         AND (:#{#filter.publicacionId} IS NULL
              OR (a.publicacion.id = :#{#filter.publicacionId}
                  AND a.publicacion.deletedAt IS NULL))
-        """)
+        ORDER BY a.fecha DESC
+    """)
     List<Avistamiento> getByFilters(@Param("filter") AvistamientoFilterDTO filter);
 
     // Opcionales: si algún día querés filtros simples:

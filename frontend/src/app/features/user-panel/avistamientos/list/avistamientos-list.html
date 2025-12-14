@@ -1,0 +1,85 @@
+<div class="flex flex-col gap-3">
+  <!-- Loading -->
+  @if (loading) {
+  <div class="flex flex-col gap-8" *ngFor="let _ of [1, 2]">
+    <p-skeleton height="150px" class="w-full"></p-skeleton>
+  </div>
+  }
+
+  <ng-container *ngIf="avistamientos$ | async as list">
+    <!-- Lista -->
+    <ng-container *ngIf="list.length > 0">
+      <div
+        *ngFor="let avistamiento of list"
+        class="surface-card rounded-lg shadow-1 p-4 flex-1 border border-slate-200"
+      >
+        <!-- Header -->
+        <div class="flex flex-1 justify-between">
+          <p class="text-900 text-lg line-height-3 mb-3">
+            {{ avistamiento.descripcion }}
+          </p>
+
+          <p-button
+            label="Ver en mapa"
+            icon="pi pi-map-marker"
+            severity="secondary"
+            size="small"
+            [link]="true"
+          ></p-button>
+        </div>
+        @if (avistamiento.fotos?.length) {
+        <p-carousel
+          [class.single-image]="(avistamiento.fotos?.length || 0) <= 1"
+          [value]="avistamiento.fotos || []"
+          [numVisible]="1"
+          [numScroll]="1"
+          [circular]="false"
+          [showIndicators]="true"
+        >
+          <ng-template let-foto pTemplate="item">
+            <div class="relative w-full h-32 rounded-lg overflow-hidden shadow-lg">
+              <img [src]="foto" alt="Mascota" class="w-full h-full object-cover" />
+            </div>
+          </ng-template>
+        </p-carousel>
+        }
+        <p-divider class="my-1"></p-divider>
+        <!-- Usuario -->
+        <div class="flex justify-between">
+          <div class="text-sm text-600 flex gap-2 items-center">
+            <div class="h-10 w-10 rounded-full overflow-hidden">
+              <img
+                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop"
+                alt="Foto de perfil del autor"
+                class="rounded-full w-full h-full object-cover shadow-md text-transparent"
+              />
+            </div>
+
+            {{ avistamiento.usuario.nombre }} {{ avistamiento.usuario.apellido }}
+          </div>
+
+          <!-- Footer -->
+          <div class="flex justify-content-between items-end">
+            @if (avistamiento.agradecimiento) {
+            <p-tag
+              class="block"
+              [value]="avistamiento.agradecimiento ? 'Agradecido' : 'Pendiente'"
+              [severity]="getSeverity(avistamiento.agradecimiento)"
+              [rounded]="true"
+            />
+            }
+
+            <span class="text-xs text-500 flex items-center ml-auto">
+              {{ avistamiento.fecha | date : 'mediumDate' }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- Empty state -->
+    <div *ngIf="list.length === 0 && !loading" class="text-center p-5 surface-100 border-round">
+      <p class="text-600 text-lg">Aún no se han registrado avistamientos</p>
+    </div>
+  </ng-container>
+</div>

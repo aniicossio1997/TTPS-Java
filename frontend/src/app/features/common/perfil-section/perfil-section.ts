@@ -6,7 +6,7 @@ import { EditarPerfil } from '../../../components/editar-perfil/editar-perfil';
 import { SpeedDialModule } from 'primeng/speeddial';
 import { EditPassword } from '../../../components/edit-password/edit-password';
 import { AuthStoreService } from '../../../store/auth.stored.service';
-import { PublicacionesComponent } from '../publicaciones/publicaciones.component';
+import { PulicacionesUser } from './pulicaciones-user/pulicaciones-user';
 
 enum TapEnum{
   TAP_0="0",
@@ -30,7 +30,7 @@ enum OpcionesDeEdicionENUM{
 
 @Component({
   selector: 'app-perfil-section',
-  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PublicacionesComponent],
+  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser],
   templateUrl: './perfil-section.html',
   styleUrl: './perfil-section.scss',
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
@@ -41,7 +41,7 @@ export class PerfilSection {
 
   private authStore= inject(AuthStoreService)
 
-  activeTab = signal(this.tapEnum.TAP_0.toString());
+  activeTab = signal(this.tapEnum.TAP_1.toString());
 
   opcionesDeTAP_0= signal<OpcionesDeEdicionENUM>(OpcionesDeEdicionENUM.VER_PERFIL)
 
@@ -93,5 +93,8 @@ export class PerfilSection {
   }
 
 
+  onBack(){
+
+  }
 
 }

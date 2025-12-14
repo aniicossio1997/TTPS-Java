@@ -2,10 +2,11 @@ import { Component, Input, computed, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
-import { Tag, TagModule, TagPassThroughOptions } from 'primeng/tag';
+import { Tag, TagModule  } from 'primeng/tag';
 import { ButtonModule } from 'primeng/button';
 import { Publicacion } from '../../../../interfaces/publicacion.interface';
 import { AuthStoreService } from '../../../../store/auth.stored.service';
+import { EstadoPublicacionTag } from '../../../../components/estado-publicacion-tag/estado-publicacion-tag';
 
 interface EstadoTag {
   text: string;
@@ -16,7 +17,7 @@ interface EstadoTag {
   selector: 'app-publicacion-card-item',
   standalone: true,
   templateUrl: './publicacion-card-item.html',
-  imports: [CommonModule, CardModule, TagModule, ButtonModule, DatePipe],
+  imports: [CommonModule, CardModule, TagModule, ButtonModule, DatePipe, EstadoPublicacionTag],
 })
 export class PublicacionCardItem {
   private router = inject(Router);
@@ -33,6 +34,9 @@ export class PublicacionCardItem {
 
       case 'PERDIDO_AJENO':
         return { text: 'ENCONTRÉ UNA MASCOTA', severity: 'info' };
+
+      case 'RECUPERADO':
+        return { text: 'RECUPERADO', severity: 'success' };
 
       default:
         return { text: 'ESTADO DESCONOCIDO', severity: 'secondary' };

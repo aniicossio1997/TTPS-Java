@@ -1,9 +1,8 @@
-import { Component, inject, signal, OnInit, computed } from '@angular/core';
+import { Component, inject, signal, OnInit, computed, ViewChild } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
-
 
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
@@ -12,20 +11,36 @@ import { MessageModule } from 'primeng/message';
 import { Tag, TagModule } from 'primeng/tag';
 import { CarouselModule } from 'primeng/carousel';
 import { TieredMenuModule } from 'primeng/tieredmenu';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { PublicacionesService } from '../../../../services/publicaciones.service';
-import { Publicacion } from '../../../../interfaces/publicacion.interface';
 import { AuthStoreService } from '../../../../store/auth.stored.service';
+import { Publicacion } from '../../../../interfaces/publicacion.interface';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { Avistamiento } from '../../../../interfaces/avistamiento.interface';
+import { AvistamientoForm } from '../../avistamientos/form/avistamiento-form';
+import { AvistamientosList } from '../../avistamientos/list/avistamientos-list';
+import { ToastrService } from 'ngx-toastr';
+import { EstadoPublicacionTag } from '../../../../components/estado-publicacion-tag/estado-publicacion-tag';
+import { DividerModule } from 'primeng/divider';
 
 interface EstadoTag {
   text: string;
   severity: Tag['severity'];
 }
 
+export interface ActionOption {
+  label: string;
+  icon: string;
+  command?: () => void;
+  severity?: Tag['severity'];
+}
+
 @Component({
   selector: 'app-publicacion-detail',
   standalone: true,
   templateUrl: './publicacion-detail.component.html',
+  providers: [ConfirmationService, MessageService],
   imports: [
     CommonModule,
     RouterModule,
@@ -38,14 +53,33 @@ interface EstadoTag {
     CarouselModule,
     SplitButtonModule,
     TieredMenuModule,
+    ConfirmDialogModule,
+    AvistamientoForm,
+    AvistamientosList,
+    EstadoPublicacionTag,
+    DividerModule
   ],
 })
 export class PublicacionDetailComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private authStore = inject(AuthStoreService);
-
+  private confirmationService = inject(ConfirmationService);
   private publicacionesService = inject(PublicacionesService);
+  private readonly toastr = inject(ToastrService);
+
+  @ViewChild('avistamientosList') avistamientosList!: AvistamientosList;
+
+  displayAvistamientoModal: boolean = false;
+  selectedAvistamiento: Avistamiento | null = null;
+
+  COLOR_MAP: Record<string, string> = {
+    negro: '#000000',
+    blanco: '#FFFFFF',
+    marron: '#8B4513',
+    gris: '#808080',
+    otro: '#D3D3D3',
+  };
 
   estadoTag = computed<EstadoTag>(() => {
     const estadoEnum = this.publicacion()?.estado?.estado ?? '';
@@ -53,10 +87,10 @@ export class PublicacionDetailComponent implements OnInit {
     switch (estadoEnum) {
       case 'PERDIDO_PROPIO':
         return { text: 'BUSCANDO A MI MASCOTA', severity: 'warn' };
-
       case 'PERDIDO_AJENO':
         return { text: 'ENCONTRÉ UNA MASCOTA', severity: 'info' };
-
+      case 'RECUPERADO':
+        return { text: 'RECUPERADO', severity: 'success' };
       default:
         return { text: 'ESTADO DESCONOCIDO', severity: 'secondary' };
     }
@@ -65,7 +99,6 @@ export class PublicacionDetailComponent implements OnInit {
   isOwner = computed(() => {
     return this.authStore.usuario()?.id == this.publicacion()?.usuarioId;
   });
-
 
   private publicacionId$ = this.route.paramMap.pipe(
     switchMap((params) => {
@@ -78,29 +111,35 @@ export class PublicacionDetailComponent implements OnInit {
     })
   );
 
-
   public publicacion = toSignal<Publicacion | null>(this.publicacionId$);
 
   public fotos = computed<string[]>(() => {
     if (!this.publicacion()) return [];
-    if (this.publicacion()?.fotos?.length) return this.publicacion()?.fotos ?? [];
-    return [
-      'https://images.unsplash.com/photo-1517849845537-4d257902454a?q=80&w=800&auto=format&fit=crop',
-    ];
+    return this.publicacion()?.fotos.map((f) => f.url) || [];
   });
-
 
   public isLoading = signal(true);
   public error = signal<string | undefined>(undefined);
 
-  options = [
+  options: ActionOption[] = [
     {
       label: 'Editar Publicación',
       icon: 'pi pi-pencil',
       command: () => this.editarPublicacion(this.publicacion()!.id),
+      severity: 'success',
     },
-    { label: 'Marcar como Recuperada', icon: 'pi pi-check-circle', severity: 'success' },
-    { label: 'Eliminar Publicación', icon: 'pi pi-trash', severity: 'danger' },
+    {
+      label: 'Marcar como Recuperada',
+      icon: 'pi pi-check-circle',
+      severity: 'secondary',
+      command: () => this.confirmarRecuperada(),
+    },
+    {
+      label: 'Archivar Publicación',
+      icon: 'pi pi-trash',
+      severity: 'danger',
+      command: () => this.confirmarArchivo(),
+    },
   ];
 
   public responsiveOptions = [
@@ -124,13 +163,86 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
   public editarPublicacion(id: number): void {
-
     this.router.navigate(['/app/publicaciones', 'editar', id]);
   }
 
   public verUbicacion(ubicacion: any): void {
-
     const url = `https://www.google.com/maps/search/?api=1&query=${ubicacion.latitud},${ubicacion.longitud}`;
     window.open(url, '_blank');
+  }
+
+  public confirmarArchivo(): void {
+    this.confirmationService.confirm({
+      message:
+        '¿Está seguro de que desea archivar esta publicación? Esta acción no se puede revertir.',
+      header: 'Achivar publicación',
+      icon: 'pi pi-info-circle',
+      acceptLabel: 'Sí, archivar',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-danger',
+
+      accept: () => {
+        this.archivarPublicacion();
+      },
+    });
+  }
+
+  public archivarPublicacion(): void {
+    const id = this.publicacion()?.id;
+    if (!id) return;
+    this.publicacionesService.delete(id).subscribe({
+      next: () => {
+        this.toastr.success('Se ha archivado la publicación.');
+        this.router.navigate(['/app/publicaciones']);
+      },
+    });
+  }
+
+  public confirmarRecuperada(): void {
+    const title =
+      this.publicacion()?.estado?.estado == 'PERDIDO_PROPIO'
+        ? '¿Has encontrado a tu mascota?'
+        : '¿Has encontrado al dueño de la mascota?';
+    this.confirmationService.confirm({
+      message: '¡No sabes cuanto nos alegra! La publicación ya no podrá modificarse.',
+      header: title,
+      acceptLabel: 'Aceptar',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.marcarRecuperada();
+      },
+    });
+  }
+
+  private marcarRecuperada() {
+    const id = this.publicacion()?.id;
+    if (!id) return;
+
+    this.publicacionesService.update(id, { estado: 'RECUPERADO' }).subscribe({
+      next: () => {
+        this.toastr.success('Se ha archivado la publicación.');
+        this.router.navigate(['/app/publicaciones']);
+      },
+    });
+  }
+  // Avistamientos
+
+  showAvistamientoModal(avistamiento?: Avistamiento): void {
+    this.displayAvistamientoModal = true;
+    if (avistamiento) {
+      this.selectedAvistamiento = avistamiento;
+    }
+  }
+
+  handleAvistamientoDisplayChange(open: boolean): void {
+    this.displayAvistamientoModal = open;
+    if (!open) {
+      this.selectedAvistamiento = null;
+    }
+  }
+
+  handleAvistamientoSuccess(): void {
+    this.avistamientosList.recargar();
   }
 }

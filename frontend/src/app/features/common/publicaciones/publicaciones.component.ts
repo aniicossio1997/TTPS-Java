@@ -22,6 +22,7 @@ import { PaginatedResult } from '../../../interfaces/pagination.interface';
 import { RouterModule } from '@angular/router';
 import { PublicacionCardItem } from './card-item/publicacion-card-item';
 import { AuthStoreService } from '../../../store/auth.stored.service';
+import { UsuariosRanking } from "../../../components/usuarios-ranking/usuarios-ranking";
 
 interface PublicacionState {
   data: Publicacion[];
@@ -52,7 +53,8 @@ interface PublicacionState {
     PaginatorModule,
     RouterModule,
     PublicacionCardItem,
-  ],
+    UsuariosRanking
+],
   templateUrl: './publicaciones.component.html',
 })
 export class PublicacionesComponent {
