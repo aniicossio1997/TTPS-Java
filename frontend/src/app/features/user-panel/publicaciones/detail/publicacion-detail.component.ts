@@ -24,6 +24,7 @@ import { ToastrService } from 'ngx-toastr';
 import { EstadoPublicacionTag } from '../../../../components/estado-publicacion-tag/estado-publicacion-tag';
 import { DividerModule } from 'primeng/divider';
 import { MapaPublicaciones } from '../../../../components/mapa-publicaciones/mapa-publicaciones';
+import { UserAvatarComponent } from '../../../../components/user-avatar/user-avatar';
 
 interface EstadoTag {
   text: string;
@@ -60,6 +61,7 @@ export interface ActionOption {
     EstadoPublicacionTag,
     DividerModule,
     MapaPublicaciones,
+    UserAvatarComponent
   ],
 })
 export class PublicacionDetailComponent implements OnInit {

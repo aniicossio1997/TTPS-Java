@@ -51,6 +51,12 @@ public class Avistamiento extends IdentifiableEntity {
     public List<Foto> getFotos() { return fotos; }
     public void setFotos(List<Foto> fotos) { this.fotos = fotos; }
 
+    public void addFoto(Foto foto) {
+        if (foto != null && !fotos.contains(foto)) {
+            fotos.add(foto);
+        }
+    }
+
     @Override
     public String toString() {
         return "Avistamiento{" +

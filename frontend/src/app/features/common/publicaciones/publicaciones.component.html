@@ -2,29 +2,28 @@
   <app-usuarios-ranking />
 </div>
 
-<div class="flex items-center justify-between">
-  <h1 class="text-2xl font-bold">Publicaciones</h1>
-  <div class="flex justify-end gap-4 mb-4">
-    <p-button
-      severity="primary"
-      icon="pi pi-plus"
-      label="Crear Publicación"
-      size="large"
-      class="block"
-      [routerLink]="[destinationUrl]"
-    />
-    <p-button
-      icon="pi pi-map-marker"
-      severity="primary"
-      label="Ver Mapa"
-      size="large"
-      class="block bg-primary-50"
-      variant="outlined"
-    />
-  </div>
-</div>
-
 <p-card>
+  <div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Publicaciones</h1>
+    <div class="flex justify-end gap-4 mb-4">
+      <p-button
+        severity="primary"
+        icon="pi pi-plus"
+        label="Crear Publicación"
+        size="large"
+        class="block"
+        [routerLink]="[destinationUrl]"
+      />
+      <p-button
+        icon="pi pi-map-marker"
+        severity="primary"
+        label="Ver Mapa"
+        size="large"
+        class="block bg-primary-50"
+        variant="outlined"
+      />
+    </div>
+  </div>
   <div class="p-4 space-y-6">
     <div class="flex align-items-start h-12 gap-2">
       <p-inputgroup>

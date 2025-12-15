@@ -24,8 +24,9 @@ export class AvistamientoService extends ApiService {
     return this.get<Avistamiento>(`${this.endpoint}/${id}`);
   }
 
-  public create(avistamiento: AvistamientoCreate): Observable<Avistamiento> {
-    return this.post<Avistamiento, AvistamientoCreate>(this.endpoint, avistamiento);
+  public create(avistamiento: AvistamientoCreate, imagenes?: File[]): Observable<Avistamiento> {
+    const formData = this.buildFormData(avistamiento, imagenes);
+    return this.post<Avistamiento, FormData>(this.endpoint, formData);
   }
 
   public delete(id: number): Observable<void> {

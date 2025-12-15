@@ -3,7 +3,9 @@ package com.grupo20.ttpsspringboot.dtos;
 import com.grupo20.ttpsspringboot.domain.models.Avistamiento;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class AvistamientoDTO {
@@ -15,6 +17,7 @@ public class AvistamientoDTO {
     private UbicacionDTO ubicacion;
     private Long publicacionId;
     private UsuarioSmallDTO usuario;
+    private List<FotoLinkDTO> fotos = new ArrayList<>();
 
     public static AvistamientoDTO fromEntity(Avistamiento entity) {
         AvistamientoDTO dto = new AvistamientoDTO();
@@ -33,6 +36,9 @@ public class AvistamientoDTO {
         if (entity.getUsuario() != null)
             dto.setUsuario(UsuarioSmallDTO.fromEntity(entity.getUsuario()));
 
+        if (!entity.getFotos().isEmpty()) {
+            dto.setFotos(entity.getFotos().stream().map(FotoLinkDTO::fromEntity).toList());
+        }
         return dto;
     }
 }

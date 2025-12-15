@@ -1,5 +1,7 @@
-<p-card header="🗺️ Publicaciones Cercanas (Vista Geográfica)" styleClass="shadow-2">
-    Mostrando resultados en: {{departamentoInicial()}}
+<p-card >
+    <h2 class="text-2xl font-bold mb-4">Publicaciones en tu zona</h2>
+
+    Mostrando resultados en: {{ubicacionInicial()}}
     <div class="relative min-h-[800px]">
 
         @if (mapaState$ | async; as state) {

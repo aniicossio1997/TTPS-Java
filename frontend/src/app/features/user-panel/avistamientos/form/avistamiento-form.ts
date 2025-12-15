@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, inject } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormGroup,
@@ -10,7 +10,7 @@ import {
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileRemoveEvent, FileSelectEvent, FileUploadModule } from 'primeng/fileupload';
 import { DatePickerModule } from 'primeng/datepicker';
 import { Avistamiento, AvistamientoCreate } from '../../../../interfaces/avistamiento.interface';
 import { FormErrorComponent } from '../../../../components/form-error/form-error.component';
@@ -51,6 +51,8 @@ export class AvistamientoForm implements OnInit {
   @Output() displayChange = new EventEmitter<boolean>();
   @Output() success = new EventEmitter<Avistamiento>();
   @Output() fileUpload = new EventEmitter<{ files: File[]; avistamientoId: number | null }>();
+
+  public selectedFiles = signal<File[]>([]);
 
   avistamientoForm!: FormGroup<Form>;
 
@@ -95,7 +97,7 @@ export class AvistamientoForm implements OnInit {
         publicacionId: this.publicacionId,
       };
 
-      this.service.create(avistamientoData).subscribe({
+      this.service.create(avistamientoData, this.selectedFiles()).subscribe({
         next: () => {
           this.success.emit();
           this.toastService.success('Se ha registrado el avistamiento.');
@@ -108,5 +110,19 @@ export class AvistamientoForm implements OnInit {
     }
   }
 
-  onFileSelect(event: any): void {}
+  onFilesSelected(event: FileSelectEvent): void {
+    const currentFiles = this.selectedFiles();
+    const newFiles = [...currentFiles, ...event.files];
+    this.selectedFiles.set(newFiles);
+    console.log('Archivos agregados. Total actual:', this.selectedFiles().length);
+  }
+
+  onFileRemoved(event: FileRemoveEvent): void {
+    const removedFile = event.file;
+    const currentFiles = this.selectedFiles();
+
+    const updatedFiles = currentFiles.filter((f) => f !== removedFile);
+    console.log({ updatedFiles });
+    this.selectedFiles.set(updatedFiles);
+  }
 }

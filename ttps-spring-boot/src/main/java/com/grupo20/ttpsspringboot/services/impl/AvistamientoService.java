@@ -8,6 +8,8 @@ import com.grupo20.ttpsspringboot.dtos.AvistamientoUpdateDTO;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.repository.AvistamientoRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
+import com.grupo20.ttpsspringboot.services.IAvistamientoService;
+import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @Service
-public class AvistamientoService {
+public class AvistamientoService implements IAvistamientoService {
 
     @Autowired
     private PublicacionRepository publicacionRepository;
@@ -29,7 +31,7 @@ public class AvistamientoService {
     private UbicacionService ubicacionService;
 
     @Transactional
-    public Avistamiento create(Usuario usuario, AvistamientoCreateDTO dto, List<MultipartFile> files) {
+    public Avistamiento create(Usuario usuario, AvistamientoCreateDTO dto,  List<MultipartFile> files) {
         Avistamiento avistamiento = dto.toEntity();
         avistamiento.setUsuario(usuario);
 
@@ -38,12 +40,26 @@ public class AvistamientoService {
         Publicacion publicacion = publicacionRepository.findById(dto.getPublicacionId())
                 .orElseThrow(() -> new NotFoundException("Publicación no encontrada"));
 
-
         avistamiento.setPublicacion(publicacion);
 
         Ubicacion ubicacion = ubicacionService.crearUbicacion(dto.getUbicacion());
 
         avistamiento.setUbicacion(ubicacion);
+        if (files != null && !files.isEmpty()) {
+            for (MultipartFile file : files) {
+                if (file != null && !file.isEmpty()) {
+                    try {
+                        Foto nuevaFoto = new Foto();
+                        nuevaFoto.setNombre(file.getOriginalFilename());
+                        nuevaFoto.setContent(file.getBytes());
+                        nuevaFoto.setAvistamiento(avistamiento);
+                        avistamiento.addFoto(nuevaFoto);
+                    } catch (IOException | java.io.IOException e) {
+                        throw new RuntimeException("Error al leer el contenido del archivo: " + file.getOriginalFilename(), e);
+                    }
+                }
+            }
+        }
 
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {

@@ -1,3 +1,4 @@
+import { FotoLinkDTO } from "./fotoLinkDTO";
 import { Ubicacion, UbicacionCreate } from "./ubicacion.interface";
 import { UsuarioSmall } from "./usuario.interface.";
 
@@ -9,7 +10,7 @@ export interface Avistamiento {
   ubicacion: Ubicacion;
   publicacionId: number;
   usuario: UsuarioSmall;
-  fotos?: string[];
+  fotos?: FotoLinkDTO[];
 }
 
 export interface AvistamientoCreate {

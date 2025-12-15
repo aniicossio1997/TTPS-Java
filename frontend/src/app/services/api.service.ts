@@ -46,4 +46,22 @@ export class ApiService {
 
     return params;
   }
+
+  protected buildFormData<T>(data: T, files?: File[]): FormData {
+    const formData = new FormData();
+
+    const publicacionBlob = new Blob([JSON.stringify(data)], {
+      type: 'application/json',
+    });
+
+    formData.append('data', publicacionBlob);
+
+    if (files && files.length > 0) {
+      files.forEach((file) => formData.append('files', file, file.name));
+    } else {
+      formData.append('files', '');
+    }
+
+    return formData;
+  }
 }

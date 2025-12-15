@@ -1,10 +1,10 @@
 package com.grupo20.ttpsspringboot.controller;
 
 import com.grupo20.ttpsspringboot.domain.models.Avistamiento;
-import com.grupo20.ttpsspringboot.domain.models.Publicacion;
 import com.grupo20.ttpsspringboot.dtos.*;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.services.impl.AvistamientoService;
+import com.grupo20.ttpsspringboot.services.IAvistamientoService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,23 +22,21 @@ import java.util.List;
 @Tag(name = "Avistamientos")
 @RestController
 @RequestMapping("/api/avistamientos")
-public class AvistamientoController extends BaseController{
+public class AvistamientoController extends BaseController {
 
     @Autowired
-    private AvistamientoService service;
+    private IAvistamientoService service;
 
     @PostMapping(consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ResponseEntity<AvistamientoDTO> create(
-            @Parameter(
-                    description = "Datos del nuevo avistamiento (JSON)",
-                    content = @Content(
-                            mediaType = "application/json",
-                            schema = @Schema(implementation = AvistamientoCreateDTO.class)
-                    )
-            )
-            @RequestPart("data") @Valid AvistamientoCreateDTO dto,
-            @RequestPart(value = "files", required = false) List<MultipartFile> files
-    ) {
+    public ResponseEntity<AvistamientoDTO> create(@Parameter(
+                                                          description = "Datos de la nueva publicación (JSON)",
+                                                          content = @Content(
+                                                                  mediaType = "application/json",
+                                                                  schema = @Schema(implementation = AvistamientoCreateDTO.class)
+                                                          )
+                                                  )
+                                                  @RequestPart("data") @Valid AvistamientoCreateDTO dto,
+                                                  @RequestPart(value = "files", required = false) List<MultipartFile> files) {
         try {
             Avistamiento avistamiento = service.create(getUsuario(), dto, files);
             return new ResponseEntity<>(AvistamientoDTO.fromEntity(avistamiento), HttpStatus.CREATED);

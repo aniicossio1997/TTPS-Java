@@ -36,13 +36,17 @@ interface MapaState {
   templateUrl: './mapa-geografico-publicaciones.html',
 })
 export class MapaGeograficoPublicaciones implements OnInit {
-
   readonly perfilStore = inject(PerfilByUserStoreService);
   readonly authStore = inject(AuthStoreService);
   private publicacionesService = inject(PublicacionesService);
 
   // Se inicializa a nulo/undefined, esperando la carga del perfil
   departamentoInicial = computed(() => this.perfilStore.perfilDeUsuario()?.ubicacion?.departamento);
+  ubicacionInicial = computed(() => {
+    const ubicacion = this.perfilStore.perfilDeUsuario()?.ubicacion;
+    if (!ubicacion) return '';
+    return `${ubicacion.departamento}, ${ubicacion.ciudad}, ${ubicacion.provincia})`;
+  });
 
   public departamentoBusqueda = signal<string | undefined>(undefined);
 
@@ -64,7 +68,6 @@ export class MapaGeograficoPublicaciones implements OnInit {
 
       // La clave es que el perfil ya resolvió (no es null) Y no hemos hecho una búsqueda manual
       if (this.perfilStore.perfilDeUsuario() !== null && !this.initialLoadDone) {
-
         // Si hay departamento, disparamos la búsqueda
         if (depto) {
           this.departamentoBusqueda.set(depto);
@@ -90,13 +93,11 @@ export class MapaGeograficoPublicaciones implements OnInit {
   private setupDataSubscription(): Observable<MapaState> {
     return this.filtroTrigger$.pipe(
       switchMap((filter) => {
-
         // Si la señal de perfil no ha resuelto (aún es null) o no hay departamento para buscar
         if (this.perfilStore.perfilDeUsuario() === null || !filter.departamento) {
-
           // Si el perfil aún está cargando, mostramos un estado de carga (el HTML lo maneja)
           if (this.perfilStore.perfilDeUsuario() === null) {
-              return of({ loading: true, publicaciones: null, error: null });
+            return of({ loading: true, publicaciones: null, error: null });
           }
 
           // Si ya cargó pero no hay departamento (filtro vacío), mostramos el mensaje de error/prompt

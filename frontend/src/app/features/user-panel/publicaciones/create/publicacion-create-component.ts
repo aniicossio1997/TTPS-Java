@@ -5,6 +5,8 @@ import { PublicacionCreate } from '../../../../interfaces/publicacion.interface'
 import { PublicacionesService } from '../../../../services/publicaciones.service';
 import { Router } from '@angular/router';
 
+type PublicacionSubmitEvent = [PublicacionCreate, File[]];
+
 @Component({
   selector: 'app-publicacion-create',
   standalone: true,
@@ -21,10 +23,11 @@ export class PublicacionCreateComponent {
   private publicacionesService = inject(PublicacionesService);
   private router = inject(Router);
 
-  public handleFormSubmit(publicacion: PublicacionCreate): void {
-    console.log('Datos de Publicación listos para crear:', publicacion);
+  public handleFormSubmit(event: PublicacionSubmitEvent): void {
+    const [publicacion, imagenes] = event;
+    console.log('Datos de Publicación listos para crear:', publicacion, imagenes);
 
-    this.publicacionesService.create(publicacion).subscribe({
+    this.publicacionesService.create(publicacion, imagenes).subscribe({
       next: (publicacionCreada) => {
         console.log('Publicación creada con éxito:', publicacionCreada);
 
