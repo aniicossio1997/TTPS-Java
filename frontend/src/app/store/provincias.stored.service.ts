@@ -8,15 +8,14 @@ import {
 
 import { ApiStatus } from '../interfaces/local/EnumApiStatus.enum';
 import { ToastrService } from 'ngx-toastr';
-import { UsuarioService } from '../services/usuario.service';
-import { FotoService } from '../services/foto.service';
-import { FotoLinkDTO } from '../interfaces/fotoLinkDTO';
+import { GeorefService } from '../services/georef.service';
+import { ProvinciaDTO } from '../interfaces/georef/provinciaDTO';
 
 @Injectable()
-export class FotosByPublicacionStoreService {
+export class ProvinciasStoreService {
   private readonly toastr = inject(ToastrService);
-  readonly servicioFoto =inject(FotoService)
-  public fotos =signal<FotoLinkDTO[]>([])
+  readonly servicioUbicacion =inject(GeorefService)
+  public provincias =signal<ProvinciaDTO[]>([])
 
   private _status  = signal<ApiStatus>(ApiStatus.INIT);
 
@@ -25,14 +24,14 @@ export class FotosByPublicacionStoreService {
   readonly isError   = computed(() => this._status() === ApiStatus.ERROR);
 
 
-  public _getFoto(publicacionId:number){
+  public _getProvincias(){
     this._status.set(ApiStatus.LOADING);
 
-    this.servicioFoto.getFotosByPublicacion(publicacionId)
+    this.servicioUbicacion.getProvincias()
       .subscribe({
       next: (resp) => {
         this._status.set(ApiStatus.SUCCESS);
-        this.fotos.set(resp)
+        this.provincias.set(resp.provincias)
 
       },
       error: (err) => {

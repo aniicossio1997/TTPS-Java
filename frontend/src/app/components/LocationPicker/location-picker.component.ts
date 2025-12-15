@@ -23,6 +23,7 @@ import { GeorefApiExternaService } from '../../services/georefApiExterna.service
 import { UbicacionExternaResponse } from '../../interfaces/ubicacionExternaResponse';
 import { SelectButton } from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
+import { SelectListaUbicacion } from './select-lista-ubicacion/select-lista-ubicacion';
 
 export type LatLng = { lat: number; lng: number };
 
@@ -47,7 +48,7 @@ export type UbicacionSeleccionada = {
 @Component({
   selector: 'app-location-picker',
   standalone: true,
-  imports: [CommonModule, Dialog, ButtonModule, SelectButton, FormsModule],
+  imports: [CommonModule, Dialog, ButtonModule, SelectButton, FormsModule,SelectListaUbicacion ],
   templateUrl: './location-picker.component.html',
   styleUrls: ['./location-picker.component.scss'],
 })
@@ -97,7 +98,7 @@ export class LocationPickerComponent implements AfterViewInit {
       return `${this.initialLocation()?.provincia}, ${this.initialLocation()?.departamento}  ${this.initialLocation()?.municipio ?  ' ,'+this.initialLocation()?.municipio : ''} `;
     }
 
-    return 'Sin ubicación';
+    return 'Click para seleccionar una ubicación';
   });
 
 
@@ -149,10 +150,17 @@ export class LocationPickerComponent implements AfterViewInit {
      this.destroyMap();
   }
 
-  confirm(): void {
+  confirmMap(): void {
 
+    //
     this.confirmed.set(this.temp());
     this.onLocationSelected.emit(this.confirmed()!);
+    this.dialogOpen.set(false);
+  }
+
+  onConfirmToSelectedList(ubicacionSelected:UbicacionSeleccionada ){
+    this.confirmed.set(ubicacionSelected);
+    this.onLocationSelected.emit(ubicacionSelected!);
     this.dialogOpen.set(false);
   }
 
@@ -265,9 +273,12 @@ export class LocationPickerComponent implements AfterViewInit {
           idExternoProvincia: u?.provincia?.id,
           municipio: u?.municipio?.nombre,
           idExternoMunicipio: u?.municipio?.id,
+
           departamento: u?.departamento?.nombre,
           idExternoDepartamento: u?.departamento?.id,
         };
+
+        console.log("MAPA PING::", enriched)
 
         this.temp.set(enriched);
 
@@ -296,23 +307,10 @@ export class LocationPickerComponent implements AfterViewInit {
   this.tempMarker = undefined;
   this.confirmedMarker = undefined;
 
-  console.log('🧨 MAPA DESTRUIDO');
+
 }
 
 
-
-  // Si más adelante querés customizar el ícono:
-  /*
-  private customIcon = L.icon({
-    iconUrl: 'assets/marker-icon.png',
-    iconRetinaUrl: 'assets/marker-icon-2x.png',
-    shadowUrl: 'assets/marker-shadow.png',
-    iconSize: [25, 41],
-    iconAnchor: [12, 41],
-    popupAnchor: [1, -34],
-    shadowSize: [41, 41]
-  });
-  */
 
 
 

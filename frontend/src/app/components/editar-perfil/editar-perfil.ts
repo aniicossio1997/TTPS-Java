@@ -185,11 +185,13 @@ export class EditarPerfil implements OnInit {
       lat: ubicacionExterna.lat.toString(),
       lng: ubicacionExterna.lng.toString(),
       provincia: ubicacionExterna?.provincia ?? '',
-      idExternoProvincia: ubicacionExterna?.provincia ?? '',
+      idExternoProvincia: ubicacionExterna?.idExternoProvincia ?? '',
+
       municipio: ubicacionExterna?.municipio ?? '',
-      idExternoMunicipio: ubicacionExterna?.municipio ?? '',
+      idExternoMunicipio: ubicacionExterna?.idExternoMunicipio ?? '',
+
       departamento: ubicacionExterna?.departamento ?? '',
-      idExternoDepartamento: ubicacionExterna?.departamento ?? '',
+      idExternoDepartamento: ubicacionExterna?.idExternoDepartamento ?? '',
     });
 
     // this.visibleMapa = false;
@@ -253,11 +255,15 @@ export class EditarPerfil implements OnInit {
         this.ubicacionPrecargada.set({
           lat: perfil.ubicacion.latitud.toString() ?? '',
           lng: perfil.ubicacion.longitud.toString() ?? '',
+
           departamento: perfil.ubicacion.departamento,
-          municipio: perfil.ubicacion.municipio,
-          provincia: perfil.ubicacion.provincia,
           idExternoDepartamento: perfil.ubicacion.idExternoDepartamento,
+
+
+          municipio: perfil.ubicacion.municipio,
           idExternoMunicipio: perfil.ubicacion.idExternoMunicipio,
+
+          provincia: perfil.ubicacion.provincia,
           idExternoProvincia: perfil.ubicacion.idExternoProvincia,
         });
       }

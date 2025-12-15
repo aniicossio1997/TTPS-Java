@@ -2,7 +2,9 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { UbicacionExternaResponse } from '../interfaces/ubicacionExternaResponse';
+import { GeorefProvinciasResponse } from '../interfaces/georef/georefProvinciasResponse';
+import { GeorefMunicipiosResponse } from '../interfaces/georef/georefMunicipiosResponse';
+import { GeorefDepartamentosResponse } from '../interfaces/georef/georefDepartamentosResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -12,16 +14,16 @@ export class GeorefService {
   private readonly apiUrl = `${environment.API_URL}/georef`;
   constructor() { }
 
-  getProvincias(): Observable<UbicacionExternaResponse> {
-    return this.http.get<UbicacionExternaResponse>(`${this.apiUrl}/provincias`);
+  getProvincias(): Observable<GeorefProvinciasResponse> {
+    return this.http.get<GeorefProvinciasResponse>(`${this.apiUrl}/provincias`);
   }
 
-  getDepartamentos(idProvincia:number): Observable<UbicacionExternaResponse> {
-    return this.http.get<UbicacionExternaResponse>(`${this.apiUrl}/departamentos/${idProvincia}`);
+  getDepartamentos(idProvincia:number): Observable<GeorefDepartamentosResponse> {
+    return this.http.get<GeorefDepartamentosResponse>(`${this.apiUrl}/departamentos/${idProvincia}`);
   }
 
-  getMunicipios(idProvincia:number): Observable<UbicacionExternaResponse> {
-    return this.http.get<UbicacionExternaResponse>(`${this.apiUrl}/municipios/${idProvincia}`);
+  getMunicipios(idProvincia:number): Observable<GeorefMunicipiosResponse> {
+    return this.http.get<GeorefMunicipiosResponse>(`${this.apiUrl}/municipios/${idProvincia}`);
   }
 
 

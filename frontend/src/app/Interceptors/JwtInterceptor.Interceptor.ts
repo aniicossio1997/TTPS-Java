@@ -18,6 +18,7 @@ export class JwtInterceptor implements HttpInterceptor {
       `${environment.API_URL}/public/publicaciones`,
       `${environment.API_URL}/public/`,
       `${environment.API_URL}/auth/login`,
+      `${environment.API_URL}/georef`,
       environment.URL_MAP  // por si querés mantenerlo
     ];
 

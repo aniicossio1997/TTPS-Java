@@ -1,9 +1,9 @@
 package com.grupo20.ttpsspringboot.services.impl;
 
-import com.grupo20.ttpsspringboot.dtos.georef.*;
+import com.grupo20.ttpsspringboot.dtos.georef.GeorefDepartamentosResponse;
+import com.grupo20.ttpsspringboot.dtos.georef.GeorefMunicipiosResponse;
+import com.grupo20.ttpsspringboot.dtos.georef.GeorefProvinciasResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.ParameterizedTypeReference; // IMPORTANTE
-import org.springframework.http.HttpMethod; // IMPORTANTE
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -13,52 +13,43 @@ public class GeorefService {
     @Autowired
     private RestTemplate restTemplate;
 
+    // La URL PROVINCIAS no requiere parámetros
     private static final String URL_PROVINCIAS = "https://apis.datos.gob.ar/georef/api/provincias?orden=nombre&aplanar=true&campos=estandar&max=100&exacto=true";
+
+    // La URL MUNICIPIOS requiere el ID de la provincia como parámetro
     private static final String URL_MUNICIPIOS = "https://apis.datos.gob.ar/georef/api/municipios?provincia={id}&orden=nombre&aplanar=true&campos=estandar&max=550&exacto=true";
+
     private static final String URL_DEPARTAMENTOS = "https://apis.datos.gob.ar/georef/api/departamentos?provincia={id}&aplanar=true&campos=estandar&max=550&exacto=true";
-
-    public GeorefBaseResponse<ProvinciaDTO> obtenerProvincias() {
+    public GeorefProvinciasResponse obtenerProvincias() {
         try {
-            // Usamos .exchange en lugar de .getForObject para manejar Genéricos <T>
-            return restTemplate.exchange(
-                    URL_PROVINCIAS,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<GeorefBaseResponse<ProvinciaDTO>>() {}
-            ).getBody();
+            // Spring convierte automáticamente el JSON a tus objetos Java
+            return restTemplate.getForObject(URL_PROVINCIAS, GeorefProvinciasResponse.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+    public GeorefDepartamentosResponse obtenerDepartamentos(String idProvincia) {
+        try {
+            // RestTemplate reemplaza {id} por la variable idProvincia
+            return restTemplate.getForObject(URL_DEPARTAMENTOS, GeorefDepartamentosResponse.class, idProvincia);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public GeorefBaseResponse<DepartamentoDTO> obtenerDepartamentos(String idProvincia) {
+    public GeorefMunicipiosResponse obtenerMunicipios(String idProvincia) {
         try {
-            return restTemplate.exchange(
-                    URL_DEPARTAMENTOS,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<GeorefBaseResponse<DepartamentoDTO>>() {},
-                    idProvincia
-            ).getBody();
+
+            return restTemplate.getForObject(URL_MUNICIPIOS, GeorefMunicipiosResponse.class, idProvincia);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public GeorefBaseResponse<MunicipioDTO> obtenerMunicipios(String idProvincia) {
-        try {
-            return restTemplate.exchange(
-                    URL_MUNICIPIOS,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<GeorefBaseResponse<MunicipioDTO>>() {},
-                    idProvincia
-            ).getBody();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+
+
+
 }
