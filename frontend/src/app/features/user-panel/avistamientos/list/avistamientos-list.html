@@ -31,14 +31,14 @@
         <p-carousel
           [class.single-image]="(avistamiento.fotos?.length || 0) <= 1"
           [value]="avistamiento.fotos || []"
-          [numVisible]="1"
+          [numVisible]="3"
           [numScroll]="1"
           [circular]="false"
           [showIndicators]="true"
         >
           <ng-template let-foto pTemplate="item">
-            <div class="relative w-full h-32 rounded-lg overflow-hidden shadow-lg">
-              <img [src]="foto" alt="Mascota" class="w-full h-full object-cover" />
+            <div class="relative  h-42 rounded-lg overflow-hidden shadow-lg px-2 ">
+              <img [src]="foto.url" alt="Mascota" class="w-full  h-full object-cover rounded-2xl" />
             </div>
           </ng-template>
         </p-carousel>
@@ -47,15 +47,7 @@
         <!-- Usuario -->
         <div class="flex justify-between">
           <div class="text-sm text-600 flex gap-2 items-center">
-            <div class="h-10 w-10 rounded-full overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=200&h=200&auto=format&fit=crop"
-                alt="Foto de perfil del autor"
-                class="rounded-full w-full h-full object-cover shadow-md text-transparent"
-              />
-            </div>
-
-            {{ avistamiento.usuario.nombre }} {{ avistamiento.usuario.apellido }}
+              <app-user-avatar [usuario]="avistamiento.usuario" size="normal" [showName]="true" />
           </div>
 
           <!-- Footer -->

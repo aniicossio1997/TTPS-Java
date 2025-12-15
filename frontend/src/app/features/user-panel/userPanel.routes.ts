@@ -6,7 +6,7 @@ import { PublicacionCreateComponent } from './publicaciones/create/publicacion-c
 import { PublicacionDetailComponent } from './publicaciones/detail/publicacion-detail.component';
 import { PublicacionEditComponent } from './publicaciones/edit/publicacion-edit-component';
 import { PerfilSection } from '../common/perfil-section/perfil-section';
-
+import { MapaGeograficoPublicaciones } from './mapa-geografico-publicaciones/mapa-geografico-publicaciones';
 
 export const APP_ROUTES: Routes = [
   {
@@ -28,7 +28,10 @@ export const APP_ROUTES: Routes = [
         path: 'publicaciones/editar/:id',
         component: PublicacionEditComponent,
       },
-
-    ]
-  }
+      {
+        path: 'mapa',
+        component: MapaGeograficoPublicaciones,
+      },
+    ],
+  },
 ];

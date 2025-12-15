@@ -9,6 +9,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { Observable, BehaviorSubject, switchMap, finalize } from 'rxjs';
 import { AvistamientoService } from '../../../../services/avistamiento.service';
 import { Avistamiento, AvistamientoFilter } from '../../../../interfaces/avistamiento.interface';
+import { UserAvatarComponent } from '../../../../components/user-avatar/user-avatar';
 
 @Component({
   selector: 'app-avistamientos-list',
@@ -22,6 +23,7 @@ import { Avistamiento, AvistamientoFilter } from '../../../../interfaces/avistam
     DividerModule,
     CarouselModule,
     SkeletonModule,
+    UserAvatarComponent
   ],
 })
 export class AvistamientosList implements OnInit {

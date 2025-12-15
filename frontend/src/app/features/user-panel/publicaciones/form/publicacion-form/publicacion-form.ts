@@ -1,9 +1,13 @@
+import { Especie, Publicacion, Tamanio } from './../../../../../interfaces/publicacion.interface';
 import {
-  Especie,
-  Publicacion,
-  Tamanio,
-} from './../../../../../interfaces/publicacion.interface';
-import { Component, OnInit, Input, Output, EventEmitter, signal, ChangeDetectionStrategy } from '@angular/core';
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  signal,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   Validators,
@@ -12,33 +16,38 @@ import {
   NonNullableFormBuilder,
 } from '@angular/forms';
 import { SelectItem } from 'primeng/api';
-import {
-  PublicacionCreate,
-} from '../../../../../interfaces/publicacion.interface';
+import { PublicacionCreate } from '../../../../../interfaces/publicacion.interface';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { FieldsetModule } from 'primeng/fieldset';
-import { FileUploadModule } from 'primeng/fileupload';
+import {
+  FileRemoveEvent,
+  FileSelectEvent,
+  FileUploadModule,
+} from 'primeng/fileupload';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { DividerModule } from 'primeng/divider';
 import { DatePickerModule } from 'primeng/datepicker';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { SelectModule } from 'primeng/select';
 import { MessageModule } from 'primeng/message';
-import { UbicacionCreate } from '../../../../../interfaces/ubicacion.interface';
 import { FormErrorComponent } from '../../../../../components/form-error/form-error.component';
 import { RouterModule } from '@angular/router';
-import { LocationPickerComponent, UbicacionSeleccionada } from '../../../../../components/LocationPicker/location-picker.component';
+import {
+  LocationPickerComponent,
+  UbicacionSeleccionada,
+} from '../../../../../components/LocationPicker/location-picker.component';
 import { UbicacionExternaResponse } from '../../../../../interfaces/ubicacionExternaResponse';
+import { FotoLinkDTO } from '../../../../../interfaces/fotoLinkDTO';
 
 enum TipoPublicacion {
   PROPIO = 'Propio',
   AJENO = 'Ajeno',
 }
-
+type PublicacionSubmitEvent = [PublicacionCreate, File[]];
 @Component({
   selector: 'app-publicacion-form',
   templateUrl: './publicacion-form.html',
@@ -72,9 +81,11 @@ export class PublicacionFormComponent implements OnInit {
 
   @Input() publicacionExistente: Publicacion | null = null;
 
-  @Output() formSubmit = new EventEmitter<PublicacionCreate>();
+  @Output() formSubmit = new EventEmitter<PublicacionSubmitEvent>();
 
   ubicacionExterna = signal<UbicacionExternaResponse | null>(null);
+  public selectedFiles = signal<File[]>([]);
+  public fotosExistentes = signal<FotoLinkDTO[]>([]);
 
   publicacionForm;
   tipoPublicacionOpciones: SelectItem<TipoPublicacion>[];
@@ -101,7 +112,19 @@ export class PublicacionFormComponent implements OnInit {
       fechaPerdida: this.fb.control<Date>(new Date(), Validators.required),
       tamanio: this.fb.control<string>('PEQUENO'),
       color: this.fb.control<string>('Negro'),
-      ubicacion: this.fb.control<UbicacionCreate | undefined>(undefined, Validators.required),
+      ubicacion: this.fb.control(
+        {
+          latitud: -1,
+          longitud: -1,
+          provincia: '',
+          idExternoProvincia: '',
+          municipio: '',
+          idExternoMunicipio: '',
+          departamento: '',
+          idExternoDepartamento: '',
+        },
+        Validators.required
+      ),
     });
   }
 
@@ -140,6 +163,9 @@ export class PublicacionFormComponent implements OnInit {
     });
 
     this.publicacionForm.get('tipo')?.updateValueAndValidity();
+    if (data.fotos?.length) {
+      this.fotosExistentes.set(data.fotos);
+    }
   }
 
   COLOR_MAP: Record<string, string> = {
@@ -154,7 +180,7 @@ export class PublicacionFormComponent implements OnInit {
     return Object.entries(this.COLOR_MAP);
   }
 
-  onSubmit(): void {
+  async onSubmit() {
     if (this.publicacionForm.valid) {
       const formValue = this.publicacionForm.value;
 
@@ -177,12 +203,13 @@ export class PublicacionFormComponent implements OnInit {
           municipio: '',
           idExternoMunicipio: '',
           departamento: '',
-          idExternoDepartamento: ''
+          idExternoDepartamento: '',
         },
         estado:
           estadoActual || (tipo === TipoPublicacion.PROPIO ? 'PERDIDO_PROPIO' : 'PERDIDO_AJENO'),
       };
-      this.formSubmit.emit(publicacionData);
+
+      this.formSubmit.emit([publicacionData, this.selectedFiles()]);
 
       console.log(`${this.publicacionId ? 'Actualizando' : 'Creando'} Publicación...`);
     } else {
@@ -200,12 +227,28 @@ export class PublicacionFormComponent implements OnInit {
     return !!this.publicacionForm.get(controlName)?.hasError(error);
   }
 
-  onUpload(event: any) {
-    console.log('Archivos recibidos para el ID:', this.publicacionId || 'nuevo');
+  onFilesSelected(event: FileSelectEvent): void {
+    this.fotosExistentes.set([]);
+    const currentFiles = this.selectedFiles();
+    const newFiles = [...currentFiles, ...event.files];
+    this.selectedFiles.set(newFiles);
+    console.log('Archivos agregados. Total actual:', this.selectedFiles().length);
+  }
+
+  onFileRemoved(event: FileRemoveEvent): void {
+    const removedFile = event.file;
+    const currentFiles = this.selectedFiles();
+
+    const updatedFiles = currentFiles.filter((f) => f !== removedFile);
+    console.log({ updatedFiles });
+    this.selectedFiles.set(updatedFiles);
+  }
+
+  onFilesClear(): void {
+    this.selectedFiles.set([]);
   }
 
   onLocationSelected(ubicacion: UbicacionSeleccionada) {
-
     null;
   }
 
@@ -214,5 +257,4 @@ export class PublicacionFormComponent implements OnInit {
 
     return !!(ubicacion && ubicacion.latitud && ubicacion.longitud);
   }
-
 }

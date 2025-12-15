@@ -34,33 +34,35 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
      * La paginación y el orden vienen en el objeto 'pageable'.
      */
     @Query(value = """
-        SELECT p FROM Publicacion p
-        WHERE
-            p.deletedAt IS NULL
-            AND (:#{#filter.nombre} IS NULL OR :#{#filter.nombre} = '' OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', :#{#filter.nombre}, '%')))
-            AND (:#{#filter.especie} IS NULL OR :#{#filter.especie} = '' OR p.especie = :#{#filter.especie})
-            AND (:#{#filter.raza} IS NULL OR :#{#filter.raza} = '' OR p.raza = :#{#filter.raza})
-            AND (:#{#filter.tamanio} IS NULL OR :#{#filter.tamanio} = '' OR p.tamanio = :#{#filter.tamanio})
-            AND (:#{#filter.color} IS NULL OR :#{#filter.color} = '' OR p.color = :#{#filter.color})
-            AND (:#{#filter.usuarioId} IS NULL OR p.usuario.id = :#{#filter.usuarioId})
-            AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
-        """,
-            // Esta consulta es OBLIGATORIA para que 'Page' funcione.
-            // Es la misma consulta de arriba, pero con COUNT(p).
+    SELECT p FROM Publicacion p
+    WHERE
+        p.deletedAt IS NULL
+        AND (:#{#filter.nombre} IS NULL OR :#{#filter.nombre} = '' OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', :#{#filter.nombre}, '%')))
+        AND (:#{#filter.especie} IS NULL OR :#{#filter.especie} = '' OR p.especie = :#{#filter.especie})
+        AND (:#{#filter.raza} IS NULL OR :#{#filter.raza} = '' OR p.raza = :#{#filter.raza})
+        AND (:#{#filter.tamanio} IS NULL OR :#{#filter.tamanio} = '' OR p.tamanio = :#{#filter.tamanio})
+        AND (:#{#filter.color} IS NULL OR :#{#filter.color} = '' OR p.color = :#{#filter.color})
+        AND (:#{#filter.usuarioId} IS NULL OR p.usuario.id = :#{#filter.usuarioId})
+        AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
+        AND (:#{#filter.departamento} IS NULL OR :#{#filter.departamento} = '' OR LOWER(p.ubicacion.departamento) LIKE LOWER(CONCAT('%', :#{#filter.departamento}, '%')))
+        AND (:#{#filter.provincia} IS NULL OR :#{#filter.provincia} = '' OR LOWER(p.ubicacion.provincia) LIKE LOWER(CONCAT('%', :#{#filter.provincia}, '%')))
+    """,
             countQuery = """
-        SELECT COUNT(p) FROM Publicacion p
-        WHERE
-            p.deletedAt IS NULL
-            AND (:#{#filter.nombre} IS NULL OR :#{#filter.nombre} = '' OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', :#{#filter.nombre}, '%')))
-            AND (:#{#filter.especie} IS NULL OR :#{#filter.especie} = '' OR p.especie = :#{#filter.especie})
-            AND (:#{#filter.raza} IS NULL OR :#{#filter.raza} = '' OR p.raza = :#{#filter.raza})
-            AND (:#{#filter.tamanio} IS NULL OR :#{#filter.tamanio} = '' OR p.tamanio = :#{#filter.tamanio})
-            AND (:#{#filter.color} IS NULL OR :#{#filter.color} = '' OR p.color = :#{#filter.color})
-            AND (:#{#filter.usuarioId} IS NULL OR p.usuario.id = :#{#filter.usuarioId})
-            AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
-        """)
+    SELECT COUNT(p) FROM Publicacion p
+    WHERE
+        p.deletedAt IS NULL
+        AND (:#{#filter.nombre} IS NULL OR :#{#filter.nombre} = '' OR LOWER(p.nombre) LIKE LOWER(CONCAT('%', :#{#filter.nombre}, '%')))
+        AND (:#{#filter.especie} IS NULL OR :#{#filter.especie} = '' OR p.especie = :#{#filter.especie})
+        AND (:#{#filter.raza} IS NULL OR :#{#filter.raza} = '' OR p.raza = :#{#filter.raza})
+        AND (:#{#filter.tamanio} IS NULL OR :#{#filter.tamanio} = '' OR p.tamanio = :#{#filter.tamanio})
+        AND (:#{#filter.color} IS NULL OR :#{#filter.color} = '' OR p.color = :#{#filter.color})
+        AND (:#{#filter.usuarioId} IS NULL OR p.usuario.id = :#{#filter.usuarioId})
+        AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
+        AND (:#{#filter.departamento} IS NULL OR :#{#filter.departamento} = '' OR LOWER(p.ubicacion.departamento) LIKE LOWER(CONCAT('%', :#{#filter.departamento}, '%')))
+        AND (:#{#filter.provincia} IS NULL OR :#{#filter.provincia} = '' OR LOWER(p.ubicacion.provincia) LIKE LOWER(CONCAT('%', :#{#filter.provincia}, '%')))
+    """)
     Page<Publicacion> findByCaracteristicas(
             @Param("filter") PublicacionFilterDTO filter,
-            Pageable pageable // <-- Spring se encarga de paginar y ordenar por esto
+            Pageable pageable
     );
 }

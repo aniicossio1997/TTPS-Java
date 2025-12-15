@@ -2,7 +2,17 @@ import {
   LocationPickerComponent,
   UbicacionSeleccionada,
 } from './../LocationPicker/location-picker.component';
-import { Component, computed, effect, inject, input, OnInit, output, signal, untracked } from '@angular/core';
+import {
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+  untracked,
+} from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -127,16 +137,15 @@ export class EditarPerfil implements OnInit {
   previewFoto = signal<string | null>(null);
   existingFotoUrl = signal<string | null>(null);
 
-
   // Archivo real seleccionado
   fotoFile: File | null = null;
 
-  constructor() {
-
-  }
+  constructor() {}
 
   ngOnInit(): void {
-    this.perfilStore._getPerfil(this.idUsuario(), ()=>{this._actualizarFormulario()});
+    this.perfilStore._getPerfil(this.idUsuario(), () => {
+      this._actualizarFormulario();
+    });
   }
 
   onFileSelected(event: Event) {
@@ -179,8 +188,6 @@ export class EditarPerfil implements OnInit {
   }
 
   onLocationSelected(ubicacionExterna: UbicacionSeleccionada) {
-
-
     this.editForm.controls['ubicacion'].setValue({
       lat: ubicacionExterna.lat.toString(),
       lng: ubicacionExterna.lng.toString(),
@@ -203,15 +210,13 @@ export class EditarPerfil implements OnInit {
       return;
     }
 
-    await this._callApiPutUser(this.editForm)
+    await this._callApiPutUser(this.editForm);
   }
 
   onCloseEditarPerfilLocal() {
-    this.editForm.reset()
+    this.editForm.reset();
     this.onCloseEditarPerfil.emit();
   }
-
-
 
   private async urlToFile(url: string, fileName = 'foto-perfil.jpg'): Promise<File> {
     const res = await fetch(url); // si necesita token, te paso alternativa abajo
@@ -221,36 +226,36 @@ export class EditarPerfil implements OnInit {
     return new File([blob], fileName, { type: blob.type || 'image/jpeg' });
   }
 
-  private _actualizarFormulario(){
-      const perfil = this.perfilStore.perfilDeUsuario();
+  private _actualizarFormulario() {
+    const perfil = this.perfilStore.perfilDeUsuario();
 
-      // Si no hay perfil, o si el formulario YA fue "tocado" (dirty), no sobrescribir.
-      // Ojo: 'dirty' se pone true apenas escribes una letra.
-      if (!perfil) return;
+    // Si no hay perfil, o si el formulario YA fue "tocado" (dirty), no sobrescribir.
+    // Ojo: 'dirty' se pone true apenas escribes una letra.
+    if (!perfil) return;
 
-      // Usamos untracked para leer valores del form sin crear dependencia circular
-      const isFormDirty = untracked(() => this.editForm.dirty);
+    // Usamos untracked para leer valores del form sin crear dependencia circular
+    const isFormDirty = untracked(() => this.editForm.dirty);
 
-      // 1) Patch datos “simples”
-      this.editForm.patchValue({
-        firstName: perfil.nombre ?? '',
-        lastName: perfil.apellido ?? '',
-        email: perfil.email ?? '',
-        phone: perfil.telefono ?? '',
+    // 1) Patch datos “simples”
+    this.editForm.patchValue({
+      firstName: perfil.nombre ?? '',
+      lastName: perfil.apellido ?? '',
+      email: perfil.email ?? '',
+      phone: perfil.telefono ?? '',
+    });
+
+    // 2) Patch ubicación (si existe)
+    if (perfil.ubicacion) {
+      this.editForm.get('ubicacion')?.patchValue({
+        lat: String(perfil.ubicacion.latitud ?? ''),
+        lng: String(perfil.ubicacion.longitud ?? ''),
+        provincia: perfil.ubicacion.provincia ?? '',
+        idExternoProvincia: perfil.ubicacion.idExternoProvincia ?? '',
+        municipio: perfil.ubicacion.municipio ?? '',
+        idExternoMunicipio: perfil.ubicacion.idExternoMunicipio ?? '',
+        departamento: perfil.ubicacion.departamento ?? '',
+        idExternoDepartamento: perfil.ubicacion.idExternoDepartamento ?? '',
       });
-
-      // 2) Patch ubicación (si existe)
-      if (perfil.ubicacion) {
-        this.editForm.get('ubicacion')?.patchValue({
-          lat: String(perfil.ubicacion.latitud ?? ''),
-          lng: String(perfil.ubicacion.longitud ?? ''),
-          provincia: perfil.ubicacion.provincia ?? '',
-          idExternoProvincia: perfil.ubicacion.idExternoProvincia ?? '',
-          municipio: perfil.ubicacion.municipio ?? '',
-          idExternoMunicipio: perfil.ubicacion.idExternoMunicipio ?? '',
-          departamento: perfil.ubicacion.departamento ?? '',
-          idExternoDepartamento: perfil.ubicacion.idExternoDepartamento ?? '',
-        });
 
         this.ubicacionPrecargada.set({
           lat: perfil.ubicacion.latitud.toString() ?? '',
@@ -268,72 +273,70 @@ export class EditarPerfil implements OnInit {
         });
       }
 
-      // 3) Foto (si viene link/url desde backend)
-      // Ej: perfil.foto?.url (según tu DTO)
-      const fotoUrl = perfil.fotoLink?.url ?? null;
+    // 3) Foto (si viene link/url desde backend)
+    // Ej: perfil.foto?.url (según tu DTO)
+    const fotoUrl = perfil.fotoLink?.url ?? null;
 
-      this.existingFotoUrl.set(fotoUrl);
-      this.previewFoto.set(fotoUrl);
+    this.existingFotoUrl.set(fotoUrl);
+    this.previewFoto.set(fotoUrl);
 
-      // 4) Importante: NO intentes setear el File real acá (por seguridad del browser)
-      // El control 'foto' queda null hasta que el usuario elija un archivo.
-      //this.editForm.get('foto')?.setValue(null);
+    // 4) Importante: NO intentes setear el File real acá (por seguridad del browser)
+    // El control 'foto' queda null hasta que el usuario elija un archivo.
+    //this.editForm.get('foto')?.setValue(null);
   }
 
   private async _callApiPutUser(entityForm: FormGroup<FormEdit>) {
-  // 1) Validación
-  if (entityForm.invalid) {
-    entityForm.markAllAsTouched();
-    this.toastr.error('Revisá los campos del formulario', 'Formulario inválido');
-    return;
-  }
-
-  this._status.set(ApiStatus.LOADING);
-
-  // 2) Datos del formulario
-  const formValue = entityForm.getRawValue();
-  const ubicacionForm = formValue.ubicacion;
-
-  const dataToPut: UsuarioUpdateRequest = {
-    apellido: formValue.lastName ?? '',
-    email: formValue.email ?? '',
-    nombre: formValue.firstName ?? '',
-    telefono: formValue.phone ?? '',
-    ubicacion: {
-      departamento: ubicacionForm.departamento ?? '',
-      idExternoDepartamento: ubicacionForm.idExternoDepartamento ?? '', // ✅ FIX
-
-      municipio: ubicacionForm.municipio ?? '',
-      idExternoMunicipio: ubicacionForm.idExternoMunicipio ?? '',
-
-      provincia: ubicacionForm.provincia ?? '',
-      idExternoProvincia: ubicacionForm.idExternoProvincia ?? '',
-
-      latitud: Number(ubicacionForm.lat),
-      longitud: Number(ubicacionForm.lng),
-    },
-  };
-
-  // 3) Foto a enviar
-  let fileToSend: File | undefined = formValue.foto ?? undefined;
-
-  // Caso: no eligió nueva foto y la que se muestra es la existente
-  // (solo si tu backend borra foto cuando no llega file)
-  if (!fileToSend && this.existingFotoUrl() && this.previewFoto() === this.existingFotoUrl()) {
-    try {
-      fileToSend = await this.urlToFile(this.existingFotoUrl()!, 'foto-perfil.jpg');
-    } catch (error) {
-      console.warn('No se pudo recuperar la foto existente para reenviarla', error);
-      fileToSend = undefined;
+    // 1) Validación
+    if (entityForm.invalid) {
+      entityForm.markAllAsTouched();
+      this.toastr.error('Revisá los campos del formulario', 'Formulario inválido');
+      return;
     }
-  }
 
-  // Caso: usuario eliminó (preview null) => fileToSend queda undefined (tu backend lo interpretará como borrar)
+    this._status.set(ApiStatus.LOADING);
 
-  // 4) Llamada API (✅ usar fileToSend)
-  this._serviceUsuario
-    .putUpdateUsuario(this.idUsuario(), dataToPut, fileToSend)
-    .subscribe({
+    // 2) Datos del formulario
+    const formValue = entityForm.getRawValue();
+    const ubicacionForm = formValue.ubicacion;
+
+    const dataToPut: UsuarioUpdateRequest = {
+      apellido: formValue.lastName ?? '',
+      email: formValue.email ?? '',
+      nombre: formValue.firstName ?? '',
+      telefono: formValue.phone ?? '',
+      ubicacion: {
+        departamento: ubicacionForm.departamento ?? '',
+        idExternoDepartamento: ubicacionForm.idExternoDepartamento ?? '', // ✅ FIX
+
+        municipio: ubicacionForm.municipio ?? '',
+        idExternoMunicipio: ubicacionForm.idExternoMunicipio ?? '',
+
+        provincia: ubicacionForm.provincia ?? '',
+        idExternoProvincia: ubicacionForm.idExternoProvincia ?? '',
+
+        latitud: Number(ubicacionForm.lat),
+        longitud: Number(ubicacionForm.lng),
+      },
+    };
+
+    // 3) Foto a enviar
+    let fileToSend: File | undefined = formValue.foto ?? undefined;
+
+    // Caso: no eligió nueva foto y la que se muestra es la existente
+    // (solo si tu backend borra foto cuando no llega file)
+    if (!fileToSend && this.existingFotoUrl() && this.previewFoto() === this.existingFotoUrl()) {
+      try {
+        fileToSend = await this.urlToFile(this.existingFotoUrl()!, 'foto-perfil.jpg');
+      } catch (error) {
+        console.warn('No se pudo recuperar la foto existente para reenviarla', error);
+        fileToSend = undefined;
+      }
+    }
+
+    // Caso: usuario eliminó (preview null) => fileToSend queda undefined (tu backend lo interpretará como borrar)
+
+    // 4) Llamada API (✅ usar fileToSend)
+    this._serviceUsuario.putUpdateUsuario(this.idUsuario(), dataToPut, fileToSend).subscribe({
       next: (resp) => {
         this._status.set(ApiStatus.SUCCESS);
         this.toastr.success('Se guardaron los datos', 'Éxito');
@@ -345,6 +348,5 @@ export class EditarPerfil implements OnInit {
         this.toastr.error('Error al guardar el perfil', 'Error en el servidor');
       },
     });
-}
-
+  }
 }

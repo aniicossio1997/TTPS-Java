@@ -141,7 +141,9 @@ public class PublicacionService implements IPublicacionService {
         List<Foto> fotosAEliminar = new ArrayList<>(publicacion.getFotos());
 
         // Limpiamos la colección. Esto es lo que activa orphanRemoval en la BD.
-        publicacion.getFotos().clear();
+        if (files != null) {
+            publicacion.getFotos().clear();
+        }
 
         if (files != null && !files.isEmpty()) {
 

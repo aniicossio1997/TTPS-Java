@@ -15,6 +15,7 @@ public class UsuarioSmallDTO {
     private RolUsuarioEnum rol;
     private String telefono;
     private Integer puntos;
+    private FotoLinkDTO foto;
 
     public static UsuarioSmallDTO fromEntity(Usuario entity) {
         UsuarioSmallDTO dto = new UsuarioSmallDTO();
@@ -26,6 +27,10 @@ public class UsuarioSmallDTO {
         dto.setRol(entity.getRol());
         dto.setTelefono(entity.getTelefono());
         dto.setPuntos(entity.getPuntos());
+
+        if (entity.getFotoPerfil() != null) {
+            dto.setFoto(FotoLinkDTO.fromEntity(entity.getFotoPerfil()));
+        }
         return dto;
     }
 }

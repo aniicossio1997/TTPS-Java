@@ -10,6 +10,8 @@ import { PublicacionesService } from '../../../../services/publicaciones.service
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, switchMap, tap } from 'rxjs';
 
+type PublicacionSubmitEvent = [PublicacionCreate, File[]];
+
 @Component({
   selector: 'app-publicacion-edit',
   standalone: true,
@@ -47,18 +49,17 @@ export class PublicacionEditComponent implements OnInit {
     );
   }
 
-  public handleFormSubmit(publicacion: PublicacionUpdate): void {
+  public handleFormSubmit(event: PublicacionSubmitEvent): void {
+
+
     if (this.publicacionId === null) {
       console.error('Error: No se encontró ID para actualizar la publicación.');
       return;
     }
 
-    console.log(
-      `Datos de Publicación listos para actualizar (ID: ${this.publicacionId}):`,
-      publicacion
-    );
+    const [publicacion, imagenes] = event;
 
-    this.publicacionesService.update(this.publicacionId, publicacion).subscribe({
+    this.publicacionesService.update(this.publicacionId, publicacion, imagenes).subscribe({
       next: (publicacionActualizada) => {
         console.log('Publicación actualizada con éxito:', publicacionActualizada);
 

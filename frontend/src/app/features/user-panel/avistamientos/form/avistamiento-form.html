@@ -34,10 +34,11 @@
           [maxFileSize]="1000000"
           [showUploadButton]="false"
           [showCancelButton]="false"
-          [customUpload]="true"
-          chooseLabel="Cargar Imágenes"
-          (uploadHandler)="onFileSelect($event)"
-        ></p-fileUpload>
+          (onSelect)="onFilesSelected($event)"
+          (onRemove)="onFileRemoved($event)"
+          chooseLabel="Cargar imágenes"
+        >
+        </p-fileUpload>
         <small class="text-500 mt-2 block">
           Si tienes imágenes de la mascota, no dudes en cargarlas.
         </small>

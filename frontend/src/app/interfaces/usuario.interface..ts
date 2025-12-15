@@ -1,3 +1,4 @@
+import { FotoLinkDTO } from './fotoLinkDTO';
 import { EnumRolUsuario } from './local/rol-usuario.enum';
 
 export interface UsuarioSmall {
@@ -7,5 +8,6 @@ export interface UsuarioSmall {
   email: string;
   rol: EnumRolUsuario;
   puntos: number;
+  foto?: FotoLinkDTO;
   //foto: string;
 }

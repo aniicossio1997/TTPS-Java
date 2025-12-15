@@ -162,7 +162,9 @@
       <p-fieldset legend="3. Ubicación" toggleable>
         <div class="flex gap-4">
           <app-location-picker
-            [initialLocation]="null" [isInvalid]="isInvalid('ubicacion')!" (onLocationSelected)="onLocationSelected($event)"
+            [initialLocation]="null"
+            [isInvalid]="isInvalid('ubicacion')!"
+            (onLocationSelected)="onLocationSelected($event)"
           ></app-location-picker>
           <div style="display: flex; margin-bottom: 4px; flex-direction: column">
             @if (!!ubicacionExterna()) {
@@ -186,6 +188,17 @@
       <p-divider></p-divider>
 
       <p-fieldset legend="4. Imágenes" toggleable>
+        <div *ngIf="fotosExistentes().length > 0" class="p-mb-4">
+          <div class="flex overflow-hidden overflow-x-auto max-w-full">
+            <div
+              *ngFor="let archivo of fotosExistentes()"
+              class="p-mr-3 p-mb-3 relative"
+            >
+              <img [src]="archivo.url" alt="Imagen Existente" class="h-[15em]" />
+            </div>
+          </div>
+        </div>
+
         <p-fileUpload
           mode="advanced"
           accept="image/*"
@@ -193,11 +206,15 @@
           [maxFileSize]="1000000"
           [showUploadButton]="false"
           [showCancelButton]="false"
-          [customUpload]="true"
-          chooseLabel="Cargar Imágenes"
-          (uploadHandler)="onUpload($event)"
-        ></p-fileUpload>
-        <small class="text-500 mt-2 block">Sube hasta 3 imágenes (máx. 1MB c/u).</small>
+          (onSelect)="onFilesSelected($event)"
+          (onRemove)="onFileRemoved($event)"
+          chooseLabel="Cargar imágenes"
+        >
+        </p-fileUpload>
+
+        <small class="text-500 mt-2 block">
+          Archivos listos para enviar: {{ selectedFiles().length }} (Máx. 1MB c/u).
+        </small>
       </p-fieldset>
 
       <p-divider></p-divider>

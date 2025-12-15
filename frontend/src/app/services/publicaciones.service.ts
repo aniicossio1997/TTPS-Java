@@ -29,15 +29,19 @@ export class PublicacionesService extends ApiService {
     return this.get<Publicacion>(`${this.endpoint}/${id}`);
   }
 
-  public create(publicacion: PublicacionCreate): Observable<Publicacion> {
-    return this.post<Publicacion, PublicacionCreate>(this.endpoint, publicacion);
+  public create(publicacion: PublicacionCreate, imagenes: File[] = []): Observable<Publicacion> {
+     const formData = this.buildFormData(publicacion, imagenes);
+
+    return this.http.post<Publicacion>(`${this.baseUrl}${this.endpoint}`, formData);
   }
 
-  public update(id: number, publicacion: PublicacionUpdate): Observable<Publicacion> {
-    return this.put<Publicacion, PublicacionUpdate>(`${this.endpoint}/${id}`, publicacion);
+  public update(id: number, publicacion: PublicacionUpdate, imagenes?: File[] ): Observable<Publicacion> {
+     const formData = this.buildFormData(publicacion, imagenes);
+    return this.http.put<Publicacion>(`${this.baseUrl}${this.endpoint}/${id}`, formData);
   }
 
   public delete(id: number): Observable<void> {
     return this._delete<void>(`${this.endpoint}/${id}`);
   }
+
 }

@@ -55,4 +55,7 @@ export interface PublicacionFilter extends PaginationFilter<Publicacion> {
   fechaDesde?: Date;
   fechaHasta?: Date;
   usuarioId?: number;
+  // Ubicacion
+  departamento?: string;
+  provincia?: string;
 }
