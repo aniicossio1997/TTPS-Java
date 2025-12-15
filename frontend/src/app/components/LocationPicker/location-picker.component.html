@@ -1,49 +1,78 @@
+<section class="bg-gray-50 p-4 rounded-xl border border-gray-200 ">
+  <p-selectbutton
+    [options]="stateOptions"
+    [ngModel]="vistaOpciones()"
+    (ngModelChange)="vistaOpciones.set($event)"
+    optionLabel="label"
+    optionValue="value"
+    [allowEmpty]="false"
+    fluid
+  >
+    <ng-template let-item pTemplate="item">
+      <div [class.text-[#10B981]]="vistaOpciones() === item.value">
+        <i [class]="item.icon" class="mr-2"></i>
+        <span>{{ item.label }}</span>
+      </div>
+    </ng-template>
+  </p-selectbutton>
 
 
+  @if (vistaOpciones()=='lista') {
 
-<p-button variant="outlined"  aria-label="Youtube" styleClass="w-full"  (click)="open()">
-    <i class="pi pi-map-marker"></i>
-    <p class="px-1">{{textoLabel()}}
-      @if(temp()){       <span class="font-light text-gray-500 ">
-      (Cambiar)
-    </span>}
-</p>
-</p-button>
+  }
 
-<p-dialog
-[closable]="false"
-  header="Seleccionar ubicación"
-  [modal]="true"
-  [style]="{ width: '800px' }"
-  [visible]="dialogOpen()"
-  (visibleChange)="dialogOpen.set($event)"
->
-  <div class="map-wrapper">
-    <div #mapContainer class="map"></div>
+  <!-- OPCION MAPA -->
 
-    <div class="info">
-      @if (temp()) {
-        <div>
-          <b>Latitud:</b> {{ temp()!.lat }} &nbsp;
-          <b>Longitud:</b> {{ temp()!.lng }}
-        </div>
-      }
+  @if(vistaOpciones()== 'mapa'){
+  <p-button variant="outlined"  aria-label="clic para ver la ubicacion" styleClass="w-full mt-4"  (click)="open()">
+      <i class="pi pi-map-marker"></i>
+      <p class="px-1">{{textoLabel()}}
+        @if(temp()){       <span class="font-light text-gray-500 ">
+        (Cambiar)
+      </span>}
+  </p>
+  </p-button>
 
-      @if (loadingGeoref()) {
-        <span class="muted">Buscando ubicación…</span>
-      } @else if (georefText()) {
-        <span>{{ georefText() }}</span>
-      }@else {
-        {{textoLabel()}}
-      }
+  <p-dialog
+  [closable]="false"
+    header="Seleccionar ubicación"
+    [modal]="true"
+    [style]="{ width: '800px' }"
+    [visible]="dialogOpen()"
+    (visibleChange)="dialogOpen.set($event)"
+  >
+    <div class="map-wrapper">
+      <div #mapContainer class="map"></div>
+
+      <div class="info">
+        @if (temp()) {
+          <div>
+            <b>Latitud:</b> {{ temp()!.lat }} &nbsp;
+            <b>Longitud:</b> {{ temp()!.lng }}
+          </div>
+        }
+
+        @if (loadingGeoref()) {
+          <span class="muted">Buscando ubicación…</span>
+        } @else if (georefText()) {
+          <span>{{ georefText() }}</span>
+        }@else {
+          {{textoLabel()}}
+        }
+      </div>
     </div>
-  </div>
 
-  <ng-template pTemplate="footer">
-    <div class="flex justify-between w-full">
-      <p-button  severity="secondary" label="Cancelar" (click)="cancel()" />
+    <ng-template pTemplate="footer">
+      <div class="flex justify-between w-full">
+        <p-button  severity="secondary" label="Cancelar" (click)="cancel()" />
 
-      <button pButton label="Confirmar" (click)="confirm()"></button>
-    </div>
-  </ng-template>
-</p-dialog>
+        <button pButton label="Confirmar" (click)="confirm()"></button>
+      </div>
+    </ng-template>
+  </p-dialog>
+  }
+</section>
+
+
+
+

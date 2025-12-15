@@ -9,7 +9,7 @@ import java.util.List;
 public class GeorefProvinciasResponse {
 
     // Mapea la lista "provincias" del JSON
-    private List<ProvinciaExternoDTO> provincias;
+    private List<ProvinciaDTO> provincias;
 
     private int cantidad;
     private int total;

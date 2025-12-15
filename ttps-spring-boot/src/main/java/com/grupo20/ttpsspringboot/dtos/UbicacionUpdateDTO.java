@@ -17,19 +17,13 @@ public class UbicacionUpdateDTO implements Serializable {
     private Double longitud;
 
 
-    @NotBlank(message = "La provincia es obligatoria.")
     private String provincia;
-    @NotBlank(message = "El id Externo Provincia es obligatoria.")
     private String idExternoProvincia;
 
-    @NotBlank(message = "El municipio es obligatoria.")
     private String municipio;
-    @NotBlank(message = "El id Externo del Municipio es obligatoria.")
     private String idExternoMunicipio;
 
-    @NotBlank(message = "El Departamento es obligatoria.")
     private String departamento;
-    @NotBlank(message = "El Id Externo Departamento es obligatoria.")
     private String idExternoDepartamento;
 
     public static UbicacionDTO fromEntity(Ubicacion entity) {

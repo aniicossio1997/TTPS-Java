@@ -1,7 +1,6 @@
 package com.grupo20.ttpsspringboot.controller;
 
-import com.grupo20.ttpsspringboot.dtos.georef.GeorefMunicipiosResponse;
-import com.grupo20.ttpsspringboot.dtos.georef.GeorefProvinciasResponse;
+import com.grupo20.ttpsspringboot.dtos.georef.*;
 import com.grupo20.ttpsspringboot.services.impl.GeorefService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,9 +21,27 @@ public class GeorefController {
 
     @Operation(summary = "Obtener listado de provincias (Proxy)")
     @GetMapping("/provincias")
-    public ResponseEntity<GeorefProvinciasResponse> getProvincias() {
+    public ResponseEntity<GeorefBaseResponse<ProvinciaDTO>> getProvincias() {
 
-        GeorefProvinciasResponse response = georefService.obtenerProvincias();
+        GeorefBaseResponse<ProvinciaDTO> response = georefService.obtenerProvincias();
+
+        if (response == null) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Obtener departamentos de una provincia")
+    @GetMapping("/departamentos/{idProvincia}")
+    public ResponseEntity<GeorefBaseResponse<DepartamentoDTO>>  getDepartamentos(@PathVariable String idProvincia) {
+
+        // Validación básica
+        if (idProvincia == null || idProvincia.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        GeorefBaseResponse<DepartamentoDTO> response = georefService.obtenerDepartamentos(idProvincia);
 
         if (response == null) {
             return ResponseEntity.internalServerError().build();
@@ -35,9 +52,9 @@ public class GeorefController {
 
     @Operation(summary = "Obtener municipios de una provincia")
     @GetMapping("/municipios/{idProvincia}")
-    public ResponseEntity<GeorefMunicipiosResponse> getMunicipios(@PathVariable String idProvincia) {
+    public ResponseEntity<GeorefBaseResponse<MunicipioDTO>>  getMunicipios(@PathVariable String idProvincia) {
 
-        GeorefMunicipiosResponse response = georefService.obtenerMunicipios(idProvincia);
+        GeorefBaseResponse<MunicipioDTO> response = georefService.obtenerMunicipios(idProvincia);
 
         if (response == null) {
             return ResponseEntity.internalServerError().build();
@@ -45,4 +62,5 @@ public class GeorefController {
 
         return ResponseEntity.ok(response);
     }
+
 }
