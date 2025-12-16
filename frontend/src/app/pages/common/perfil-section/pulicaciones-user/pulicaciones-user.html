@@ -1,0 +1,20 @@
+
+@if(isSuccess()){
+  <div class="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 gap-6">
+  @for (publicacion of publicacionesState().data; track $index) {
+    <app-publicacion-card-item
+      [publicacion]="publicacion"
+    ></app-publicacion-card-item>
+  }
+
+</div>
+}
+
+@if (isLoading()) {
+  <div class="w-20 h-20 border-6 border-gray-200 border-t-green-500 rounded-full animate-spin"></div>
+  <span class="text-sm text-zinc-500">Obteniendo publicaciones del usuario...</span>
+}
+@if(isNotFound()){
+  <p-message severity="success">Sin publicaciones</p-message>
+
+}

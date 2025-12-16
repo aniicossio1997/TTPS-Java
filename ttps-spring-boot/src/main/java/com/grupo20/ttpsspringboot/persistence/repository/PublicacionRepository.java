@@ -46,6 +46,8 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
         AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
         AND (:#{#filter.departamento} IS NULL OR :#{#filter.departamento} = '' OR LOWER(p.ubicacion.departamento) LIKE LOWER(CONCAT('%', :#{#filter.departamento}, '%')))
         AND (:#{#filter.provincia} IS NULL OR :#{#filter.provincia} = '' OR LOWER(p.ubicacion.provincia) LIKE LOWER(CONCAT('%', :#{#filter.provincia}, '%')))
+       
+                                                                                                                                
     """,
             countQuery = """
     SELECT COUNT(p) FROM Publicacion p
@@ -60,6 +62,8 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
         AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
         AND (:#{#filter.departamento} IS NULL OR :#{#filter.departamento} = '' OR LOWER(p.ubicacion.departamento) LIKE LOWER(CONCAT('%', :#{#filter.departamento}, '%')))
         AND (:#{#filter.provincia} IS NULL OR :#{#filter.provincia} = '' OR LOWER(p.ubicacion.provincia) LIKE LOWER(CONCAT('%', :#{#filter.provincia}, '%')))
+       
+                                                                                                                                     
     """)
     Page<Publicacion> findByCaracteristicas(
             @Param("filter") PublicacionFilterDTO filter,

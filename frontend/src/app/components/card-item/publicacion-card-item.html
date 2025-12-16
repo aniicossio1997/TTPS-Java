@@ -1,0 +1,59 @@
+<p-card
+  class="shadow-md rounded-xl overflow-hidden hover:scale-[1.01] transition ease-out duration-200 cursor-pointer relative"
+  (click)="navigateToDetail(publicacion.id)"
+>
+
+  @if (this.authStore.usuario() && this.authStore.usuario()?.id ==publicacion.usuarioId ) {
+      <p-button
+        aria-label="Ver ubicación"
+        class="bottom-2  absolute top-0 left-0-0 z-50 right-0"
+        severity="secondary"
+        [rounded]="false"
+        (click)="$event.stopPropagation(); navigateToEdit(publicacion.id)"
+        >
+
+        <span class="pi pi-pencil"></span>
+        <span>Editar</span>
+      </p-button>
+  }
+
+
+  <ng-template #header>
+    <div class="w-full h-56 bg-gray-200 flex items-center justify-center relative">
+      <img
+        [src]="publicacion.fotos[0]?.url  || defaultImageUrl"
+        [alt]="'Imagen de ' + publicacion.nombre"
+        class="w-full h-full object-cover text-transparent"
+        loading="lazy"
+      />
+
+      <span class="absolute bottom-2 left-2">
+        <app-estado-publicacion-tag [estado]="publicacion.estado?.estado || ''" />
+      </span>
+
+    </div>
+
+  </ng-template>
+
+    <span class="text-muted-color mt-0"><i class="pi pi-map-marker"></i> {{publicacion.ubicacion.provincia}},{{publicacion.ubicacion.departamento}} </span>
+
+  <div class="space-y-2">
+
+    <h3 class="font-bold mb-0 line-clamp-2"
+    [innerHTML]="publicacion.nombre.toString() | highlightSearch:searchText()">
+
+    </h3>
+    @if (publicacion.descripcion) {
+    <p class="text-sm line-clamp-3">
+      {{ publicacion.descripcion }}
+    </p>
+    }
+    <p class="text-sm">
+      <strong>Fecha:</strong>
+      {{ publicacion.fecha | date : 'dd/MM/yyyy' }}
+    </p>
+
+    <p class="text-sm"><strong>Color:</strong> {{ publicacion.color }}</p>
+    <p class="text-sm"><strong>Tamaño:</strong> {{ publicacion.tamanio }}</p>
+  </div>
+</p-card>

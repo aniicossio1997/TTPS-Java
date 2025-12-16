@@ -20,4 +20,5 @@ public class PublicacionFilterDTO extends FilterPaginateBaseDTO {
     // Ubicacion
     public String departamento;
     public String provincia;
+    public String idExternoDepartamento;
 }

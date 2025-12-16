@@ -35,8 +35,12 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     @Query("""
         SELECT u 
         FROM Usuario u 
+        WHERE u.puntos > 10
         ORDER BY u.puntos DESC
         LIMIT 10
     """)
     List<Usuario> ranking();
+
+    List<Usuario> findTop100ByPuntosGreaterThanOrderByPuntosDesc(int puntos);
+
 }

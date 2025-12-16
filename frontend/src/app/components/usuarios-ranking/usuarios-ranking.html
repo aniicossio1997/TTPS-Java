@@ -1,4 +1,4 @@
-<p-card class="flex flex-col">
+<div class="flex flex-col">
   <h3 class="text-lg font-bold">🏆 Top 10 rescatistas</h3>
   <div class="flex flex-col flex-1">
     @if (ranking() === null) {
@@ -11,10 +11,13 @@
       }
     </div>
     } @if (ranking()?.length) {
-    <div class="flex gap-4 p-4 overflow-x-auto flex-nowrap">
+
+
+    <div class="flex gap-4 mt-4 overflow-x-auto flex-nowrap">
       @for (usuario of ranking()!; track usuario.id) {
       <div
-        class="surface-100 rounded-2xl p-3 flex-shrink-0 border border-slate-200 w-[12em] flex flex-col gap-2 overflow-hidden"
+        class="rounded-2xl p-3 flex-shrink-0  shadow-sm  border-slate-300 w-[12em] flex flex-col gap-2 overflow-hidden"
+        style="border: 1px solid #c9f3df;background-color: #fff;"
       >
         <div class="flex justify-between items-end gap-4 pl-2">
           <span class="text-xl font-bold text-primary"> {{ usuario.puntos }} pts </span>
@@ -56,4 +59,4 @@
     </div>
     }
   </div>
-</p-card>
+</div>

@@ -2,7 +2,8 @@ import { Routes } from '@angular/router';
 import { publicGuard } from './shared/guards/public.guard';
 import { userPanelGuard } from './shared/guards/user-panel.guard';
 import { adminGuard } from './shared/guards/admin.guard';
-import { NotFound } from './features/common/not-found/not-found';
+import { NotFound } from './pages/common/not-found/not-found';
+
 
 export const routes: Routes = [
   {
@@ -14,19 +15,19 @@ export const routes: Routes = [
     path: 'public',
     canMatch: [publicGuard],
     loadChildren: () =>
-      import('./features/public/public.routes').then(m => m.PUBLIC_ROUTES)
+      import('./pages/public/public.routes').then(m => m.PUBLIC_ROUTES)
   },
   {
     path: 'app',
     canMatch: [userPanelGuard],
     loadChildren: () =>
-      import('./features/user-panel/userPanel.routes').then(m => m.APP_ROUTES)
+      import('./pages/user-panel/userPanel.routes').then(m => m.APP_ROUTES)
   },
   {
     path: 'admin',
     canMatch: [adminGuard],
     loadChildren: () =>
-      import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
+      import('./pages/admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
 
 

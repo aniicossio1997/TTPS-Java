@@ -22,6 +22,7 @@ export class PerfilCard implements OnInit {
   readonly perfilStore =inject(PerfilByUserStoreService)
   readonly servicioFoto =inject(FotoService)
 
+
   private readonly toastr = inject(ToastrService);
 
   onEditarPerfil = output<void>();

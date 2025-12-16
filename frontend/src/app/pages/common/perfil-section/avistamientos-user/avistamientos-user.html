@@ -1,0 +1,71 @@
+@if (isLoading()) {
+  <div class="w-20 h-20 border-6 border-gray-200 border-t-green-500 rounded-full animate-spin"></div>
+  <span class="text-sm text-zinc-500">Obteniendo avistamientos del usuario...</span>
+}
+@if(isNotFound()){
+  <p-message severity="success">Sin avistamientos</p-message>
+
+}
+
+
+@if (isSuccess()) {
+  @for (avistamiento of avistamientos(); track $index) {
+
+    <div class="surface-card rounded-lg shadow-1 p-4 flex-1 border border-slate-200 mb-6">
+        <!-- Header -->
+        <div class="flex flex-1 justify-between">
+          <p class="text-900 text-lg line-height-3 mb-3">
+            {{ avistamiento.descripcion }}
+          </p>
+
+          <p-button
+            label="Ver en mapa"
+            icon="pi pi-map-marker"
+            severity="secondary"
+            size="small"
+            [link]="true"
+          ></p-button>
+        </div>
+        @if (avistamiento.fotos?.length) {
+        <p-carousel
+          [class.single-image]="(avistamiento.fotos?.length || 0) <= 1"
+          [value]="avistamiento.fotos || []"
+          [numVisible]="3"
+          [numScroll]="1"
+          [circular]="false"
+          [showIndicators]="true"
+        >
+          <ng-template let-foto pTemplate="item">
+            <div class="relative  h-42 rounded-lg overflow-hidden shadow-lg px-2 ">
+              <img [src]="foto.url" alt="Mascota" class="w-full  h-full object-cover rounded-2xl" />
+            </div>
+          </ng-template>
+        </p-carousel>
+        }
+        <p-divider class="my-1"></p-divider>
+        <!-- Usuario -->
+        <div class="flex justify-between">
+          <div class="text-sm text-600 flex gap-2 items-center">
+              <app-user-avatar [usuario]="avistamiento.usuario" size="normal" [showName]="true" />
+          </div>
+
+          <!-- Footer -->
+          <div class="flex justify-content-between items-end">
+            @if (avistamiento.agradecimiento) {
+            <p-tag
+              class="block"
+              [value]="avistamiento.agradecimiento ? 'Agradecido' : 'Pendiente'"
+              [severity]="getSeverity(avistamiento.agradecimiento)"
+              [rounded]="true"
+            />
+            }
+
+            <span class="text-xs text-500 flex items-center ml-auto">
+              {{ avistamiento.fecha | date : 'mediumDate' }}
+            </span>
+          </div>
+        </div>
+      </div>
+  }
+
+}

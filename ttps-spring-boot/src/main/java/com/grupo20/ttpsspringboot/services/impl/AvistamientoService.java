@@ -45,7 +45,8 @@ public class AvistamientoService implements IAvistamientoService {
         Ubicacion ubicacion = ubicacionService.crearUbicacion(dto.getUbicacion());
 
         avistamiento.setUbicacion(ubicacion);
-        if (files != null && !files.isEmpty()) {
+
+        /*if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
                 if (file != null && !file.isEmpty()) {
                     try {
@@ -59,7 +60,7 @@ public class AvistamientoService implements IAvistamientoService {
                     }
                 }
             }
-        }
+        }*/
 
         if (files != null && !files.isEmpty()) {
             for (MultipartFile file : files) {
@@ -83,6 +84,7 @@ public class AvistamientoService implements IAvistamientoService {
                 }
             }
         }
+
         avistamientoRepository.save(avistamiento);
 
         return avistamiento;

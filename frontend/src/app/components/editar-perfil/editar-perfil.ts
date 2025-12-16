@@ -4,14 +4,12 @@ import {
 } from './../LocationPicker/location-picker.component';
 import {
   Component,
-  computed,
-  effect,
-  inject,
+  computed, inject,
   input,
   OnInit,
   output,
   signal,
-  untracked,
+  untracked
 } from '@angular/core';
 import {
   AbstractControl,
@@ -23,7 +21,6 @@ import {
 } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { Message } from 'primeng/message';
-import { UbicacionExternaResponse } from '../../interfaces/ubicacionExternaResponse';
 import { Tooltip } from 'primeng/tooltip';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputMaskModule } from 'primeng/inputmask';
@@ -34,24 +31,6 @@ import { ApiStatus } from '../../interfaces/local/EnumApiStatus.enum';
 import { ToastrService } from 'ngx-toastr';
 import { UsuarioUpdateRequest } from '../../interfaces/usuarioUpdateRequest.interface';
 
-function passwordMatchValidator(form: AbstractControl) {
-  const password = form.get('password')?.value;
-  const confirm = form.get('confirmPassword')?.value;
-
-  if (password !== confirm) {
-    form.get('confirmPassword')?.setErrors({ mismatch: true });
-  } else {
-    const errors = form.get('confirmPassword')?.errors;
-    if (errors) {
-      delete errors['mismatch'];
-      if (Object.keys(errors).length === 0) {
-        form.get('confirmPassword')?.setErrors(null);
-      }
-    }
-  }
-
-  return null;
-}
 
 type UbicacionControls = {
   lat: FormControl<string>;

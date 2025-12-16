@@ -4,6 +4,7 @@ import com.grupo20.ttpsspringboot.domain.models.Foto; // Importar Foto
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.*;
+import com.grupo20.ttpsspringboot.dtos.georef.GeorefUbicacionResponse;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionMapperService;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UbicacionUpdateMapper;
 import com.grupo20.ttpsspringboot.dtos.mappingService.UsuarioCreateMapperService;
@@ -12,6 +13,7 @@ import com.grupo20.ttpsspringboot.exceptions.BadRequestException;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.repository.FotoRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
+import com.grupo20.ttpsspringboot.services.IGeorefService;
 import com.grupo20.ttpsspringboot.services.IUsuarioService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +56,9 @@ public class UsuarioService implements IUsuarioService {
     @Autowired
     private FotoRepository fotoRepository;
 
+    @Autowired
+    private IGeorefService georefService;
+
     /**
      * Crea un nuevo usuario a partir del DTO.
      * Implementa: Búsqueda de Ubicación, Hasheo de Contraseña y Mapeo DTO -> Entidad.
@@ -67,6 +72,7 @@ public class UsuarioService implements IUsuarioService {
         System.out.println("Usuario recibido: " + usuarioDto);
         System.out.println("Email: " + usuarioDto.getEmail());
 
+
         if(usuarioDto.getEmail() == null){
             throw new IllegalArgumentException("El email es obligatorio");
         }
@@ -74,6 +80,27 @@ public class UsuarioService implements IUsuarioService {
         if (existe) {
             throw new IllegalArgumentException("El email '" + usuarioDto.getEmail() + "' ya está en uso.");
         }
+
+        // 3. Llamas al servicio de Georef pasando lat y lon
+        // Como tu método acepta Strings, se los pasas directo.
+        if (usuarioDto.ubicacion.getLatitud() != null && usuarioDto.ubicacion.getLongitud() != null) {
+            UbicacionCreateDTO dtoNuevo = georefService.getUbicacionFormateada(
+                            usuarioDto.ubicacion.getLatitud().toString(),
+                            usuarioDto.ubicacion.getLongitud().toString(),
+                            UbicacionCreateDTO.class);
+
+            // 4. Verificas que la respuesta no sea null y extraes los datos
+            if (dtoNuevo != null) {
+                // Sobrescribís los datos de ubicación en el DTO original
+                usuarioDto.ubicacion.setProvincia(dtoNuevo.getProvincia());
+                usuarioDto.ubicacion.setDepartamento(dtoNuevo.getDepartamento());
+                usuarioDto.ubicacion.setMunicipio(dtoNuevo.getMunicipio());
+                usuarioDto.ubicacion.setIdExternoProvincia(dtoNuevo.getIdExternoProvincia());
+                usuarioDto.ubicacion.setIdExternoDepartamento(dtoNuevo.getIdExternoDepartamento());
+                usuarioDto.ubicacion.setIdExternoMunicipio(dtoNuevo.getIdExternoMunicipio());
+            }
+        }
+
 
         // 1) Hashear la contraseña en el DTO
         String hashedPassword = passwordEncoder.encode(usuarioDto.getPassword());
@@ -178,23 +205,11 @@ public class UsuarioService implements IUsuarioService {
 
     @Override
     public List<UsuarioSmallDTO> ranking() {
-        return usuarioRepository.ranking().stream().map(UsuarioSmallDTO::fromEntity).collect(Collectors.toList());
+        //return usuarioRepository.ranking().stream().map(UsuarioSmallDTO::fromEntity).collect(Collectors.toList());
+        return  usuarioRepository.findTop100ByPuntosGreaterThanOrderByPuntosDesc(10).stream().map(UsuarioSmallDTO::fromEntity).collect(Collectors.toList());
+
     }
 
-    /**
-     * Borra la foto de perfil.
-     */
-    @Transactional
-    public void eliminarFotoPerfil(Long id) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
-
-        // Al ponerlo en null, 'orphanRemoval = true' se encarga de borrarla de la BD
-        if (usuario.getFotoPerfil() != null) {
-            usuario.setFotoPerfil(null);
-            usuarioRepository.save(usuario);
-        }
-    }
 
     /**
      * Obtiene el contenido binario de la foto.
@@ -214,27 +229,6 @@ public class UsuarioService implements IUsuarioService {
         return  FotoResponseDTO.fromEntity(foto);
     }
 
-    @Transactional
-    public void guardarFotoPerfil(Long id, MultipartFile file) throws IOException {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
-
-        Foto foto = usuario.getFotoPerfil();
-
-        if (foto == null) {
-            // Si no tiene foto, creamos una nueva y vinculamos
-            foto = new Foto();
-            foto.setUsuario(usuario);
-            usuario.setFotoPerfil(foto);
-        }
-
-        // Actualizamos los datos (funciona tanto para create como update)
-        foto.setNombre(file.getOriginalFilename());
-        foto.setContent(file.getBytes());
-
-        // Al guardar usuario, se guarda/actualiza la foto en cascada
-        usuarioRepository.save(usuario);
-    }
 
     @Transactional
     public void restablecerPassword(Long id, RestablecerPasswordRequestDTO entityToEdit ) {

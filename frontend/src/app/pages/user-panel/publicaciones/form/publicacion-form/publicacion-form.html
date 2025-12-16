@@ -1,0 +1,232 @@
+<div class="max-w-[1000px]">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
+    <button
+      class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium"
+      routerLink="/app/publicaciones"
+    >
+      <i class="pi pi-arrow-left" style="font-size: 0.8rem"></i>
+      Atrás
+    </button>
+    <h1 class="text-sm text-slate-500 mt-1">Publicaciones</h1>
+  </nav>
+  <form [formGroup]="publicacionForm" (ngSubmit)="onSubmit()" class="col-12 p-5">
+    <p-card>
+      <h2 class="m-0 text-2xl font-bold">
+        {{ publicacionId ? 'Editar Publicación #' + publicacionId : 'Crear Nueva Publicación' }}
+      </h2>
+      <p-fieldset legend="1. Tipo de Publicación" [toggleable]="true" class="mb-3">
+        <div class="field">
+          <label class="block mb-2">¿Es tu mascota o la encontraste?</label>
+          <div class="flex gap-3">
+            <p-selectButton
+              formControlName="tipo"
+              [options]="tipoPublicacionOpciones"
+              optionLabel="label"
+              optionValue="value"
+              [disabled]="!!publicacionId"
+              class="w-full"
+            >
+            </p-selectButton>
+          </div>
+        </div>
+      </p-fieldset>
+
+      <p-divider></p-divider>
+
+      <p-fieldset legend="2. Detalles de la Mascota" toggleable>
+        <ng-template #content>
+          <div class="flex flex-col gap-3">
+            <div class="flex flex-col gap-2">
+              <label for="fechaPerdida">
+                @if(publicacionForm.get('tipo')?.value === 'Propio'){
+                <span>Fecha de Pérdida</span>
+                } @else {
+                <span>Fecha de Encuentro</span>
+                }
+                <span class="text-red-500"> *</span></label
+              >
+              <p-date-picker
+                id="fechaPerdida"
+                formControlName="fechaPerdida"
+                dateFormat="dd/mm/yy"
+                placeholder="DD/MM/AAAA"
+              ></p-date-picker>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label for="nombre">
+                Nombre
+                <span *ngIf="publicacionForm.get('tipo')?.value === 'Propio'" class="text-red-500"
+                  >*</span
+                >
+                <span
+                  *ngIf="publicacionForm.get('tipo')?.value === 'Ajeno'"
+                  class="optional text-sm font-light"
+                  >(Opcional)</span
+                >
+              </label>
+              <input
+                pInputText
+                id="nombre"
+                formControlName="nombre"
+                placeholder="Nombre de la mascota"
+              />
+              <app-form-error [control]="publicacionForm.get('nombre')" />
+            </div>
+
+            <div class="col-12">
+              <div class="flex flex-col gap-2">
+                <label for="descripcion"
+                  >Descripción <span class="text-sm font-light">(Opcional)</span></label
+                >
+                <textarea
+                  pTextarea
+                  id="descripcion"
+                  rows="3"
+                  formControlName="descripcion"
+                  placeholder="Rasgos especiales..."
+                  class="resize-none bg-surface-100 p-2 rounded-md"
+                ></textarea>
+                <app-form-error [control]="publicacionForm.get('descripcion')" />
+              </div>
+            </div>
+
+            <div class="flex gap-5">
+              <div class="inline-flex flex-col gap-2">
+                <label for="especie">Especie <span class="text-red-500">*</span></label>
+                <p-select
+                  id="especie"
+                  formControlName="especie"
+                  [options]="especies"
+                  placeholder="Selecciona una especie"
+                  class="w-[14em]"
+                  [ngClass]="{
+                    'p-invalid':
+                      publicacionForm.get('especie')?.invalid &&
+                      (publicacionForm.get('especie')?.dirty ||
+                        publicacionForm.get('especie')?.touched)
+                  }"
+                ></p-select>
+                <app-form-error [control]="publicacionForm.get('especie')" />
+              </div>
+
+              <div class="flex flex-col gap-2">
+                <label>Tamaño <span class="text-sm font-light">(Opcional)</span></label>
+                <div class="flex gap-3">
+                  <div *ngFor="let t of tamanos; let i = index">
+                    <p-radioButton
+                      name="tamanio"
+                      [inputId]="'tamanio' + i"
+                      [value]="t.value"
+                      formControlName="tamanio"
+                    ></p-radioButton>
+                    <label [for]="'tamanio' + i" class="ml-2">{{ t.label }}</label>
+                  </div>
+                </div>
+                <app-form-error [control]="publicacionForm.get('tamanio')" />
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-2">
+              <label>Color principal <span class="text-sm font-light">(Opcional)</span></label>
+              <div class="flex flex-wrap gap-3">
+                <div *ngFor="let color of getColors(); let i = index" class="flex items-center">
+                  <p-radioButton
+                    name="color"
+                    [inputId]="'color' + i"
+                    [value]="color[0]"
+                    formControlName="color"
+                    class="no-native-radio"
+                  ></p-radioButton>
+
+                  <label
+                    [for]="'color' + i"
+                    class="color-label ml-2 flex items-center cursor-pointer"
+                    [class.selected]="publicacionForm.get('color')?.value === color[0]"
+                  >
+                    <span
+                      class="color-circle"
+                      [title]="color"
+                      [style.backgroundColor]="color[1]"
+                    ></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-fieldset>
+
+      <p-divider></p-divider>
+
+      <p-fieldset legend="3. Ubicación" toggleable>
+        <div class="w-full">
+          <app-location-picker
+            [initialLocation]="null"
+            [isInvalid]="isInvalid('ubicacion')!"
+            (onLocationSelected)="onLocationSelected($event)"
+          ></app-location-picker>
+          <div style="display: flex; margin-bottom: 4px; flex-direction: column">
+            @if (!!ubicacionExterna()) {
+            <label for=""> Ubicación seleccionada: </label>
+            <strong style="font-size: 14px">
+              {{ ubicacionExterna()!.ubicacion!.provincia!.nombre! }},
+              {{ ubicacionExterna()!.ubicacion!.departamento!.nombre! }},
+              {{ ubicacionExterna()!.ubicacion!.municipio!.nombre! }}
+            </strong>
+            }
+          </div>
+
+          @if (isInvalid('ubicacion')) {
+          <p-message severity="error" size="small" variant="simple"
+            >La ubicación es obligatoria</p-message
+          >
+          }
+        </div>
+      </p-fieldset>
+
+      <p-divider></p-divider>
+
+      <p-fieldset legend="4. Imágenes" toggleable>
+        <div *ngIf="fotosExistentes().length > 0" class="p-mb-4">
+          <div class="flex overflow-hidden overflow-x-auto max-w-full">
+            <div
+              *ngFor="let archivo of fotosExistentes()"
+              class="p-mr-3 p-mb-3 relative"
+            >
+              <img [src]="archivo.url" alt="Imagen Existente" class="h-[15em]" />
+            </div>
+          </div>
+        </div>
+
+        <p-fileUpload
+          mode="advanced"
+          accept="image/*"
+          [multiple]="true"
+          [maxFileSize]="1000000"
+          [showUploadButton]="false"
+          [showCancelButton]="false"
+          (onSelect)="onFilesSelected($event)"
+          (onRemove)="onFileRemoved($event)"
+          chooseLabel="Cargar imágenes"
+        >
+        </p-fileUpload>
+
+        <small class="text-500 mt-2 block">
+          Archivos listos para enviar: {{ selectedFiles().length }} (Máx. 1MB c/u).
+        </small>
+      </p-fieldset>
+
+      <p-divider></p-divider>
+
+      <div class="flex justify-end">
+        <p-button
+          [label]="submitLabel"
+          icon="pi pi-check"
+          [disabled]="publicacionForm.invalid"
+          type="submit"
+        ></p-button>
+      </div>
+    </p-card>
+  </form>
+</div>

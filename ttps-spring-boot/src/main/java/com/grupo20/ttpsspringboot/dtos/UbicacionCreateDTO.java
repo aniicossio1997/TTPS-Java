@@ -1,31 +1,16 @@
 package com.grupo20.ttpsspringboot.dtos;
 
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
+import com.grupo20.ttpsspringboot.dtos.bases.UbicacionBaseDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Getter
-@Setter
-public class UbicacionCreateDTO implements Serializable {
 
-    @NotBlank(message = "La latitud es obligatoria.")
-    private Double latitud;
-    @NotBlank(message = "La longitud es obligatoria.")
-    private Double longitud;
+public class UbicacionCreateDTO extends UbicacionBaseDTO {
 
-
-    private String provincia;
-    private String idExternoProvincia;
-
-    private String municipio;
-    private String idExternoMunicipio;
-
-    private String departamento;
-    private String idExternoDepartamento;
 
     public Ubicacion toEntity() {
         Ubicacion ubicacion = new Ubicacion();

@@ -1,18 +1,22 @@
 package com.grupo20.ttpsspringboot.services.impl;
 
+import com.grupo20.ttpsspringboot.dtos.UbicacionCreateDTO;
+import com.grupo20.ttpsspringboot.dtos.bases.UbicacionBaseDTO;
 import com.grupo20.ttpsspringboot.dtos.georef.GeorefDepartamentosResponse;
 import com.grupo20.ttpsspringboot.dtos.georef.GeorefMunicipiosResponse;
 import com.grupo20.ttpsspringboot.dtos.georef.GeorefProvinciasResponse;
 import com.grupo20.ttpsspringboot.dtos.georef.GeorefUbicacionResponse;
 import com.grupo20.ttpsspringboot.exceptions.BadRequestException;
+import com.grupo20.ttpsspringboot.services.IGeorefService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import java.lang.reflect.InvocationTargetException;
 
 @Service
-public class GeorefService {
+public class GeorefService implements IGeorefService {
 
     @Autowired
     private RestTemplate restTemplate;
@@ -90,6 +94,49 @@ public class GeorefService {
             return null;
         }
     }
+
+    public <T extends UbicacionBaseDTO> T getUbicacionFormateada(String lat, String lon, Class<T> tipoClase) {
+
+        // 1. Llamamos al servicio
+        GeorefUbicacionResponse response = this.obtenerUbicacion(lat, lon);
+
+        // 2. Verificamos respuesta
+        if (response != null && response.getUbicacion() != null) {
+            try {
+                // 3. AQUÍ ESTÁ LA MAGIA: Instanciamos T usando la clase que pasamos
+                T dto = tipoClase.getDeclaredConstructor().newInstance();
+
+                GeorefUbicacionResponse.UbicacionDetalleDTO datosGeo = response.getUbicacion();
+
+                // Seteamos los datos (Como dto extiende de Base, tiene los setters)
+                dto.setLatitud(datosGeo.getLat());
+                dto.setLongitud(datosGeo.getLon());
+
+                dto.setIdExternoProvincia(datosGeo.getProvinciaId());
+                dto.setProvincia(datosGeo.getProvinciaNombre());
+
+                dto.setIdExternoDepartamento(datosGeo.getDepartamentoId());
+                dto.setDepartamento(datosGeo.getDepartamentoNombre());
+
+                if (datosGeo.getMunicipioId() != null) {
+                    dto.setIdExternoMunicipio(datosGeo.getMunicipioId());
+                    dto.setMunicipio(datosGeo.getMunicipioNombre());
+                } else {
+                    dto.setIdExternoMunicipio(null);
+                    dto.setMunicipio("Zona Rural / Sin Municipio");
+                }
+
+                return dto;
+
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace();
+                throw new RuntimeException("Error al crear la instancia del DTO");
+            }
+        } else {
+            throw new BadRequestException("Error: Las coordenadas deben ser números válidos o el servicio externo falló.");
+        }
+    }
+
 
     private Double parsearCoordenada(String coord) {
         if (coord == null) return null;

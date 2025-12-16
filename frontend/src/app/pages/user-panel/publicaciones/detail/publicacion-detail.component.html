@@ -1,0 +1,165 @@
+<nav class="max-w-7xl px-4 sm:px-6 lg:px-8 py-2">
+  <button
+    class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium"
+    routerLink="/app/publicaciones"
+  >
+    <i class="pi pi-arrow-left" style="font-size: 0.8rem"></i>
+    Atrás
+  </button>
+  <h1 class="text-sm text-slate-500 mt-1">Publicaciones</h1>
+</nav>
+<div class="p-4 md:p-8">
+  @if (isLoading()) {
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <p-skeleton height="400px" class="w-full"></p-skeleton>
+    <div class="space-y-4">
+      <p-skeleton width="80%"></p-skeleton>
+      <p-skeleton width="60%"></p-skeleton>
+      <p-skeleton height="100px"></p-skeleton>
+    </div>
+  </div>
+  } @else if (error()) {
+  <span> No se ha encontrado la publicación. </span>
+  } @if (publicacion()) {
+  <app-estado-publicacion-tag [estado]="publicacion()?.estado?.estado || ''" />
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-4">
+    <p-card class="lg:col-span-2 space-y-6">
+      <div class="flex justify-between gap-3">
+        <div class="flex items-center space-x-4 pb-4 mb-4">
+             <app-user-avatar [usuario]="publicacion()!.usuario" size="large" />
+
+          <div>
+            <span class="text-primary-600 hover:text-primary-700 cursor-pointer font-bold">
+              {{ publicacion()!.usuario.nombre }} {{ publicacion()!.usuario.apellido }}
+            </span>
+            <p class="text-xs text-gray-500 mt-1">
+              {{ publicacion()!.fecha | date : 'mediumDate' }}
+            </p>
+          </div>
+        </div>
+
+        <p-button
+          label="Ver ubicación"
+          class="w-fit-content"
+          icon="pi pi-map-marker"
+          (click)="verUbicacion(publicacion()!.ubicacion)"
+        />
+      </div>
+
+      @if (fotos().length > 0) {
+      <p-carousel
+        [class.single-image]="fotos().length <= 1"
+        [value]="fotos()"
+        [numVisible]="1"
+        [numScroll]="1"
+        [circular]="false"
+        [showIndicators]="true"
+        [responsiveOptions]="responsiveOptions"
+      >
+        <ng-template let-foto pTemplate="item">
+          <div class="relative w-full h-96 rounded-lg overflow-hidden shadow-lg">
+            <img [src]="foto" alt="Mascota" class="w-full h-full object-cover" />
+          </div>
+        </ng-template>
+      </p-carousel>
+      }
+
+      <h2 class="text-2xl font-bold mb-4">Detalles</h2>
+      <h1 class="text-xl font-bold mb-4">
+        {{ publicacion()!.nombre }}
+      </h1>
+
+      <p class="text-gray-700 whitespace-pre-wrap break-all">
+        {{ publicacion()!.descripcion || 'Sin descripción detallada.' }}
+      </p>
+
+      <p-divider style="margin: 20px 0px" />
+
+      <div class="flex justify-between items-start">
+        <h2 class="text-2xl font-bold mt-0 mb-4">Avistamientos</h2>
+        <p-button
+          label="Reportar Avistamiento"
+          icon="pi pi-plus"
+          (onClick)="showAvistamientoModal()"
+          styleClass="mb-4"
+        ></p-button>
+      </div>
+
+      <app-avistamientos-list #avistamientosList [publicacionId]="publicacion()!.id" />
+
+    </p-card>
+
+    <div class="lg:col-span-1 space-y-6">
+
+      <p-card>
+      <app-mapa-publicaciones [publicaciones]="publicacionArray()" style="height: 300px"/>
+       <p class="my-4">{{publicacionArray()[0].ubicacion.departamento}}, {{publicacionArray()[0].ubicacion.provincia}}</p>
+      </p-card>
+
+      @if (isOwner()) {
+      <p-card>
+        <h2 class="text-2xl font-bold mb-4 flex-1">Acciones</h2>
+
+        <div class="flex flex-col gap-4">
+          @for (option of options; track $index) {
+          <p-button
+            [label]="option.label"
+            [icon]="option.icon"
+            [severity]="option.severity"
+            (onClick)="option.command ? option.command() : null"
+            styleClass="p-button-lg p-button-outlined w-full"
+          >
+          </p-button>
+          }
+        </div> </p-card
+      >}
+
+      <p-card>
+        <h2 class="text-2xl font-bold mb-4 flex-1">Características</h2>
+        <ul class="space-y-3">
+          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+            <span class="font-semibold">Especie:</span>
+            <p-tag [value]="publicacion()!.especie" severity="secondary" />
+          </li>
+          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+            <span class="font-semibold">Tamaño:</span>
+            <p-tag [value]="publicacion()!.tamanio" severity="secondary" />
+          </li>
+          @if (publicacion()!.color) {
+          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+            <span class="font-semibold">Color:</span>
+            <div class="flex items-center gap-2">
+              <span class="capitalize">{{ publicacion()!.color }}</span>
+              @if ( COLOR_MAP[publicacion()!.color]){
+              <span
+                class="h-6 w-6 rounded-full shadow-md inline-flex"
+                [title]="publicacion()!.color"
+                [style]="{ background: COLOR_MAP[publicacion()!.color] }"
+              ></span>
+              }
+            </div>
+          </li>
+          }
+          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+            <span class="font-semibold">Publicado:</span>
+            <span>{{ publicacion()!.fecha | date : 'mediumDate' }}</span>
+          </li>
+          <li class="flex justify-between items-center">
+            <span class="font-semibold">Ubicación:</span>
+            <span>Ver en mapa</span>
+          </li>
+        </ul>
+      </p-card>
+    </div>
+  </div>
+
+  <app-avistamiento-form
+    [display]="displayAvistamientoModal"
+    [publicacionId]="publicacion()!.id"
+    (displayChange)="handleAvistamientoDisplayChange($event)"
+    (success)="handleAvistamientoSuccess()"
+  ></app-avistamiento-form>
+  }
+</div>
+<p-confirmDialog></p-confirmDialog>
