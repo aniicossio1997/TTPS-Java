@@ -40,12 +40,17 @@ export class MapaGeograficoPublicaciones implements OnInit {
   readonly authStore = inject(AuthStoreService);
   private publicacionesService = inject(PublicacionesService);
 
+
   // Se inicializa a nulo/undefined, esperando la carga del perfil
   departamentoInicial = computed(() => this.perfilStore.perfilDeUsuario()?.ubicacion?.departamento);
   ubicacionInicial = computed(() => {
     const ubicacion = this.perfilStore.perfilDeUsuario()?.ubicacion;
     if (!ubicacion) return '';
     return `(${ubicacion.departamento}, ${ubicacion.provincia})`;
+  });
+
+  ubicacion = computed(() => {
+    return this.perfilStore.perfilDeUsuario()?.ubicacion || null;
   });
 
   public departamentoBusqueda = signal<string | undefined>(undefined);

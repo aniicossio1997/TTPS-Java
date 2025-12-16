@@ -1,16 +1,45 @@
 import { CommonModule } from '@angular/common';
-import { AfterViewInit, Component, ElementRef, input, ViewChild } from '@angular/core';
-
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  input,
+  ViewChild,
+  OnDestroy,
+  effect,
+} from '@angular/core';
 import * as L from 'leaflet';
+import 'leaflet.markercluster';
 import { Publicacion } from '../../interfaces/publicacion.interface';
+import { Avistamiento } from '../../interfaces/avistamiento.interface';
+import { Ubicacion } from '../../interfaces/ubicacion.interface';
 
-delete (L.Icon.Default.prototype as any)._getIconUrl;
+type MarkerType = 'avistamiento' | 'publicacion';
 
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: '/assets/leaflet/marker-icon-2x.png',
-  iconUrl: '/assets/leaflet/marker-icon.png',
-  shadowUrl: '/assets/leaflet/marker-shadow.png',
-});
+const createMarkerIcon = (type: MarkerType = 'publicacion'): L.DivIcon => {
+  const size = 30;
+  return L.divIcon({
+    html: `<div>${type == 'avistamiento' ? '!' : '?'}</div>`,
+    className: 'custom-marker-icon ' + type,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size],
+    popupAnchor: [0, -size],
+  });
+};
+
+const createClusterIcon = (cluster: any, type: MarkerType = 'publicacion'): L.DivIcon => {
+  const count = cluster.getChildCount();
+  let size = 50;
+
+  return L.divIcon({
+    html: `<div><span>${count}</span></div>`,
+    className: 'custom-cluster-icon ' + type,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size],
+  });
+};
+
+// =========================================================================
 
 @Component({
   selector: 'app-mapa-publicaciones',
@@ -18,24 +47,47 @@ L.Icon.Default.mergeOptions({
   imports: [CommonModule],
   templateUrl: './mapa-publicaciones.html',
   styleUrl: './mapa-publicaciones.scss',
-})
-export class MapaPublicaciones implements AfterViewInit {
+}) // =========================================================================
+export class MapaPublicaciones implements AfterViewInit, OnDestroy {
   publicaciones = input<Publicacion[]>([]);
+  avistamientos = input<Avistamiento[]>([]);
+  ubicacionInicial = input<Ubicacion | null>(null);
 
   @ViewChild('mapContainer') mapContainer!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
-  private markersLayer = new L.LayerGroup();
+  // 💡 Mantenemos la capa general (LayerGroup) para agrupar las dos capas de clusters
+  private allMarkersLayer: L.FeatureGroup = new L.FeatureGroup();
+
+  // 💡 NUEVAS CAPAS DE CLUSTER (Una por tipo)
+  private publicacionesLayer: any;
+  private avistamientosLayer: any;
+
+  private readonly publicacionIconInstance = createMarkerIcon('publicacion');
+  private readonly avistamientoIconInstance = createMarkerIcon('avistamiento'); // Nueva instancia
 
   private readonly CENTRO_AR: L.LatLngExpression = [-34.9214, -64.9544];
 
-  ngAfterViewInit(): void {
-    this.ensureMap();
-    this.renderMarkers(this.publicaciones());
+  constructor() {
+    effect(() => {
+      const pubs = this.publicaciones();
+      const avists = this.avistamientos();
+
+      if (this.map) {
+        console.log('se llama', pubs)
+        this.updateMarkers(pubs, avists);
+      }
+    });
   }
 
-  public updateMarkers(publicaciones: Publicacion[]): void {
-    this.renderMarkers(publicaciones);
+  ngAfterViewInit(): void {
+    this.ensureMap();
+  }
+
+  public updateMarkers(publicaciones: Publicacion[], avistamientos: Avistamiento[]): void {
+    console.log('update', this.avistamientos());
+
+    this.renderMarkers(publicaciones, avistamientos);
   }
 
   private ensureMap(): void {
@@ -43,95 +95,147 @@ export class MapaPublicaciones implements AfterViewInit {
       this.map.invalidateSize();
       return;
     }
+    let centro = this.CENTRO_AR;
 
+    const inicial = this.ubicacionInicial();
+
+    if (inicial) {
+      centro = [inicial.latitud, inicial.longitud];
+    }
     const el = this.mapContainer.nativeElement;
+    this.map = L.map(el, { center: centro, zoom: 15 });
 
-    this.map = L.map(el, {
-      center: this.CENTRO_AR,
-      zoom: 5,
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19 }).addTo(
+      this.map
+    );
+
+    this.publicacionesLayer = (L as any).markerClusterGroup({
+      maxClusterRadius: 30,
+      iconCreateFunction: (c: any) => createClusterIcon(c, 'publicacion'),
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-    }).addTo(this.map);
+    this.avistamientosLayer = (L as any).markerClusterGroup({
+      maxClusterRadius: 30,
+      iconCreateFunction: (c: any) => createClusterIcon(c, 'avistamiento'),
+    });
 
-    this.map.addLayer(this.markersLayer);
+    this.allMarkersLayer.addLayer(this.avistamientosLayer);
+    this.allMarkersLayer.addLayer(this.publicacionesLayer);
+
+    this.map.addLayer(this.allMarkersLayer);
+
+    this.updateMarkers(this.publicaciones(), this.avistamientos());
   }
 
-  private renderMarkers(publicaciones: Publicacion[]): void {
+  private fitMapToMarkers(): void {
     if (!this.map) return;
 
-    this.markersLayer.clearLayers();
+    // 1. Obtener los límites del FeatureGroup (que ahora tiene getBounds garantizado)
+    const combinedBounds = this.allMarkersLayer.getBounds();
 
-    const markers: L.Marker[] = [];
+    if (combinedBounds.isValid()) {
+      // Si hay al menos un marcador y los límites son válidos, centrar la vista
+      this.map.fitBounds(combinedBounds, { padding: [50, 50] });
+    } else {
+      // 2. Si no hay marcadores o los límites no son válidos, intentar el caso de un único punto
+      const allMarkers = [...this.publicaciones(), ...this.avistamientos()];
 
+      if (allMarkers.length === 1) {
+        // Acceder a la ubicación del único marcador
+        const marker = allMarkers[0];
+        const lat = marker.ubicacion.latitud;
+        const lng = marker.ubicacion.longitud;
+
+        // Centrar con un zoom fijo para un solo punto
+        this.map.setView([lat, lng], 14);
+      } else {
+        // Cero marcadores, centrar en Argentina
+        this.map.setView(this.CENTRO_AR, 5);
+      }
+    }
+  }
+
+  private renderMarkers(publicaciones: Publicacion[], avistamientos: Avistamiento[]): void {
+    if (!this.map || !this.publicacionesLayer || !this.avistamientosLayer) return;
+
+    // 1. Limpiamos ambas capas individuales
+    this.avistamientosLayer.clearLayers();
+    this.publicacionesLayer.clearLayers();
+
+    // 2. Renderizar Avistamientos
+    for (const avis of avistamientos) {
+      const lat = avis.ubicacion.latitud;
+      const lng = avis.ubicacion.longitud;
+
+      if (lat && lng) {
+        const marker = L.marker([lat, lng], { icon: this.avistamientoIconInstance });
+        marker.bindPopup(this.buildPopupContent(avis, 'avistamiento'), {
+          maxWidth: 250,
+          minWidth: 150,
+        });
+        this.avistamientosLayer.addLayer(marker); // Añadir a su capa
+      }
+    }
+
+    // 3. Renderizar Publicaciones
     for (const pub of publicaciones) {
       const lat = pub.ubicacion.latitud;
       const lng = pub.ubicacion.longitud;
 
       if (lat && lng) {
-        const marker = L.marker([lat, lng]);
-
-        const popupContent = this.buildPopupContent(pub);
-
-        marker.bindPopup(popupContent, {
+        const marker = L.marker([lat, lng], { icon: this.publicacionIconInstance });
+        marker.bindPopup(this.buildPopupContent(pub, 'publicacion'), {
           maxWidth: 250,
           minWidth: 150,
         });
-
-        this.markersLayer.addLayer(marker);
-        markers.push(marker);
+        this.publicacionesLayer.addLayer(marker); // Añadir a su capa
       }
     }
 
-    if (markers.length > 0) {
-      const group = new L.FeatureGroup(markers);
-      if (markers.length > 1) {
-        this.map.fitBounds(group.getBounds(), { padding: [20, 20] });
-      } else {
-        this.map.setView(group.getBounds().getCenter(), 14);
-      }
-    }
+    this.fitMapToMarkers();
   }
 
-  private buildPopupContent(pub: Publicacion): string {
-    let imageUrl = '';
+  // 💡 buildPopupContent ahora recibe el tipo
+  private buildPopupContent(
+    item: Publicacion | Avistamiento,
+    type: 'publicacion' | 'avistamiento'
+  ): string {
+    const isPublicacion = type === 'publicacion';
 
-    if (pub.fotos && pub.fotos.length > 0) {
-      const firstPhotoUrl = pub.fotos[0].url;
+    const title = isPublicacion ? (item as Publicacion).nombre : 'Avistamiento';
+    const description = item.descripcion.substring(0, 50) + '...';
+    const detailUrl = isPublicacion
+      ? `/app/publicaciones/detalle/${item.id}`
+      : `/app/avistamientos/detalle/${item.id}`; // Asume una ruta de avistamiento
+
+    let imageUrl = '';
+    const photos = (item as any).fotos;
+    if (photos && photos.length > 0) {
+      const firstPhotoUrl = photos[0].url;
       imageUrl = `
             <img
                 src="${firstPhotoUrl}"
-                alt="${pub.nombre}"
+                alt="${title}"
                 style="max-width: 100%; height: auto; display: block; margin-bottom: 8px; border-radius: 4px;"
             />
         `;
     }
 
-    const descriptionSnippet = pub.descripcion.substring(0, 50) + '...';
-
-    // 🚩 Obtenemos Latitud y Longitud
-    const lat = pub.ubicacion.latitud.toFixed(4); // Limitar a 4 decimales para limpieza
-    const lng = pub.ubicacion.longitud.toFixed(4);
+    const lat = item.ubicacion.latitud.toFixed(4);
+    const lng = item.ubicacion.longitud.toFixed(4);
 
     return `
         <div style="font-family: Arial, sans-serif;">
             ${imageUrl}
-            <h4 style="margin: 0 0 5px 0;">${pub.nombre}</h4>
-            <p style="margin: 0 0 5px 0; font-size: 0.9em;">${descriptionSnippet}</p>
-
-            <p style="margin: 0 0 5px 0; font-size: 0.8em; color: #444;">
+            <h4 style="margin: 0 0 5px 0;">${title}</h4>
+            <p style="margin: 0 0 5px 0; font-size: 0.9em;">${description}</p>
+            <p style="margin: 0 0 5px 0; font-size: 0.8em; color: #666;">
                 ${lat}, ${lng}
             </p>
-
-            <p style="margin: 0 0 5px 0; font-size: 0.8em; color: #666;">
-                Publicado: ${new Date(pub.fecha).toLocaleDateString()}
-            </p>
-            <a href="/app/publicaciones/detalle/${
-              pub.id
-            }" target="_blank" style="font-size: 0.9em; color: #007bff; text-decoration: none;">
+            ${isPublicacion ? `<a href="${detailUrl}" target="_blank" style="font-size: 0.9em; color: #007bff; text-decoration: none;">
                 Ver detalle completo
-            </a>
+            </a>`: ''}
+
         </div>
     `;
   }

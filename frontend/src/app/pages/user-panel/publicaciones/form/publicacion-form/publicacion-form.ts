@@ -187,7 +187,7 @@ export class PublicacionFormComponent implements OnInit {
     blanco: '#FFFFFF',
     marron: '#8B4513',
     gris: '#808080',
-    otro: '#D3D3D3',
+    amarillo: '#fded0aff',
   };
 
   getColors() {

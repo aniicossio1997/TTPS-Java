@@ -11,6 +11,7 @@ enum EstadoPublicacionEnum {
   PERDIDO_PROPIO = 'PERDIDO_PROPIO',
   PERDIDO_AJENO = 'PERDIDO_AJENO',
   RECUPERADO = 'RECUPERADO',
+  ADOPTADO = 'ADOPTADO',
 }
 
 @Component({
@@ -34,6 +35,8 @@ export class EstadoPublicacionTag {
         return { text: 'ENCONTRÉ UNA MASCOTA', severity: 'info' };
       case EstadoPublicacionEnum.RECUPERADO:
         return { text: 'RECUPERADO', severity: 'success' };
+      case EstadoPublicacionEnum.ADOPTADO:
+        return { text: 'ADOPTADO', severity: 'success' };
       default:
         return { text: 'ESTADO DESCONOCIDO', severity: 'secondary' };
     }

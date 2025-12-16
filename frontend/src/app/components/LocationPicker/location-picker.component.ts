@@ -150,8 +150,8 @@ export class LocationPickerComponent implements AfterViewInit {
      this.destroyMap();
   }
 
-  confirmMap(): void {
-
+  confirmMap(event: Event): void {
+    event.preventDefault();
     //
     this.confirmed.set(this.temp());
     this.onLocationSelected.emit(this.confirmed()!);

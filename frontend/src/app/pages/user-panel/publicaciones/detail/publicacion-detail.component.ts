@@ -5,7 +5,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
 
 import { CardModule } from 'primeng/card';
-import { ButtonModule } from 'primeng/button';
+import { Button, ButtonModule } from 'primeng/button';
 import { SkeletonModule } from 'primeng/skeleton';
 import { MessageModule } from 'primeng/message';
 import { Tag, TagModule } from 'primeng/tag';
@@ -15,7 +15,7 @@ import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { PublicacionesService } from '../../../../services/publicaciones.service';
 import { AuthStoreService } from '../../../../store/auth.stored.service';
-import { Publicacion } from '../../../../interfaces/publicacion.interface';
+import { EstadoPublicacionEnum, Publicacion } from '../../../../interfaces/publicacion.interface';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Avistamiento } from '../../../../interfaces/avistamiento.interface';
 import { AvistamientoForm } from '../../avistamientos/form/avistamiento-form';
@@ -35,7 +35,8 @@ export interface ActionOption {
   label: string;
   icon: string;
   command?: () => void;
-  severity?: Tag['severity'];
+  severity?: Button['severity'];
+  show?: boolean;
 }
 
 @Component({
@@ -61,7 +62,7 @@ export interface ActionOption {
     EstadoPublicacionTag,
     DividerModule,
     MapaPublicaciones,
-    UserAvatarComponent
+    UserAvatarComponent,
   ],
 })
 export class PublicacionDetailComponent implements OnInit {
@@ -74,6 +75,7 @@ export class PublicacionDetailComponent implements OnInit {
 
   @ViewChild('avistamientosList') avistamientosList!: AvistamientosList;
 
+  avistamientos: Avistamiento[] = [];
   displayAvistamientoModal: boolean = false;
   selectedAvistamiento: Avistamiento | null = null;
 
@@ -82,26 +84,23 @@ export class PublicacionDetailComponent implements OnInit {
     blanco: '#FFFFFF',
     marron: '#8B4513',
     gris: '#808080',
+    amarillo: '#edf113',
     otro: '#D3D3D3',
   };
 
-  estadoTag = computed<EstadoTag>(() => {
-    const estadoEnum = this.publicacion()?.estado?.estado ?? '';
-
-    switch (estadoEnum) {
-      case 'PERDIDO_PROPIO':
-        return { text: 'BUSCANDO A MI MASCOTA', severity: 'warn' };
-      case 'PERDIDO_AJENO':
-        return { text: 'ENCONTRÉ UNA MASCOTA', severity: 'info' };
-      case 'RECUPERADO':
-        return { text: 'RECUPERADO', severity: 'success' };
-      default:
-        return { text: 'ESTADO DESCONOCIDO', severity: 'secondary' };
-    }
-  });
-
   isOwner = computed(() => {
     return this.authStore.usuario()?.id == this.publicacion()?.usuarioId;
+  });
+
+  puedeEditar = computed(() => {
+    const publicacion = this.publicacion();
+    if (!publicacion || !publicacion.estado?.estado) return false;
+    return !['RECUPERADO', 'ADOPTADO'].includes(publicacion.estado.estado);
+  });
+
+  estado = computed<EstadoPublicacionEnum | undefined>(() => {
+    const publicacion = this.publicacion();
+    return publicacion?.estado?.estado;
   });
 
   private publicacionId$ = this.route.paramMap.pipe(
@@ -131,26 +130,36 @@ export class PublicacionDetailComponent implements OnInit {
   public isLoading = signal(true);
   public error = signal<string | undefined>(undefined);
 
-  options: ActionOption[] = [
+  options = computed<ActionOption[]>(() =>[
     {
       label: 'Editar Publicación',
       icon: 'pi pi-pencil',
       command: () => this.editarPublicacion(this.publicacion()!.id),
       severity: 'success',
+      show: this.puedeEditar(),
     },
     {
       label: 'Marcar como Recuperada',
       icon: 'pi pi-check-circle',
       severity: 'secondary',
       command: () => this.confirmarRecuperada(),
+      show: this.puedeEditar(),
+    },
+    {
+      label: 'Adoptar',
+      icon: 'pi pi-heart',
+      severity: 'help',
+      command: () => this.confirmarAdopcion(),
+      show: this.estado() == 'PERDIDO_AJENO',
     },
     {
       label: 'Archivar Publicación',
       icon: 'pi pi-trash',
       severity: 'danger',
       command: () => this.confirmarArchivo(),
+      show: true,
     },
-  ];
+  ]);
 
   public responsiveOptions = [
     { breakpoint: '1400px', numVisible: 1, numScroll: 1 },
@@ -158,6 +167,11 @@ export class PublicacionDetailComponent implements OnInit {
     { breakpoint: '767px', numVisible: 1, numScroll: 1 },
     { breakpoint: '575px', numVisible: 1, numScroll: 1 },
   ];
+
+  onAvistamientosCargados(avistamientos: Avistamiento[]): void {
+    console.log({ avistamientos });
+    this.avistamientos = avistamientos;
+  }
 
   ngOnInit(): void {
     this.publicacionId$.subscribe({
@@ -221,6 +235,32 @@ export class PublicacionDetailComponent implements OnInit {
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
         this.marcarRecuperada();
+      },
+    });
+  }
+
+  public confirmarAdopcion(): void {
+    const title = '¿Quieres adoptar a esta mascota?';
+    this.confirmationService.confirm({
+      message: '¡No sabes cuanto nos alegra! La publicación ya no podrá modificarse.',
+      header: title,
+      acceptLabel: 'Aceptar',
+      rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.adoptar();
+      },
+    });
+  }
+
+  private adoptar() {
+    const id = this.publicacion()?.id;
+    if (!id) return;
+
+    this.publicacionesService.update(id, { estado: 'ADOPTADO' }).subscribe({
+      next: () => {
+        this.toastr.success('Felicidades! Tienes una nueva mascota.');
+        this.router.navigate(['/app/publicaciones']);
       },
     });
   }

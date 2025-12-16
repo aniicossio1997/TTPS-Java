@@ -16,13 +16,22 @@ import { Avistamiento, AvistamientoCreate } from '../../../../interfaces/avistam
 import { FormErrorComponent } from '../../../../components/form-error/form-error.component';
 import { AvistamientoService } from '../../../../services/avistamiento.service';
 import { ToastrService } from 'ngx-toastr';
+import { LocationPickerComponent, UbicacionSeleccionada } from '../../../../components/LocationPicker/location-picker.component';
+
+type UbicacionControls = {
+  lat: FormControl<string>;
+  lng: FormControl<string>;
+  provincia: FormControl<string>;
+  idExternoProvincia: FormControl<string>;
+  municipio: FormControl<string>;
+  idExternoMunicipio: FormControl<string>;
+  departamento: FormControl<string>;
+  idExternoDepartamento: FormControl<string>;
+};
 
 type Form = {
   descripcion: FormControl<string>;
-  ubicacion: FormGroup<{
-    latitud: FormControl<number>;
-    longitud: FormControl<number>;
-  }>;
+  ubicacion: FormGroup<UbicacionControls>;
 };
 
 @Component({
@@ -38,6 +47,7 @@ type Form = {
     FileUploadModule,
     DatePickerModule,
     FormErrorComponent,
+    LocationPickerComponent,
   ],
 })
 export class AvistamientoForm implements OnInit {
@@ -66,10 +76,21 @@ export class AvistamientoForm implements OnInit {
     this.avistamientoForm = this.fb.group({
       descripcion: ['', Validators.required],
       ubicacion: this.fb.group({
-        latitud: this.fb.control(-1, [Validators.required]),
-        longitud: this.fb.control(-1, [Validators.required]),
+        lat: ['', Validators.required],
+        lng: ['', Validators.required],
+        provincia: [''],
+        idExternoProvincia: [''],
+        municipio: [''],
+        idExternoMunicipio: [''],
+        departamento: [''],
+        idExternoDepartamento: [''],
       }),
     });
+  }
+
+  isInvalid(controlName: string): boolean {
+    const control = this.avistamientoForm.get(controlName);
+    return !!(control && control.invalid && (control.dirty || control.touched));
   }
 
   onHide(): void {
@@ -80,19 +101,22 @@ export class AvistamientoForm implements OnInit {
   onSubmit(): void {
     if (this.avistamientoForm.valid) {
       const formValue = this.avistamientoForm.getRawValue();
+      const ubicacion = this.avistamientoForm.get('ubicacion')?.value;
+      if (!ubicacion) {
+        return;
+      }
+
       const avistamientoData: AvistamientoCreate = {
         descripcion: formValue.descripcion,
         ubicacion: {
-          ...formValue.ubicacion,
-          provincia: '',
-          ciudad: '',
-          barrio: '',
-          municipio: '',
-          departamento: '',
-          idExterno: '',
-          idExternoMunicipio: '',
-          idExternoProvincia: '',
-          idExternoDepartamento: ''
+          provincia: ubicacion.provincia || '',
+          departamento: ubicacion.departamento || '',
+          municipio: ubicacion.municipio || '',
+          latitud: Number(formValue.ubicacion.lat),
+          longitud: Number(formValue.ubicacion.lng),
+          idExternoProvincia: ubicacion.idExternoProvincia ?? '',
+          idExternoDepartamento: ubicacion.idExternoDepartamento ?? '',
+          idExternoMunicipio: ubicacion.idExternoMunicipio ?? '',
         },
         publicacionId: this.publicacionId,
       };
@@ -109,6 +133,19 @@ export class AvistamientoForm implements OnInit {
       this.avistamientoForm.markAllAsTouched();
     }
   }
+
+    onLocationSelected(ubicacionExterna: UbicacionSeleccionada) {
+      this.avistamientoForm.controls['ubicacion'].setValue({
+        lat: ubicacionExterna.lat.toString(),
+        lng: ubicacionExterna.lng.toString(),
+        provincia: ubicacionExterna?.provincia ?? '',
+        idExternoProvincia: ubicacionExterna?.idExternoProvincia ?? '',
+        municipio: ubicacionExterna?.municipio ?? '',
+        idExternoMunicipio: ubicacionExterna?.idExternoMunicipio ?? '',
+        departamento: ubicacionExterna?.departamento ?? '',
+        idExternoDepartamento: ubicacionExterna?.idExternoDepartamento ?? '',
+      });
+    }
 
   onFilesSelected(event: FileSelectEvent): void {
     const currentFiles = this.selectedFiles();

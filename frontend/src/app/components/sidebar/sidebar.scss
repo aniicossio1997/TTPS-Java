@@ -2,14 +2,16 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: calc(100vh - 40px);
   padding: 1.5rem 1rem;
   background-color: #FFFFFF; // tono verdoso como en tu UI
-  border-right: 1px solid #d4ece2;
+  border: 1px solid #d4ece2;
+  border-radius: 20px;
   min-width: 220px;
   position: sticky;
   top: 0;
   left: 0;
+  margin: 20px;
 
   &__header {
     margin-bottom: 2rem;
