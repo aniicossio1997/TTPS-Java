@@ -3,14 +3,12 @@ package com.grupo20.ttpsspringboot.services.impl;
 import com.grupo20.ttpsspringboot.domain.enums.EstadoPublicacionEnum;
 import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
 import com.grupo20.ttpsspringboot.domain.models.*;
-import com.grupo20.ttpsspringboot.dtos.PublicacionCreateDTO;
-import com.grupo20.ttpsspringboot.dtos.PublicacionDTO;
-import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
-import com.grupo20.ttpsspringboot.dtos.PublicacionUpdateDTO;
+import com.grupo20.ttpsspringboot.dtos.*;
 import com.grupo20.ttpsspringboot.dtos.bases.PaginateBaseDTO;
 import com.grupo20.ttpsspringboot.exceptions.ForbiddenException;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
+import com.grupo20.ttpsspringboot.services.IGeorefService;
 import com.grupo20.ttpsspringboot.services.IPublicacionService;
 import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,11 +36,28 @@ public class PublicacionService implements IPublicacionService {
     @Autowired
     private PublicacionRepository publicacionRepository;
 
+    @Autowired
+    private IGeorefService georefService;
+
 
     @Transactional
     public Publicacion create(Usuario usuario, PublicacionCreateDTO dto, List<MultipartFile> files) {
         Publicacion publicacion = dto.toEntity();
         publicacion.setUsuario(usuario);
+
+        UbicacionCreateDTO dtoUbicacionNuevo = dto.getUbicacion();
+        // 3. Llamas al servicio georef para obtener la ubicación formateada
+        if (dto.getUbicacion().getLatitud() != null && dto.getUbicacion().getLongitud() != null) {
+            dtoUbicacionNuevo = georefService.getUbicacionFormateada(
+                    dto.getUbicacion().getLatitud().toString(),
+                    dto.getUbicacion().getLongitud().toString(),
+                    UbicacionCreateDTO.class);
+
+            // 4. Verificas que la respuesta no sea null y extraes los datos
+            if (dtoUbicacionNuevo != null) {
+                dto.setUbicacion(dtoUbicacionNuevo);
+            }
+        }
 
         Ubicacion ubicacion = ubicacionService.crearUbicacion(dto.getUbicacion());
 
@@ -136,7 +151,20 @@ public class PublicacionService implements IPublicacionService {
         }
 
         if (dto.getUbicacion() != null) {
-            ubicacionService.updateUbicacion(publicacion.getUbicacion().getId(), dto.getUbicacion());
+            UbicacionUpdateDTO dtoUbicacionNuevo = dto.getUbicacion();
+            // 3. Llamas al servicio georef para obtener la ubicación formateada
+            if (dto.getUbicacion().getLatitud() != null && dto.getUbicacion().getLongitud() != null) {
+                 dtoUbicacionNuevo = georefService.getUbicacionFormateada(
+                        dto.getUbicacion().getLatitud().toString(),
+                        dto.getUbicacion().getLongitud().toString(),
+                        UbicacionUpdateDTO.class);
+
+                // 4. Verificas que la respuesta no sea null y extraes los datos
+                if (dtoUbicacionNuevo != null) {
+                    dto.setUbicacion(dtoUbicacionNuevo);
+                }
+            }
+            ubicacionService.updateUbicacion(publicacion.getUbicacion().getId(), dtoUbicacionNuevo);
         }
         List<Foto> fotosAEliminar = new ArrayList<>(publicacion.getFotos());
 

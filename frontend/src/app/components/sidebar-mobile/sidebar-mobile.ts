@@ -9,7 +9,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-sidebar-mobile',
-  imports: [Sidebar, DrawerModule, ButtonModule,RouterLink, RouterLinkActive],
+  imports: [ DrawerModule, ButtonModule,RouterLink, RouterLinkActive],
   templateUrl: './sidebar-mobile.html',
   styleUrl: './sidebar-mobile.scss',
 })

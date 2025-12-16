@@ -9,5 +9,5 @@ export interface  UsuarioDetalleDTO {
     rol:      string;
     telefono: string;
     ubicacion: Ubicacion
-    fotoLink: FotoLinkDTO
+    fotoLink?: FotoLinkDTO
 }

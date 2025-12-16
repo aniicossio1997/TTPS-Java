@@ -35,12 +35,7 @@ import { UsuarioUpdateRequest } from '../../interfaces/usuarioUpdateRequest.inte
 type UbicacionControls = {
   lat: FormControl<string>;
   lng: FormControl<string>;
-  provincia: FormControl<string>;
-  idExternoProvincia: FormControl<string>;
-  municipio: FormControl<string>;
-  idExternoMunicipio: FormControl<string>;
-  departamento: FormControl<string>;
-  idExternoDepartamento: FormControl<string>;
+
 };
 
 type FormEdit = {
@@ -79,6 +74,7 @@ export class EditarPerfil implements OnInit {
   private readonly _serviceUsuario = inject(UsuarioService);
 
   onCloseEditarPerfil = output<void>();
+  onSuccessEdit = output<void>();
   idUsuario = input.required<number>();
 
   // Foto actual del usuario (perfil ya guardado)
@@ -92,12 +88,7 @@ export class EditarPerfil implements OnInit {
     ubicacion: this.fb.group({
       lat: ['', Validators.required],
       lng: ['', Validators.required],
-      provincia: [''],
-      idExternoProvincia: [''],
-      municipio: [''],
-      idExternoMunicipio: [''],
-      departamento: [''],
-      idExternoDepartamento: [''],
+
     }),
 
     // 👉 AQUÍ agregamos el archivo dentro del form
@@ -167,17 +158,11 @@ export class EditarPerfil implements OnInit {
   }
 
   onLocationSelected(ubicacionExterna: UbicacionSeleccionada) {
+    this.ubicacionPrecargada.set({ ...ubicacionExterna });
     this.editForm.controls['ubicacion'].setValue({
       lat: ubicacionExterna.lat.toString(),
       lng: ubicacionExterna.lng.toString(),
-      provincia: ubicacionExterna?.provincia ?? '',
-      idExternoProvincia: ubicacionExterna?.idExternoProvincia ?? '',
 
-      municipio: ubicacionExterna?.municipio ?? '',
-      idExternoMunicipio: ubicacionExterna?.idExternoMunicipio ?? '',
-
-      departamento: ubicacionExterna?.departamento ?? '',
-      idExternoDepartamento: ubicacionExterna?.idExternoDepartamento ?? '',
     });
 
     // this.visibleMapa = false;
@@ -228,12 +213,7 @@ export class EditarPerfil implements OnInit {
       this.editForm.get('ubicacion')?.patchValue({
         lat: String(perfil.ubicacion.latitud ?? ''),
         lng: String(perfil.ubicacion.longitud ?? ''),
-        provincia: perfil.ubicacion.provincia ?? '',
-        idExternoProvincia: perfil.ubicacion.idExternoProvincia ?? '',
-        municipio: perfil.ubicacion.municipio ?? '',
-        idExternoMunicipio: perfil.ubicacion.idExternoMunicipio ?? '',
-        departamento: perfil.ubicacion.departamento ?? '',
-        idExternoDepartamento: perfil.ubicacion.idExternoDepartamento ?? '',
+
       });
 
         this.ubicacionPrecargada.set({
@@ -284,15 +264,6 @@ export class EditarPerfil implements OnInit {
       nombre: formValue.firstName ?? '',
       telefono: formValue.phone ?? '',
       ubicacion: {
-        departamento: ubicacionForm.departamento ?? '',
-        idExternoDepartamento: ubicacionForm.idExternoDepartamento ?? '', // ✅ FIX
-
-        municipio: ubicacionForm.municipio ?? '',
-        idExternoMunicipio: ubicacionForm.idExternoMunicipio ?? '',
-
-        provincia: ubicacionForm.provincia ?? '',
-        idExternoProvincia: ubicacionForm.idExternoProvincia ?? '',
-
         latitud: Number(ubicacionForm.lat),
         longitud: Number(ubicacionForm.lng),
       },
@@ -320,6 +291,7 @@ export class EditarPerfil implements OnInit {
         this._status.set(ApiStatus.SUCCESS);
         this.toastr.success('Se guardaron los datos', 'Éxito');
         this.onCloseEditarPerfilLocal();
+        this.onSuccessEdit.emit()
       },
       error: (err) => {
         console.error('Update usuario error:', err);

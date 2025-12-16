@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed, ChangeDetectionStrategy, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { Component, inject, signal, computed, ChangeDetectionStrategy, CUSTOM_ELEMENTS_SCHEMA, OnInit } from '@angular/core';
 import { PerfilCard } from '../../../components/perfil-card/perfil-card';
 import { TabsModule } from 'primeng/tabs';
 import { ButtonModule } from 'primeng/button';
@@ -8,6 +8,9 @@ import { EditPassword } from '../../../components/edit-password/edit-password';
 import { AuthStoreService } from '../../../store/auth.stored.service';
 import { PulicacionesUser } from './pulicaciones-user/pulicaciones-user';
 import { AvistamientosUser } from './avistamientos-user/avistamientos-user';
+import { Dialog } from 'primeng/dialog';
+import { PerfilByUserStoreService } from '../../../store/perfilByUser.stored.service';
+import { UsuarioService } from '../../../services/usuario.service';
 
 enum TapEnum{
   TAP_0="0", // -> PUBLICACIONES
@@ -31,21 +34,47 @@ enum OpcionesDeEdicionENUM{
 
 @Component({
   selector: 'app-perfil-section',
-  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser, AvistamientosUser],
+  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser, AvistamientosUser, Dialog],
   templateUrl: './perfil-section.html',
   styleUrl: './perfil-section.scss',
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
-
+  providers:[PerfilByUserStoreService, UsuarioService]
 })
-export class PerfilSection {
+export class PerfilSection implements OnInit {
 
   private authStore= inject(AuthStoreService)
+
+  readonly perfilStore =inject(PerfilByUserStoreService)
+
+  modalOpen = false;
 
   activeTab = signal(this.tapEnum.TAP_0.toString());
 
   opcionesDeTAP_0= signal<OpcionesDeEdicionENUM>(OpcionesDeEdicionENUM.VER_PERFIL)
 
+  selectedOption = signal<OpcionesDeEdicionENUM | null>(null);
+
+  modalTitle = computed(() => {
+    switch (this.selectedOption()) {
+      case OpcionesDeEdicionENUM.EDITAR_PERDIL:
+        return 'Editar perfil';
+      case OpcionesDeEdicionENUM.EDITAR_PASSWORD:
+        return 'Cambiar contraseña';
+      default:
+        return 'Edición';
+    }
+  });
+
+  openModal(option: OpcionesDeEdicionENUM) {
+    this.selectedOption.set(option);
+    this.modalOpen = true;
+  }
+
+  closeModal() {
+    this.modalOpen = false;
+    this.selectedOption.set(null); // opcional (si querés “resetear”)
+  }
 
   idUsuario = computed(()=> this.authStore.usuario()?.id!)
 
@@ -54,7 +83,7 @@ export class PerfilSection {
   }
 
   ngOnInit() {
-
+    this.perfilStore._getPerfil(this.idUsuario())
   }
 
 
@@ -88,8 +117,8 @@ export class PerfilSection {
   }
 
 
-  onBack(){
-
+  onSuccessEdit(){
+    this.perfilStore._getPerfil(this.idUsuario())
   }
 
 }

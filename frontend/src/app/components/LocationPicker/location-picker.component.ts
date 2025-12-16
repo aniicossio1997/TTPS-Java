@@ -58,12 +58,13 @@ export class LocationPickerComponent implements AfterViewInit {
 
   // Opciones estáticas (no necesitan ser signal si no cambian)
     public readonly stateOptions = [
-      { icon: 'pi pi-list', label: 'Lista', value: 'lista' },
       { icon: 'pi pi-map-marker', label: 'Mapa', value: 'mapa' },
+      { icon: 'pi pi-list', label: 'Lista', value: 'lista' },
+
     ];
 
     // Tu signal inicializada
-    public vistaOpciones = signal<'lista' | 'mapa'>('lista');
+    public vistaOpciones = signal<'lista' | 'mapa'>('mapa');
 
 
   // INPUT / OUTPUT
@@ -98,7 +99,7 @@ export class LocationPickerComponent implements AfterViewInit {
       return `${this.initialLocation()?.provincia}, ${this.initialLocation()?.departamento}  ${this.initialLocation()?.municipio ?  ' ,'+this.initialLocation()?.municipio : ''} `;
     }
 
-    return 'Click para seleccionar una ubicación';
+    return 'Debe hacer click en alguna ubicacion';
   });
 
 
@@ -120,6 +121,9 @@ export class LocationPickerComponent implements AfterViewInit {
     effect(() => {
       if (this.dialogOpen()) {
         this.temp.set(this.confirmed());
+        if(this.map){
+          this.map.invalidateSize();
+        }
 
         queueMicrotask(() => {
           this.ensureMap();
@@ -140,6 +144,11 @@ export class LocationPickerComponent implements AfterViewInit {
 
   open(): void {
     this.dialogOpen.set(true);
+    if(this.map){
+      this.map.invalidateSize();
+    }
+
+
   }
 
   cancel(): void {
@@ -156,6 +165,8 @@ export class LocationPickerComponent implements AfterViewInit {
     this.confirmed.set(this.temp());
     this.onLocationSelected.emit(this.confirmed()!);
     this.dialogOpen.set(false);
+
+    this.destroyMap()
   }
 
   onConfirmToSelectedList(ubicacionSelected:UbicacionSeleccionada ){
@@ -185,7 +196,7 @@ export class LocationPickerComponent implements AfterViewInit {
     this.map.on('click', (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
 
-      console.log("MAPA::,",e)
+
       const temp: UbicacionSeleccionada = {
         lat: String(lat),
         lng: String(lng),
@@ -266,7 +277,6 @@ export class LocationPickerComponent implements AfterViewInit {
       next: (res: UbicacionExternaResponse) => {
         const u = res.ubicacion;
 
-        console.log("UBICACION SELECCIONADA fetchGeoref::", u)
         const enriched: UbicacionSeleccionada = {
           ...temp,
           provincia: u?.provincia?.nombre,
@@ -278,7 +288,6 @@ export class LocationPickerComponent implements AfterViewInit {
           idExternoDepartamento: u?.departamento?.id,
         };
 
-        console.log("MAPA PING::", enriched)
 
         this.temp.set(enriched);
 

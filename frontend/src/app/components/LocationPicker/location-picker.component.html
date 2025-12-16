@@ -16,34 +16,45 @@
     </ng-template>
   </p-selectbutton>
 
-
-  @if (vistaOpciones()=='lista') {
-
-    <div class="mt-4">
-      <app-select-lista-ubicacion [ubicacionPrecargadaInput]="confirmed()" (onUbicacionSelectedOutput)="onConfirmToSelectedList($event)"   ></app-select-lista-ubicacion>
-    </div>
-
-  }
-
-  <!-- OPCION MAPA -->
+    <!-- OPCION MAPA -->
 
   @if(vistaOpciones()== 'mapa'){
-  <p-button variant="outlined"  aria-label="clic para ver la ubicacion" styleClass="w-full mt-4"  (click)="open()">
-      <i class="pi pi-map-marker"></i>
+    <!-- <button
+(click)="open()"
+    class="w-full py-4 px-4 border-2 border-dashed border-blue-300 rounded-xl
+           flex flex-col items-center justify-center gap-2
+           bg-blue-50/50 text-blue-600 hover:bg-blue-100 hover:border-blue-500
+           hover:text-blue-700 transition-all duration-300 cursor-pointer active:scale-95"
+>
+    <i class="pi pi-map text-4xl mb-1"></i>
+    <span class="font-bold text-lg">Abrir Mapa Interactivo</span>
+    <span class="text-sm opacity-80">Toca aquí para buscar tu dirección manualmente</span>
+</button> -->
+
+  <p-button [type]="'button'" variant="outlined"
+
+  aria-label="clic para ver la ubicacion" styleClass="w-full mt-4"  (click)="open()">
+      <i class="pi pi-map-marker  text-6xl"></i>
       <p class="px-1">
+
         {{textoLabel()}}
+
         @if(confirmed()){
+        <div class="flex">
+        <span class="font-light text-gray-500 ">Toca aquí para buscar</span>
         <span class="font-light text-gray-500 ">
         (Cambiar en mapa)
-      </span>}
-  </p>
+        </span>
+          </div>
+    }
+      </p>
   </p-button>
 
   <p-dialog
   [closable]="false"
     header="Seleccionar ubicación"
     [modal]="true"
-    [style]="{ width: '800px' }"
+    [style]="{ width: '800px', }"
     [visible]="dialogOpen()"
     (visibleChange)="dialogOpen.set($event)"
   >
@@ -63,20 +74,30 @@
         } @else if (georefText()) {
           <span>{{ georefText() }}</span>
         }@else {
-          {{textoLabel()}}
+          <span class="font-bold">{{textoLabel()}}</span>
         }
+
       </div>
     </div>
 
     <ng-template pTemplate="footer">
       <div class="flex justify-between w-full">
-        <p-button  severity="secondary" label="Cancelar" (click)="cancel()" />
-
-        <button pButton label="Confirmar" (click)="confirmMap()"></button>
+        <p-button  severity="secondary" label="Cancelar" (click)="cancel()"   />
+        <button pButton label="Confirmar" (click)="confirmMap()" [disabled]="temp()==null"></button>
       </div>
     </ng-template>
   </p-dialog>
   }
+
+  @if (vistaOpciones()=='lista') {
+
+    <div class="mt-4">
+      <app-select-lista-ubicacion [ubicacionPrecargadaInput]="confirmed()" (onUbicacionSelectedOutput)="onConfirmToSelectedList($event)"   ></app-select-lista-ubicacion>
+    </div>
+
+  }
+
+
 </section>
 
 

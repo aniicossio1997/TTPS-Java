@@ -9,7 +9,7 @@
 
     <h2 class="register-card__title">Iniciar sesión</h2>
 
-    @if (authStore.isError()) {
+    @if (isError()) {
       <p-message severity="error" icon="pi pi-times-circle" styleClass="mb-10">Error en el Correo o Contraseña</p-message>
     }
 
@@ -37,7 +37,7 @@
 
       <div class="register-form__field">
 
-      <button pButton type="submit" label="Continuar" style="margin-top: 10px;"  [loading]="authStore.isLoading()"></button>
+      <button pButton type="submit" label="Continuar" style="margin-top: 10px;"  [loading]="isLoading()"></button>
 
       </div>
 

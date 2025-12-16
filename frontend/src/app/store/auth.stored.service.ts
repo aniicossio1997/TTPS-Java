@@ -8,7 +8,6 @@ import {
 
 import { AuthService } from '../services/auth.service';
 import { LoginResponse, Usuario } from '../interfaces/LoginResponse.interface';
-import { ApiStatus } from '../interfaces/local/EnumApiStatus.enum';
 import { EnumRolUsuario } from '../interfaces/local/rol-usuario.enum';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
@@ -21,20 +20,15 @@ export class AuthStoreService {
   private readonly toastr = inject(ToastrService);
   // ===== Signals privados =====
   private readonly _session = signal<LoginResponse | null>(null);
-  private readonly _status  = signal<ApiStatus>(ApiStatus.INIT);
 
   // ===== Estado público de solo lectura =====
   readonly session = this._session.asReadonly();
-  readonly status  = this._status.asReadonly();
 
   // ===== Computed =====
   readonly usuario   = computed<Usuario | null>(() => this._session()?.usuario ?? null);
 
   readonly token     = computed<string | null>(() => this._session()?.token ?? null);
 
-  readonly isLoading = computed(() => this._status() === ApiStatus.LOADING);
-  readonly isSuccess = computed(() => this._status() === ApiStatus.SUCCESS);
-  readonly isError   = computed(() => this._status() === ApiStatus.ERROR);
 
   readonly isAuthenticated = computed(() => !!this.token());
 
@@ -48,42 +42,34 @@ export class AuthStoreService {
     this.restoreFromStorage();
   }
 
+  onSaveSesionError(error?:any){
+    this._session.set(null);
+    this.clearStorage();
+    this.toastr.error('Credenciales incorrectas.', 'Error de Autenticación');
+  }
+
   // ===== Acciones públicas =====
 
   // ===== LOGIN SIN await (solo subscribe) =====
-  login(email: string, password: string): void {
-    this._status.set(ApiStatus.LOADING);
+  onSaveSession(sesion:LoginResponse): void {
+      this._session.set(sesion);
+      this.saveToStorage(sesion);
 
-    this.authService.login(email, password).subscribe({
-      next: (resp) => {
-        this._session.set(resp);
-        this._status.set(ApiStatus.SUCCESS);
-        this.saveToStorage(resp);
-         // ✅ RE-INTRODUCIR LA NAVEGACIÓN AQUÍ.
-              // La navegación se dispara inmediatamente después de actualizar la señal.
-              if (this.isAdmin()) {
-                this.router.navigate(['/admin']);
-                return;
-              }
-              if (this.isUserComun()) {
-                this.router.navigate(['/app']);
-                return;
-              }
-
-      },
-      error: (err) => {
-        console.error('Login error:', err);
-        this._session.set(null);
-        this._status.set(ApiStatus.ERROR);
-        this.clearStorage();
-        this.toastr.error('Credenciales incorrectas.', 'Error de Autenticación');
+      if (this.isAdmin()) {
+        this.router.navigate(['/admin']);
+        return;
       }
-    });
+
+      if (this.isUserComun()) {
+        this.router.navigate(['/app']);
+        return;
+      }
+
   }
+
 
   logout(): void {
     this._session.set(null);
-    this._status.set(ApiStatus.INIT);
     this.clearStorage();
     this.router.navigate(['/public']);
   }
@@ -132,7 +118,6 @@ export class AuthStoreService {
     try {
       const usuario: Usuario = JSON.parse(rawUsuario);
       this._session.set({ token, usuario });
-      this._status.set(ApiStatus.SUCCESS);
     } catch {
       this._session.set(null);
       this.clearStorage();

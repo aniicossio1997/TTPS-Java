@@ -54,6 +54,7 @@ export class EditPassword {
 
   idUsuario= input.required<number>()
   onCloseEditarPerfil = output<void>();
+  onSuccessEdit = output<void>();
 
   public mensajeError = signal<string>('')
   private _status = signal<ApiStatus>(ApiStatus.INIT);

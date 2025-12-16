@@ -161,8 +161,16 @@ public class UsuarioService implements IUsuarioService {
         // 2) Actualizar ubicación
         if (dto.getUbicacion() != null) {
             Ubicacion ubicacion = existingUsuario.getUbicacion();
-            if (ubicacion == null) {
-                throw new IllegalStateException("El usuario no tiene ubicación asociada");
+            if (dto.getUbicacion().getLatitud() != null && dto.getUbicacion().getLongitud() != null) {
+                UbicacionUpdateDTO dtoNuevo = georefService.getUbicacionFormateada(
+                        dto.getUbicacion().getLatitud().toString(),
+                        dto.getUbicacion().getLongitud().toString(),
+                        UbicacionUpdateDTO.class);
+
+                // 4. Verificas que la respuesta no sea null y extraes los datos
+                if (dtoNuevo != null) {
+                    dto.setUbicacion(dtoNuevo);
+                }
             }
             ubicacionUpdateMapper.updateFromDto(dto.getUbicacion(), ubicacion);
         }

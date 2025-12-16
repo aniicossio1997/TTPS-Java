@@ -3,12 +3,12 @@ export interface ubicacionCreateRequest {
   latitud: number;
   longitud: number;
 
-  provincia: string;
-  idExternoProvincia: string;
+  provincia?: string;
+  idExternoProvincia?: string;
 
-  municipio: string;
-  idExternoMunicipio: string;
+  municipio?: string;
+  idExternoMunicipio?: string;
 
-  departamento: string; // en Java estaba con mayúscula Departamento
-  idExternoDepartamento: string;
+  departamento?: string; // en Java estaba con mayúscula Departamento
+  idExternoDepartamento?: string;
 }

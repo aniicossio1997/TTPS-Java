@@ -1,14 +1,12 @@
 package com.grupo20.ttpsspringboot.services.impl;
 
 import com.grupo20.ttpsspringboot.domain.models.*;
-import com.grupo20.ttpsspringboot.dtos.AvistamientoCreateDTO;
-import com.grupo20.ttpsspringboot.dtos.AvistamientoDTO;
-import com.grupo20.ttpsspringboot.dtos.AvistamientoFilterDTO;
-import com.grupo20.ttpsspringboot.dtos.AvistamientoUpdateDTO;
+import com.grupo20.ttpsspringboot.dtos.*;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
 import com.grupo20.ttpsspringboot.persistence.repository.AvistamientoRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
 import com.grupo20.ttpsspringboot.services.IAvistamientoService;
+import com.grupo20.ttpsspringboot.services.IGeorefService;
 import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +28,9 @@ public class AvistamientoService implements IAvistamientoService {
     @Autowired
     private UbicacionService ubicacionService;
 
+    @Autowired
+    private IGeorefService georefService;
+
     @Transactional
     public Avistamiento create(Usuario usuario, AvistamientoCreateDTO dto,  List<MultipartFile> files) {
         Avistamiento avistamiento = dto.toEntity();
@@ -42,7 +43,21 @@ public class AvistamientoService implements IAvistamientoService {
 
         avistamiento.setPublicacion(publicacion);
 
-        Ubicacion ubicacion = ubicacionService.crearUbicacion(dto.getUbicacion());
+        UbicacionCreateDTO dtoUbicacionNuevo = dto.getUbicacion();
+        // llamar al servicio georef para obtener la ubicación formateada
+        if (dto.getUbicacion().getLatitud() != null && dto.getUbicacion().getLongitud() != null) {
+            dtoUbicacionNuevo = georefService.getUbicacionFormateada(
+                    dto.getUbicacion().getLatitud().toString(),
+                    dto.getUbicacion().getLongitud().toString(),
+                    UbicacionCreateDTO.class);
+
+            // 4. Verificas que la respuesta no sea null y extraes los datos
+            if (dtoUbicacionNuevo != null) {
+                dto.setUbicacion(dtoUbicacionNuevo);
+            }
+        }
+
+        Ubicacion ubicacion = ubicacionService.crearUbicacion(dtoUbicacionNuevo);
 
         avistamiento.setUbicacion(ubicacion);
 
@@ -115,7 +130,22 @@ public class AvistamientoService implements IAvistamientoService {
 
         // Actualizar Ubicación si viene en el DTO
         if (dto.getUbicacion() != null) {
-            ubicacionService.updateUbicacion(avistamiento.getUbicacion().getId(), dto.getUbicacion());
+            UbicacionUpdateDTO dtoUbicacionNuevo = dto.getUbicacion();
+            // llamar al servicio georef para obtener la ubicación formateada
+            if (dto.getUbicacion().getLatitud() != null && dto.getUbicacion().getLongitud() != null) {
+                dtoUbicacionNuevo = georefService.getUbicacionFormateada(
+                        dto.getUbicacion().getLatitud().toString(),
+                        dto.getUbicacion().getLongitud().toString(),
+                        UbicacionUpdateDTO.class);
+
+                // 4. Verificas que la respuesta no sea null y extraes los datos
+                if (dtoUbicacionNuevo != null) {
+                    dto.setUbicacion(dtoUbicacionNuevo);
+                }
+            }
+
+
+            ubicacionService.updateUbicacion(avistamiento.getUbicacion().getId(), dtoUbicacionNuevo);
         }
 
         // Limpiamos la colección. Esto es lo que activa orphanRemoval de JPA.

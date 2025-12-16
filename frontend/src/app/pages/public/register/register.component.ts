@@ -58,12 +58,7 @@ function passwordMatchValidator(form: AbstractControl) {
 type UbicacionControls = {
   lat: FormControl<string>;
   lng: FormControl<string>;
-  provincia: FormControl<string>;
-  idExternoProvincia: FormControl<string>;
-  municipio: FormControl<string>;
-  idExternoMunicipio: FormControl<string>;
-  departamento: FormControl<string>;
-  idExternoDepartamento: FormControl<string>;
+
 };
 type RegisterForm = {
   firstName: FormControl<string>;
@@ -115,12 +110,6 @@ export class RegisterComponent implements OnInit {
       lat: ubicacionExterna.lat.toString(),
       lng: ubicacionExterna.lng.toString(),
 
-      provincia: ubicacionExterna?.provincia ?? '',
-      idExternoProvincia: ubicacionExterna?.idExternoProvincia ?? '',
-      municipio: ubicacionExterna?.municipio ?? '',
-      idExternoMunicipio: ubicacionExterna?.idExternoMunicipio ?? '',
-      departamento: ubicacionExterna?.departamento ?? '',
-      idExternoDepartamento: ubicacionExterna?.idExternoDepartamento ?? '',
     });
 
     // this.visibleMapa = false;
@@ -148,12 +137,6 @@ export class RegisterComponent implements OnInit {
       ubicacion: this.fb.group({
         lat: ['', Validators.required],
         lng: ['', Validators.required],
-        provincia: [''],
-        idExternoProvincia: [''],
-        municipio: [''],
-        idExternoMunicipio: [''],
-        departamento: [''],
-        idExternoDepartamento: [''],
       }),
       password: this.fb.control('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: this.fb.control('', [Validators.required]),
@@ -224,14 +207,6 @@ export class RegisterComponent implements OnInit {
       rol: EnumRolUsuario.USUARIO_COMUN,
       telefono: formValue.phone,
       ubicacion: {
-        idExternoProvincia: ubicacion.idExternoProvincia ?? '',
-        provincia: ubicacion.provincia || '',
-
-        idExternoDepartamento: ubicacion.idExternoDepartamento ?? '',
-        departamento: ubicacion.departamento || '',
-
-        idExternoMunicipio: ubicacion.idExternoMunicipio ?? '',
-        municipio: ubicacion.municipio || '',
         latitud: Number(formValue.ubicacion.lat),
         longitud: Number(formValue.ubicacion.lng),
       },

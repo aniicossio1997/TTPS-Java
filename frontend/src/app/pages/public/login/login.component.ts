@@ -1,4 +1,4 @@
-import { Component, effect, inject, OnInit } from '@angular/core';
+import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormBuilder,
@@ -19,6 +19,7 @@ import { MessageModule } from 'primeng/message';
 import { AuthService } from '../../../services/auth.service';
 import { AuthStoreService } from '../../../store/auth.stored.service';
 import { CommonModule } from '@angular/common';
+import { ApiStatus } from '../../../interfaces/local/EnumApiStatus.enum';
 
 
 interface Option {
@@ -67,6 +68,13 @@ export class LoginComponent implements OnInit {
   public readonly authStore = inject(AuthStoreService);
   private readonly authService = inject(AuthService);
 
+
+  private readonly _status  = signal<ApiStatus>(ApiStatus.INIT);
+
+  readonly isLoading = computed(() => this._status() === ApiStatus.LOADING);
+  readonly isSuccess = computed(() => this._status() === ApiStatus.SUCCESS);
+  readonly isError   = computed(() => this._status() === ApiStatus.ERROR);
+
   // 🔹 Creamos el FormGroup con el método group() del FormBuilder
   //    Todos los controles son no-nullable gracias a .nonNullable
     readonly loginForm: FormGroup<LoginForm> = this.fb.group({
@@ -90,51 +98,25 @@ export class LoginComponent implements OnInit {
 
       const { email, password } = this.loginForm.getRawValue();
 
-      this.authStore.login(email, password)
+      this.onLogin(email, password)
     }
 
-//     onSubmit(): void {
-//   if (this.loginForm.invalid) {
-//     this.loginForm.markAllAsTouched();
-//     return;
-//   }
+  // ===== LOGIN SIN await (solo subscribe) =====
+  onLogin(email: string, password: string): void {
+    this._status.set(ApiStatus.LOADING);
 
-//   this.loading = true;
-//   this.errorMessage = '';
+    this.authService.login(email, password).subscribe({
+      next: (resp) => {
 
-//   const { email, password } = this.loginForm.getRawValue();
-
-//   this.authService.login(email, password!).subscribe({
-//     next: (response: LoginResponse) => {
-//       this.authService.guardarSesion(response);
-
-//       const rol = response.usuario.rol;
-
-//       if (rol === 'ADMINISTRADOR') {
-//         this.router.navigate(['/admin']); // administrador
-//       } else {
-//         this.router.navigate(['/app']); // usuario normal
-//       }
-//     },
-//     error: (err) => {
-//       console.error('Error en login', err);
-//       if (err.status === 401 || err.status === 400) {
-//         this.errorMessage = 'Credenciales incorrectas.';
-//       } else {
-//         this.errorMessage = 'Ocurrió un error al iniciar sesión. Intenta nuevamente.';
-//       }
-//       this.loading = false;
-//     },
-//     complete: () => {
-//       this.loading = false;
-//     }
-//   });
-// }
-
-
-
-// helper (mucho más cómodo de usar en HTML)
-
+        this.authStore.onSaveSession(resp)
+        this._status.set(ApiStatus.SUCCESS);
+      },
+      error: (err) => {
+         this._status.set(ApiStatus.ERROR);
+        this.authStore.onSaveSesionError(err)
+      }
+    });
+  }
     isInvalid(controlName: string) {
         const control = this.loginForm.get(controlName);
         return control?.invalid && (control.touched || control.dirty);
