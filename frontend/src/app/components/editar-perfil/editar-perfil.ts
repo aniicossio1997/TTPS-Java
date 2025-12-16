@@ -158,13 +158,13 @@ export class EditarPerfil implements OnInit {
   }
 
   onLocationSelected(ubicacionExterna: UbicacionSeleccionada) {
-    this.ubicacionPrecargada.set({ ...ubicacionExterna });
+
     this.editForm.controls['ubicacion'].setValue({
       lat: ubicacionExterna.lat.toString(),
       lng: ubicacionExterna.lng.toString(),
 
     });
-
+    this.ubicacionPrecargada.set({ ...ubicacionExterna });
     // this.visibleMapa = false;
     // acá podés guardar en el formulario, mandar al backend, etc.
   }

@@ -5,8 +5,7 @@
 
   @if (this.authStore.usuario() && this.authStore.usuario()?.id ==publicacion.usuarioId ) {
       <p-button
-        aria-label="Ver ubicación"
-        class="bottom-2  absolute top-0 left-0-0 z-50 right-0"
+        class="bottom-2  absolute top-1 right-1 right-0"
         severity="secondary"
         [rounded]="false"
         (click)="$event.stopPropagation(); navigateToEdit(publicacion.id)"

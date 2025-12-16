@@ -1,30 +1,31 @@
 <div class="mb-5">
   <app-usuarios-ranking />
 </div>
-
-<p-card>
-  <div class="flex items-center justify-between">
-    <h1 class="text-2xl font-bold">Publicaciones</h1>
-    <div class="flex justify-end gap-4 mb-4">
-      <p-button
-        severity="primary"
-        icon="pi pi-plus"
-        label="Crear Publicación"
-        size="large"
-        class="block"
-        [routerLink]="[destinationUrl]"
-      />
-      <p-button
-        icon="pi pi-map-marker"
-        severity="primary"
-        label="Ver Mapa"
-        size="large"
-        class="block bg-primary-50"
-        variant="outlined"
-        routerLink="/app/mapa"
-      />
-    </div>
+<div class="flex items-center justify-between">
+  <h1 class="text-2xl font-bold">Publicaciones</h1>
+  <div class="flex justify-end gap-4 mb-4">
+    <p-button
+      severity="primary"
+      icon="pi pi-plus"
+      label="Crear Publicación"
+      size="large"
+      class="block"
+      [routerLink]="[destinationUrl]"
+    />
+    @if (isAuthenticated){
+    <p-button
+      icon="pi pi-map-marker"
+      severity="primary"
+      label="Ver Mapa"
+      size="large"
+      class="block bg-primary-50"
+      variant="outlined"
+      routerLink="/app/mapa"
+    />
+    }
   </div>
+</div>
+<p-card>
   <div class="p-4 space-y-6">
     <div class="flex align-items-start h-12 gap-2">
       <p-inputgroup>
@@ -78,9 +79,15 @@
             ></p-select>
           </div>
 
-          <div>
+           <div>
             <label class="text-sm mb-1 block">Color</label>
-            <input pInputText class="w-full" [(ngModel)]="filtro().color" placeholder="Color" />
+            <p-select
+              [options]="colorOptions"
+              [(ngModel)]="filtro().color"
+              [showClear]="true"
+              placeholder="Todos los colores"
+              styleClass="w-full"
+            ></p-select>
           </div>
 
           <div>

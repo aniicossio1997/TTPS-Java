@@ -1,15 +1,11 @@
-import {
-  Component,
-  inject,
-  OnInit,
-  signal, ChangeDetectionStrategy
-} from '@angular/core';
+import { Component, inject, OnInit, signal, ViewChild, computed, ChangeDetectionStrategy } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormBuilder,
   Validators,
   FormGroup,
-  FormsModule
+  FormsModule,
+  ValidationErrors,
 } from '@angular/forms';
 
 // PrimeNG
@@ -22,11 +18,10 @@ import { FormControl } from '@angular/forms';
 import { DividerModule } from 'primeng/divider';
 import { Router, RouterLink } from '@angular/router';
 import { MessageModule } from 'primeng/message';
-import {
-  LocationPickerComponent,
-  UbicacionSeleccionada,
-} from '../../../components/LocationPicker/location-picker.component';
+import { LocationPickerComponent, UbicacionSeleccionada } from '../../../components/LocationPicker/location-picker.component';
 import { CommonModule } from '@angular/common';
+import { Dialog } from 'primeng/dialog';
+import { UbicacionExternaResponse } from '../../../interfaces/ubicacionExternaResponse';
 import { AuthService } from '../../../services/auth.service';
 import { ApiStatus } from '../../../interfaces/local/EnumApiStatus.enum';
 import { RegisterRequest } from '../../../interfaces/registerRequest.interface';
@@ -58,7 +53,12 @@ function passwordMatchValidator(form: AbstractControl) {
 type UbicacionControls = {
   lat: FormControl<string>;
   lng: FormControl<string>;
-
+  provincia: FormControl<string>;
+  idExternoProvincia: FormControl<string>;
+  municipio: FormControl<string>;
+  idExternoMunicipio: FormControl<string>;
+  departamento: FormControl<string>;
+  idExternoDepartamento: FormControl<string>;
 };
 type RegisterForm = {
   firstName: FormControl<string>;
@@ -103,23 +103,30 @@ export class RegisterComponent implements OnInit {
 
   ubicacionPrecargada = signal<UbicacionSeleccionada | null>(null);
 
-  onLocationSelected(ubicacionExterna: UbicacionSeleccionada) {
-    this.ubicacionPrecargada.set({ ...ubicacionExterna });
+  onLocationSelected( ubicacionExterna: UbicacionSeleccionada) {
+      this.ubicacionPrecargada.set({...ubicacionExterna})
 
-    this.registerForm.controls['ubicacion'].setValue({
-      lat: ubicacionExterna.lat.toString(),
-      lng: ubicacionExterna.lng.toString(),
+      this.registerForm.controls['ubicacion'].setValue({
+        lat: ubicacionExterna.lat.toString(),
+        lng: ubicacionExterna.lng.toString(),
+        provincia: ubicacionExterna?.provincia ?? '',
+        idExternoProvincia: ubicacionExterna?.idExternoProvincia ?? '',
+        municipio: ubicacionExterna?.municipio ?? '',
+        idExternoMunicipio: ubicacionExterna?.idExternoMunicipio ?? '',
+        departamento: ubicacionExterna?.departamento ?? '',
+        idExternoDepartamento: ubicacionExterna?.idExternoDepartamento ?? '',
+      });
 
-    });
 
-    // this.visibleMapa = false;
-    // acá podés guardar en el formulario, mandar al backend, etc.
+      // this.visibleMapa = false;
+      // acá podés guardar en el formulario, mandar al backend, etc.
   }
 
   /*
    {{ubicacionExterna()!.ubicacion!.provincia!.nombre!}}, {{ubicacionExterna()!.ubicacion!.departamento!.nombre!}},
                 {{ubicacionExterna()!.ubicacion!.municipio!.nombre!}}
   */
+
 
   ngOnInit(): void {}
 
@@ -137,6 +144,12 @@ export class RegisterComponent implements OnInit {
       ubicacion: this.fb.group({
         lat: ['', Validators.required],
         lng: ['', Validators.required],
+        provincia: ['', ],
+        idExternoProvincia: ['', ],
+        municipio: ['', ],
+        idExternoMunicipio: ['', ],
+        departamento: ['',],
+        idExternoDepartamento: ['',],
       }),
       password: this.fb.control('', [Validators.required, Validators.minLength(6)]),
       confirmPassword: this.fb.control('', [Validators.required]),
@@ -152,6 +165,7 @@ export class RegisterComponent implements OnInit {
     this.registerForm.markAllAsTouched();
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
+
     }
 
     // getRawValue() para mantener bien el tipo
@@ -207,12 +221,21 @@ export class RegisterComponent implements OnInit {
       rol: EnumRolUsuario.USUARIO_COMUN,
       telefono: formValue.phone,
       ubicacion: {
+        idExternoProvincia: ubicacion.idExternoProvincia ?? '',
+        provincia: ubicacion.provincia || '',
+
+        idExternoDepartamento: ubicacion.idExternoDepartamento ?? '',
+        departamento: ubicacion.departamento || '',
+
+        idExternoMunicipio: ubicacion.idExternoMunicipio ?? '',
+        municipio: ubicacion.municipio || '',
         latitud: Number(formValue.ubicacion.lat),
         longitud: Number(formValue.ubicacion.lng),
       },
     };
     this.serviceAuth.postRegister(request).subscribe({
       next: (resp) => {
+
         this._status.set(ApiStatus.SUCCESS);
         this.router.navigate([`/${PUBLIC_ROUTES_ENUM.ROOT}/${PUBLIC_ROUTES_ENUM.LOGIN}`]);
         this.toastr.success('Se registró correctamente.', 'Éxito en el Registro');

@@ -56,7 +56,7 @@
                 <p-message severity="error" size="small" variant="simple">La ubicación es obligatoria</p-message>
             }
 
-        <app-location-picker [initialLocation]="ubicacionPrecargada()" [isInvalid]="isInvalid('ubicacion')!" (onLocationSelected)="onLocationSelected($event)"></app-location-picker>
+        <app-location-picker [initialLocation]="ubicacionPrecargada()"  (onLocationSelected)="onLocationSelected($event)" [isInvalid]="isInvalid('ubicacion')!"></app-location-picker>
 
 
       </div>

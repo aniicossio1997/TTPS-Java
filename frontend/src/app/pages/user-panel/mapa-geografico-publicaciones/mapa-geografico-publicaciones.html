@@ -1,41 +1,37 @@
-<p-card >
-    <h2 class="text-2xl font-bold mb-4">Publicaciones en tu zona</h2>
+<p-card>
+  <h2 class="text-2xl font-bold mb-4">Publicaciones en tu zona</h2>
 
-    Mostrando resultados en: {{ubicacionInicial()}}
-    <div class="relative min-h-[800px]">
-
-        @if (mapaState$ | async; as state) {
-
-            @if (state.loading) {
-                <div class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/80 border-round">
-                    <p class="mt-2 text-700">Cargando publicaciones en la zona...</p>
-                </div>
-            }
-
-            @if (state.error) {
-                <p-message
-                    severity="info"
-                    [text]="state.error"
-                    class="block w-full"
-                ></p-message>
-                <div class="h-[800px] surface-100 border-round"></div>
-            } @else if (state.publicaciones) {
-                 @if (state.publicaciones.length > 0) {
-                    <app-mapa-publicaciones
-                    style="height: 800px;"
-                        [publicaciones]="state.publicaciones"
-                    />
-                } @else if (state.publicaciones.length === 0) {
-                    <div class="text-center p-5 surface-200 border-round h-[500px] flex flex-col items-center justify-center">
-                        <i class="pi pi-map-marker text-500 mb-3" style="font-size: 3rem"></i>
-                        <p class="text-700 font-semibold text-lg">No se encontraron publicaciones en este departamento ({{ departamentoBusqueda() || 'N/A' }}).</p>
-                        <p class="text-600 mt-1">Intente buscar otro departamento o amplíe la zona.</p>
-                    </div>
-                }
-            }
-        } @else {
-             <p-skeleton height="500px"></p-skeleton>
-        }
+  Mostrando resultados en: {{ ubicacionInicial() }}
+  <div class="relative min-h-[800px]">
+    @if (mapaState$ | async; as state) { @if (state.loading) {
+    <div
+      class="absolute inset-0 z-10 flex flex-col items-center justify-center bg-white/80 border-round"
+    >
+      <p class="mt-2 text-700">Cargando publicaciones en la zona...</p>
     </div>
-
+    } @if (state.error) {
+    <p-message severity="info" [text]="state.error" class="block w-full"></p-message>
+    <div class="h-[800px] surface-100 border-round"></div>
+    } @else if (state.publicaciones) { @if (state.publicaciones.length > 0) {
+    <app-mapa-publicaciones
+      [ubicacionInicial]="ubicacion()"
+      style="height: 800px"
+      [publicaciones]="state.publicaciones"
+    />
+    } @else if (state.publicaciones.length === 0) {
+    <div
+      class="text-center p-5 surface-200 border-round h-[500px] flex flex-col items-center justify-center"
+    >
+      <i class="pi pi-map-marker text-500 mb-3" style="font-size: 3rem"></i>
+      <p class="text-700 font-semibold text-lg">
+        No se encontraron publicaciones en este departamento ({{
+          departamentoBusqueda() || 'N/A'
+        }}).
+      </p>
+      <p class="text-600 mt-1">Intente buscar otro departamento o amplíe la zona.</p>
+    </div>
+    } } } @else {
+    <p-skeleton height="500px"></p-skeleton>
+    }
+  </div>
 </p-card>

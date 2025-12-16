@@ -63,11 +63,11 @@ public class GeorefController {
     @Operation(summary = "Obtener ubicación (Provincia/Muni/Depto) desde coordenadas")
     @GetMapping("/ubicacion")
     public ResponseEntity<GeorefUbicacionResponse> getUbicacion(
-            @RequestParam(required = true) String lat,
-            @RequestParam(required = true) String lon) {
+            @RequestParam(required = true) String latitud,
+            @RequestParam(required = true) String longitud) {
+        
 
-
-        GeorefUbicacionResponse response = georefService.obtenerUbicacion(lat, lon);
+        GeorefUbicacionResponse response = georefService.obtenerUbicacion(latitud, longitud);
 
         if (response == null) {
             return ResponseEntity.internalServerError().build();

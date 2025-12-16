@@ -18,6 +18,11 @@
 
     <!-- OPCION MAPA -->
 
+    <pre>
+      UBICACION CONFIRMADA{{confirmed() | json}}
+     </pre>
+
+
   @if(vistaOpciones()== 'mapa'){
     <!-- <button
 (click)="open()"
@@ -40,13 +45,13 @@
         {{textoLabel()}}
 
         @if(confirmed()){
-        <div class="flex">
-        <span class="font-light text-gray-500 ">Toca aquí para buscar</span>
-        <span class="font-light text-gray-500 ">
-        (Cambiar en mapa)
-        </span>
-          </div>
-    }
+            <div class="flex">
+            <span class="font-light text-gray-500 ">Toca aquí para buscar</span>
+            <span class="font-light text-gray-500 ">
+            (Cambiar en mapa)
+            </span>
+            </div>
+        }
       </p>
   </p-button>
 
@@ -82,8 +87,8 @@
 
     <ng-template pTemplate="footer">
       <div class="flex justify-between w-full">
-        <p-button  severity="secondary" label="Cancelar" (click)="cancel()"   />
-        <button pButton label="Confirmar" (click)="confirmMap()" [disabled]="temp()==null"></button>
+        <p-button [type]="'button'"   severity="secondary" label="Cancelar" (click)="cancel()"   />
+        <button [type]="'button'" pButton label="Confirmar" (click)="confirmMap($event)" [disabled]="temp()==null"></button>
       </div>
     </ng-template>
   </p-dialog>

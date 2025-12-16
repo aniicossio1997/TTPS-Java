@@ -1,4 +1,4 @@
-import { Component, OnInit, input, inject } from '@angular/core';
+import { Component, OnInit, input, inject, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { TagModule } from 'primeng/tag';
@@ -6,7 +6,7 @@ import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
 import { CarouselModule } from 'primeng/carousel';
 import { SkeletonModule } from 'primeng/skeleton';
-import { Observable, BehaviorSubject, switchMap, finalize } from 'rxjs';
+import { Observable, BehaviorSubject, switchMap, finalize, tap } from 'rxjs';
 import { AvistamientoService } from '../../../../services/avistamiento.service';
 import { Avistamiento, AvistamientoFilter } from '../../../../interfaces/avistamiento.interface';
 import { UserAvatarComponent } from '../../../../components/user-avatar/user-avatar';
@@ -23,7 +23,7 @@ import { UserAvatarComponent } from '../../../../components/user-avatar/user-ava
     DividerModule,
     CarouselModule,
     SkeletonModule,
-    UserAvatarComponent
+    UserAvatarComponent,
   ],
 })
 export class AvistamientosList implements OnInit {
@@ -33,6 +33,10 @@ export class AvistamientosList implements OnInit {
   usuarioId = input<number | null>(null);
 
   avistamientos$!: Observable<Avistamiento[]>;
+
+  @Output()
+  avistamientosCargados = new EventEmitter<Avistamiento[]>();
+
   loading: boolean = true;
 
   constructor() {}
@@ -54,9 +58,12 @@ export class AvistamientosList implements OnInit {
     }
 
     this.loading = true;
-    this.avistamientos$ = this.avistamientoService
-      .getFiltered(filter)
-      .pipe(finalize(() => (this.loading = false)));
+    this.avistamientos$ = this.avistamientoService.getFiltered(filter).pipe(
+      tap((avistamientos: Avistamiento[]) => {
+        this.avistamientosCargados.emit(avistamientos);
+      }),
+      finalize(() => (this.loading = false))
+    );
   }
 
   recargar(): void {

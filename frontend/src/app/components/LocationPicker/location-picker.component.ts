@@ -159,8 +159,8 @@ export class LocationPickerComponent implements AfterViewInit {
      this.destroyMap();
   }
 
-  confirmMap(): void {
-
+  confirmMap(event: Event): void {
+    event.preventDefault();
     //
     this.confirmed.set(this.temp());
     this.onLocationSelected.emit(this.confirmed()!);
@@ -173,6 +173,7 @@ export class LocationPickerComponent implements AfterViewInit {
     this.confirmed.set(ubicacionSelected);
     this.onLocationSelected.emit(ubicacionSelected!);
     this.dialogOpen.set(false);
+    this.destroyMap()
   }
 
   // ---------------- MAP ----------------

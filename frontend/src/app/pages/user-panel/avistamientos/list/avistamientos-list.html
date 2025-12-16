@@ -13,21 +13,7 @@
         *ngFor="let avistamiento of list"
         class="surface-card rounded-lg shadow-1 p-4 flex-1 border border-slate-200"
       >
-        <!-- Header -->
-        <div class="flex flex-1 justify-between">
-          <p class="text-900 text-lg line-height-3 mb-3">
-            {{ avistamiento.descripcion }}
-          </p>
-
-          <p-button
-            label="Ver en mapa"
-            icon="pi pi-map-marker"
-            severity="secondary"
-            size="small"
-            [link]="true"
-          ></p-button>
-        </div>
-        @if (avistamiento.fotos?.length) {
+       @if (avistamiento.fotos?.length) {
         <p-carousel
           [class.single-image]="(avistamiento.fotos?.length || 0) <= 1"
           [value]="avistamiento.fotos || []"
@@ -37,12 +23,29 @@
           [showIndicators]="true"
         >
           <ng-template let-foto pTemplate="item">
-            <div class="relative  h-42 rounded-lg overflow-hidden shadow-lg px-2 ">
-              <img [src]="foto.url" alt="Mascota" class="w-full  h-full object-cover rounded-2xl" />
+            <div class="relative  max-h-50 rounded-lg overflow-hidden shadow-lg px-2 ">
+              <img [src]="foto.url" alt="Mascota" class="w-full  h-full object-cover rounded-2xl max-w-[300px]" />
             </div>
           </ng-template>
         </p-carousel>
         }
+        <!-- Header -->
+        <div class="flex flex-1 justify-between">
+          <p class="text-900 text-lg line-height-3 mb-3">
+            {{ avistamiento.descripcion }}
+          </p>
+
+          <a
+            pButton
+            label="Ver en mapa"
+            icon="pi pi-map-marker"
+            text
+            size="small"
+            target="_blank"
+            [href]="`https://maps.google.com/?q=${avistamiento.ubicacion.latitud},${avistamiento.ubicacion.longitud}`"
+          ></a>
+        </div>
+
         <p-divider class="my-1"></p-divider>
         <!-- Usuario -->
         <div class="flex justify-between">

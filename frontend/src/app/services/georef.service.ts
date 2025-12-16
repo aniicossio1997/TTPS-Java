@@ -26,6 +26,10 @@ export class GeorefService {
     return this.http.get<GeorefMunicipiosResponse>(`${this.apiUrl}/municipios/${idProvincia}`);
   }
 
+  //http://localhost:8081/api/georef/ubicacion?latitud=-1&longitud=-1
 
+  getUbicacion( {latitud,longitud} : {latitud:string, longitud:string}): Observable<GeorefMunicipiosResponse> {
+    return this.http.get<GeorefMunicipiosResponse>(`${this.apiUrl}/ubicacion?latitud=${latitud}&longitud=${longitud}`);
+  }
 
 }

@@ -107,6 +107,8 @@
                 <p-message severity="error" size="small" variant="simple">La ubicación es obligatoria</p-message>
             }
 
+            <!-- <h1>{{ubicacionPrecargada() |json}}</h1>
+            <pre>{{this.editForm.controls['ubicacion'].value | json}} </pre> -->
         <app-location-picker
         [initialLocation]="ubicacionPrecargada()"
         [isInvalid]="isInvalid('ubicacion')!"
