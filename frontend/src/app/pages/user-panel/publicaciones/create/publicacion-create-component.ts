@@ -26,6 +26,7 @@ export class PublicacionCreateComponent {
   private readonly toastr = inject(ToastrService);
 
   public handleFormSubmit(event: PublicacionSubmitEvent): void {
+    console.log("ENTRE AL PADRE:: handleFormSubmit")
     const [publicacion, imagenes] = event;
     console.log('Datos de Publicación listos para crear:', publicacion, imagenes);
 

@@ -109,14 +109,8 @@ export class AvistamientoForm implements OnInit {
       const avistamientoData: AvistamientoCreate = {
         descripcion: formValue.descripcion,
         ubicacion: {
-          provincia: ubicacion.provincia || '',
-          departamento: ubicacion.departamento || '',
-          municipio: ubicacion.municipio || '',
           latitud: Number(formValue.ubicacion.lat),
           longitud: Number(formValue.ubicacion.lng),
-          idExternoProvincia: ubicacion.idExternoProvincia ?? '',
-          idExternoDepartamento: ubicacion.idExternoDepartamento ?? '',
-          idExternoMunicipio: ubicacion.idExternoMunicipio ?? '',
         },
         publicacionId: this.publicacionId,
       };

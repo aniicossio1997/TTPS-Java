@@ -1,42 +1,4 @@
-<section class="bg-gray-50 p-4 rounded-xl border border-gray-200 ">
-  <p-selectbutton
-    [options]="stateOptions"
-    [ngModel]="vistaOpciones()"
-    (ngModelChange)="vistaOpciones.set($event)"
-    optionLabel="label"
-    optionValue="value"
-    [allowEmpty]="false"
-    fluid
-  >
-    <ng-template let-item pTemplate="item">
-      <div [class.text-[#10B981]]="vistaOpciones() === item.value">
-        <i [class]="item.icon" class="mr-2"></i>
-        <span>{{ item.label }}</span>
-      </div>
-    </ng-template>
-  </p-selectbutton>
-
-    <!-- OPCION MAPA -->
-
-    <pre>
-      UBICACION CONFIRMADA{{confirmed() | json}}
-     </pre>
-
-
-  @if(vistaOpciones()== 'mapa'){
-    <!-- <button
-(click)="open()"
-    class="w-full py-4 px-4 border-2 border-dashed border-blue-300 rounded-xl
-           flex flex-col items-center justify-center gap-2
-           bg-blue-50/50 text-blue-600 hover:bg-blue-100 hover:border-blue-500
-           hover:text-blue-700 transition-all duration-300 cursor-pointer active:scale-95"
->
-    <i class="pi pi-map text-4xl mb-1"></i>
-    <span class="font-bold text-lg">Abrir Mapa Interactivo</span>
-    <span class="text-sm opacity-80">Toca aquí para buscar tu dirección manualmente</span>
-</button> -->
-
-  <p-button [type]="'button'" variant="outlined"
+  <!-- <p-button [type]="'button'" variant="outlined"
 
   aria-label="clic para ver la ubicacion" styleClass="w-full mt-4"  (click)="open()">
       <i class="pi pi-map-marker  text-6xl"></i>
@@ -53,15 +15,58 @@
             </div>
         }
       </p>
-  </p-button>
+  </p-button> -->
+
+
+<button
+  type="button"
+  (click)="open()"
+  class="
+    w-full mt-4
+    flex items-center gap-3
+    px-4 py-2
+    border-3 border-emerald-400 rounded-lg
+    text-emerald-600
+    hover:bg-emerald-50
+    transition
+    cursor-pointer
+
+    focus:outline-none focus:ring-2 focus:ring-emerald-300
+  "
+  aria-label="Clic para ver la ubicación"
+>
+<div class="flex justify-center w-full gap-2 align-middle">
+    <!-- Icono grande REAL -->
+  <i class="pi pi-map-marker " style="font-size: 1.6rem;" ></i>
+
+  <div class="font-medium">
+      {{textoLabel()}}
+      @if(confirmed()){
+            <div class="flex">
+            <span class="font-light text-gray-500 ">(Toca aquí para buscar/cambiar la ubicación)</span>
+            </div>
+      }
+  </div>
+</div>
+</button>
+
+
+
+
+
+
+
+
 
   <p-dialog
-  [closable]="false"
-    header="Seleccionar ubicación"
-    [modal]="true"
-    [style]="{ width: '800px', }"
+    [closable]="false"
     [visible]="dialogOpen()"
     (visibleChange)="dialogOpen.set($event)"
+    header="Seleccionar ubicación"
+
+    [modal]="true" [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }" [style]="{ width: '50vw' }" [draggable]="false" [resizable]="false"
+
+
   >
     <div class="map-wrapper">
       <div #mapContainer class="map"></div>
@@ -92,19 +97,4 @@
       </div>
     </ng-template>
   </p-dialog>
-  }
-
-  @if (vistaOpciones()=='lista') {
-
-    <div class="mt-4">
-      <app-select-lista-ubicacion [ubicacionPrecargadaInput]="confirmed()" (onUbicacionSelectedOutput)="onConfirmToSelectedList($event)"   ></app-select-lista-ubicacion>
-    </div>
-
-  }
-
-
-</section>
-
-
-
 

@@ -35,7 +35,7 @@
             {{ avistamiento.descripcion }}
           </p>
 
-          <a
+          <!-- <a
             pButton
             label="Ver en mapa"
             icon="pi pi-map-marker"
@@ -43,7 +43,19 @@
             size="small"
             target="_blank"
             [href]="`https://maps.google.com/?q=${avistamiento.ubicacion.latitud},${avistamiento.ubicacion.longitud}`"
-          ></a>
+          ></a> -->
+
+          <a
+          target="_blank"
+          [href]="`https://maps.google.com/?q=${avistamiento.ubicacion.latitud},${avistamiento.ubicacion.longitud}`"
+          class="flex flex-col justify-center align-middle text-[#04aa6d] text-sm">
+            <span>
+              <i class="pi pi-map-marker"></i>
+              {{avistamiento.ubicacion.provincia }},
+              {{avistamiento.ubicacion.departamento }}
+            </span>
+             <span class="text-center">Ir al mapa</span>
+          </a>
         </div>
 
         <p-divider class="my-1"></p-divider>

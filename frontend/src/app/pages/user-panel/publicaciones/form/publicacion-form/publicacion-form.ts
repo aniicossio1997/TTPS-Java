@@ -195,11 +195,14 @@ export class PublicacionFormComponent implements OnInit {
   }
 
   async onSubmit() {
+    console.log("ENTRE AL SUBMIT")
     if (this.publicacionForm.valid) {
       const formValue = this.publicacionForm.value;
 
       const { nombre, descripcion, tipo, color, especie, tamanio, ubicacion } = formValue;
-      if (!color || !especie || !tamanio || !ubicacion || !nombre || !descripcion || !ubicacion)
+      console.log({ nombre, descripcion, tipo, color, especie, tamanio, ubicacion })
+      console.log("ANTES DEL CONSOLE:LOG")
+      if (!color || !especie || !tamanio || !ubicacion || !nombre || !ubicacion)
         return;
 
       const estadoActual = this.publicacionExistente?.estado?.estado;
@@ -212,17 +215,12 @@ export class PublicacionFormComponent implements OnInit {
         ubicacion: {
           latitud: Number(ubicacion!.lat!),
           longitud: Number(ubicacion.lng),
-          provincia: ubicacion.provincia!,
-          idExternoProvincia: ubicacion.idExternoProvincia!,
-          municipio: ubicacion.municipio!,
-          idExternoMunicipio: ubicacion.idExternoMunicipio!,
-          departamento: ubicacion.departamento!,
-          idExternoDepartamento: ubicacion.idExternoDepartamento!,
         },
         estado:
           estadoActual || (tipo === TipoPublicacion.PROPIO ? 'PERDIDO_PROPIO' : 'PERDIDO_AJENO'),
       };
 
+      console.log("ESTOY POR EMITIR AL PADRE")
       this.formSubmit.emit([publicacionData, this.selectedFiles()]);
 
       console.log(`${this.publicacionId ? 'Actualizando' : 'Creando'} Publicación...`);

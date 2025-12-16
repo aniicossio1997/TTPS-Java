@@ -11,6 +11,7 @@ import { AvistamientosUser } from './avistamientos-user/avistamientos-user';
 import { Dialog } from 'primeng/dialog';
 import { PerfilByUserStoreService } from '../../../store/perfilByUser.stored.service';
 import { UsuarioService } from '../../../services/usuario.service';
+import { RouterLink } from '@angular/router';
 
 enum TapEnum{
   TAP_0="0", // -> PUBLICACIONES
@@ -34,7 +35,7 @@ enum OpcionesDeEdicionENUM{
 
 @Component({
   selector: 'app-perfil-section',
-  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser, AvistamientosUser, Dialog],
+  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser, AvistamientosUser, Dialog, RouterLink],
   templateUrl: './perfil-section.html',
   styleUrl: './perfil-section.scss',
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
@@ -119,6 +120,13 @@ export class PerfilSection implements OnInit {
 
   onSuccessEdit(){
     this.perfilStore._getPerfil(this.idUsuario())
+  }
+
+  get destinationUrl(): string {
+    if (this.authStore.isAuthenticated()) {
+      return '/app/publicaciones/crear';
+    }
+    return '/public/login';
   }
 
 }

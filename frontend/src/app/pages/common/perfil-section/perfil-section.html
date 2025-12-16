@@ -60,7 +60,16 @@
               </div>
             </div>
 
-            <article class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100     mb-4">
+            <article class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-4">
+                  <p-button
+                    severity="primary"
+                    icon="pi pi-plus"
+                    label="Crear Publicación"
+                    size="large"
+                    class="block"
+                    [size]="'small'"
+                    [routerLink]="[destinationUrl]"
+                  />
             <p-tabs lazy [value]="activeTab()" (valueChange)="onTabChange($event)" scrollable class="rounded-3xl ">
                 <p-tablist>
                   <p-tab value="0">Mis publicaciones</p-tab>

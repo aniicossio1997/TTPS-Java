@@ -39,12 +39,12 @@
           </div>
         </div>
 
-        <p-button
+        <!-- <p-button
           label="Ver ubicación"
           class="w-fit-content"
           icon="pi pi-map-marker"
           (click)="verUbicacion(publicacion()!.ubicacion)"
-        />
+        /> -->
       </div>
 
       @if (fotos().length > 0) {
@@ -91,6 +91,7 @@
         [publicacionId]="publicacion()!.id"
         (avistamientosCargados)="onAvistamientosCargados($event)"
       />
+
     </p-card>
 
     <div class="lg:col-span-1 space-y-6">
@@ -101,9 +102,28 @@
           style="height: 300px"
         />
         <p class="my-4">
+          <i class="pi pi-map-marker"></i>
+
+          {{ publicacionArray()[0].ubicacion.provincia }},
           {{ publicacionArray()[0].ubicacion.departamento }},
-          {{ publicacionArray()[0].ubicacion.provincia }}
+          {{ publicacionArray()[0].ubicacion.municipio }}
         </p>
+
+        <div class="mt-4 space-y-3 text-sm text-gray-600">
+          <div class="flex items-center">
+            <span class="inline-block w-5 h-5 mr-3 rounded-full bg-[#ff0062] shadow-sm"></span>
+            <i class="pi pi-arrow-right mr-3"></i>
+            <span> Ubicación de donde se perdió</span>
+          </div>
+
+
+          <div class="flex items-center">
+            <span class="inline-block w-5 h-5 mr-3 rounded-full bg-[#00e1ff] shadow-sm"></span>
+            <i class="pi pi-arrow-right mr-3"></i>
+            <span class=" mr-3"> Avistamientos de la mascota</span>
+          </div>
+        </div>
+
       </p-card>
 
       @if (isOwner()) {
@@ -150,14 +170,11 @@
             </div>
           </li>
           }
-          <li class="flex justify-between items-center pb-2 border-b-1 border-slate-200">
+          <li class="flex justify-between items-center pb-2  border-slate-200">
             <span class="font-semibold">Publicado:</span>
             <span>{{ publicacion()!.fecha | date : 'mediumDate' }}</span>
           </li>
-          <li class="flex justify-between items-center">
-            <span class="font-semibold">Ubicación:</span>
-            <span>Ver en mapa</span>
-          </li>
+
         </ul>
       </p-card>
     </div>
