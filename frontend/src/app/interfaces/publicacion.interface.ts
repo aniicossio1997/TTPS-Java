@@ -6,7 +6,7 @@ import { UsuarioSmall } from './usuario.interface.';
 
 export type EstadoPublicacionEnum = 'PERDIDO_PROPIO' | 'PERDIDO_AJENO' | 'RECUPERADO' | 'ADOPTADO';
 export type Tamanio = 'PEQUENO' | 'MEDIANO' | 'GRANDE';
-export type Color = 'Negro' | 'Blanco' | 'Marrón' | 'Gris' | 'Otro';
+export type Color = 'Negro' | 'Blanco' | 'Marrón' | 'Gris' | 'Amarillo' |'Otro';
 export type Especie = 'Perro' | 'Gato' | 'Ave' | 'Otro';
 
 export interface EstadoPublicacion {

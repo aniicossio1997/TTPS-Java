@@ -12,6 +12,7 @@
       class="block"
       [routerLink]="[destinationUrl]"
     />
+    @if (isAuthenticated){
     <p-button
       icon="pi pi-map-marker"
       severity="primary"
@@ -21,6 +22,7 @@
       variant="outlined"
       routerLink="/app/mapa"
     />
+    }
   </div>
 </div>
 <p-card>
@@ -77,9 +79,15 @@
             ></p-select>
           </div>
 
-          <div>
+           <div>
             <label class="text-sm mb-1 block">Color</label>
-            <input pInputText class="w-full" [(ngModel)]="filtro().color" placeholder="Color" />
+            <p-select
+              [options]="colorOptions"
+              [(ngModel)]="filtro().color"
+              [showClear]="true"
+              placeholder="Todos los colores"
+              styleClass="w-full"
+            ></p-select>
           </div>
 
           <div>
