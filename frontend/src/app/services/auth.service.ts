@@ -2,7 +2,7 @@ import { inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { LoginResponse, Usuario } from '../interfaces/LoginResponse.interface';
+import { LoginResponse } from '../interfaces/LoginResponse.interface';
 import { RegisterRequest } from '../interfaces/registerRequest.interface';
 import { environment } from '../../environments/environment';
 

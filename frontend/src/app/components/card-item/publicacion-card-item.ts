@@ -55,7 +55,7 @@ export class PublicacionCardItem {
 
   verUbicacion(ubicacion: any): void {
     // Aquí puedes implementar la lógica para abrir un modal de mapa o redirigir
-    console.log('Ver ubicación:', ubicacion);
+   // console.log('Ver ubicación:', ubicacion);
   }
 
   navigateToEdit(id: number){

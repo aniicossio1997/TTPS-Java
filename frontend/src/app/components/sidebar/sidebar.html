@@ -38,9 +38,27 @@
 
     </nav>
 
-    <div class="sidebar__footer">
-      <button pButton type="button" label="Salir" icon="pi pi-sign-out"
-        class="p-button-text sidebar__logout-btn" (click)="salir()"></button>
+    <div class="sidebar__footer   ">
+
+
+<div class="border-t border-gray-200 pt-4 mt-auto w-full">
+
+    <div class="flex flex-row mb-4 gap-2 items-center px-2">
+      <app-user-avatar [usuario]="authStore!.usuario()!" size="large" [showName]="false" />
+      <span class="text-gray-500 font-medium truncate">
+        {{authStore!.usuario()?.nombre}}
+      </span>
+    </div>
+
+    <button type="button"
+      class="w-full flex items-center justify-center gap-4 bg-red-100 hover:bg-red-200 text-red-500 font-bold rounded-bl-2xl rounded-br-2xl py-4 px-4 transition-colors duration-200 cursor-pointer"
+      (click)="salir()">
+       <i class="pi pi-sign-out text-lg" style="font-weight: 800;"></i>
+      <span>Salir</span>
+
+    </button>
+
+  </div>
     </div>
   </aside>
 

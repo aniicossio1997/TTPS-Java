@@ -9,7 +9,7 @@
   <form [formGroup]="avistamientoForm" (ngSubmit)="onSubmit()">
     <div class="flex flex-col gap-5">
       <div class="flex flex-col">
-        <label for="descripcion">Descripción</label>
+        <label for="descripcion">Descripción <span class="text-red-500">*</span> </label>
         <textarea
           pInputTextarea
           id="descripcion"
@@ -27,6 +27,7 @@
       </div>
       <div (click)="$event.preventDefault(); $event.stopPropagation()">
         <app-location-picker
+          [initialLocation]="null"
           [isInvalid]="isInvalid('ubicacion')!"
           (onLocationSelected)="onLocationSelected($event)"
         ></app-location-picker>
@@ -54,6 +55,7 @@
 
   <ng-template pTemplate="footer">
     <p-button
+    [type]="'submit'"
       label="Guardar"
       icon="pi pi-check"
       class="ml-auto"

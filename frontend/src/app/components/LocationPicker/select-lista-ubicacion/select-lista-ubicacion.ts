@@ -78,12 +78,8 @@ export class SelectListaUbicacion implements OnInit {
 
     effect(()=>{
       const departamento = this.departamentoSelected()
-      console.log("SELECTED_DEPARTAMENTO::", departamento)
-      console.log("SLECTED:_OLD", this.ubicacionPrecargadaInput())
-      console.log(departamento && String(departamento?.centroide_lat) != this.ubicacionPrecargadaInput()?.lat &&  String(departamento.centroide_lon) !=this.ubicacionPrecargadaInput()?.lng)
 
       if(departamento && String(departamento?.centroide_lat) != this.ubicacionPrecargadaInput()?.lat &&  String(departamento.centroide_lon) !=this.ubicacionPrecargadaInput()?.lng){
-        console.log("ENTRE EL SEGUNDO_EFFECT::")
         this.onUbicacionSelectedOutput.emit({
           lat: String(departamento.centroide_lat),
           lng: String(departamento.centroide_lon),
@@ -92,7 +88,6 @@ export class SelectListaUbicacion implements OnInit {
           idExternoDepartamento: departamento.id,
           departamento: departamento.nombre
         })
-        console.log("SE ELIJIO UN DEPARTAMENTO", departamento)
       }
     })
   }

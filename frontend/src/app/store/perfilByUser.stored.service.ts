@@ -22,7 +22,7 @@ export class PerfilByUserStoreService implements OnDestroy {
 
   readonly servicePerfil = inject(UsuarioService);
 
-  public _getPerfil(idUsuario: number, callback?: () => void) {
+  public _getPerfil(idUsuario: number, callback?: (e?:any) => void) {
     this._status.set(ApiStatus.LOADING);
 
     this.subs.add(
@@ -31,7 +31,7 @@ export class PerfilByUserStoreService implements OnDestroy {
           this._status.set(ApiStatus.SUCCESS);
           this.perfilDeUsuario.set(resp);
           if (callback) {
-            callback();
+            callback?.(resp);
           }
         },
         error: (err) => {

@@ -95,7 +95,7 @@ export class PulicacionesUser implements OnInit {
                 pageSize: response.size,
                 status:ApiStatus.SUCCESS
               });
-              console.log("ESTADO DE PUBLICACION::", this.publicacionesState())
+
             }else{
                 this.publicacionesState.update((state) => ({
                 ...state,

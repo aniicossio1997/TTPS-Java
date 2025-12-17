@@ -17,7 +17,7 @@ import { UsuarioDetalleDTO } from '../../interfaces/UsuarioDetalleDTO.interface'
 
 @Component({
   selector: 'app-perfil-card',
-  imports: [ButtonModule],
+  imports: [ButtonModule,],
   templateUrl: './perfil-card.html',
   styleUrl: './perfil-card.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -30,6 +30,8 @@ import { CommonModule } from '@angular/common';
 import { ApiStatus } from '../../interfaces/local/EnumApiStatus.enum';
 import { ToastrService } from 'ngx-toastr';
 import { UsuarioUpdateRequest } from '../../interfaces/usuarioUpdateRequest.interface';
+import { HttpErrorResponse } from '@angular/common/http';
+import { AuthStoreService } from '../../store/auth.stored.service';
 
 
 type UbicacionControls = {
@@ -67,6 +69,7 @@ type FormEdit = {
 })
 export class EditarPerfil implements OnInit {
   private readonly toastr = inject(ToastrService);
+  private readonly authStore= inject(AuthStoreService)
 
   private readonly fb = inject(FormBuilder).nonNullable;
   readonly perfilStore = inject(PerfilByUserStoreService);
@@ -95,6 +98,7 @@ export class EditarPerfil implements OnInit {
     foto: this.fb.control<File | null>(null), // 👈 mismo nombre que en la interface
   });
 
+  public errorMensaje = signal<string>('')
   private _status = signal<ApiStatus>(ApiStatus.INIT);
 
   readonly isLoading = computed(() => this._status() === ApiStatus.LOADING);
@@ -286,17 +290,25 @@ export class EditarPerfil implements OnInit {
     // Caso: usuario eliminó (preview null) => fileToSend queda undefined (tu backend lo interpretará como borrar)
 
     // 4) Llamada API (✅ usar fileToSend)
+
+    this.errorMensaje.set('')
     this._serviceUsuario.putUpdateUsuario(this.idUsuario(), dataToPut, fileToSend).subscribe({
       next: (resp) => {
         this._status.set(ApiStatus.SUCCESS);
         this.toastr.success('Se guardaron los datos', 'Éxito');
         this.onCloseEditarPerfilLocal();
         this.onSuccessEdit.emit()
+
+        if(resp.id == this.authStore.usuario()?.id){
+          this.authStore.updateUsuarioEnSesion(resp);
+        }
+
       },
-      error: (err) => {
-        console.error('Update usuario error:', err);
+      error: (err:HttpErrorResponse) => {
+        const mensajeError = err?.error?.message ||' Error al guardar el perfil'
+        this.errorMensaje.set(mensajeError)
         this._status.set(ApiStatus.ERROR);
-        this.toastr.error('Error al guardar el perfil', 'Error en el servidor');
+        this.toastr.error(mensajeError, 'Error');
       },
     });
   }

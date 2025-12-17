@@ -179,8 +179,8 @@ export class RegisterComponent implements OnInit {
   isInvalid(controlName: string) {
     const control = this.registerForm.get(controlName);
 
-    if (controlName === 'ubicacion') {
-      return !!control && control.invalid && (control.touched || control.dirty);
+    if (controlName == 'ubicacion') {
+      return !!control && control.invalid ;
     }
 
     return control?.invalid && (control.touched || control.dirty);

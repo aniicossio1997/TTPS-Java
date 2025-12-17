@@ -48,7 +48,7 @@ export type UbicacionSeleccionada = {
 @Component({
   selector: 'app-location-picker',
   standalone: true,
-  imports: [CommonModule, Dialog, ButtonModule, SelectButton, FormsModule,SelectListaUbicacion ],
+  imports: [CommonModule, Dialog, ButtonModule,  FormsModule, ],
   templateUrl: './location-picker.component.html',
   styleUrls: ['./location-picker.component.scss'],
 })

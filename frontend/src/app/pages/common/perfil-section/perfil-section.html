@@ -11,9 +11,6 @@
 
   <!-- Tarjeta Héroe de Barrio -->
 
-
-
-
     @switch (selectedOption()) {
       @case (opcionesDeEdicionENUM.EDITAR_PERDIL) {
         <div class="bg-white rounded-3xl pt-2 px-6 shadow-sm border border-slate-100  max-w-3xl overflow-hidden mb-4">
@@ -41,15 +38,17 @@
         <div class="flex flex-col-reverse lg:flex-row gap-4">
 
           <!-- Columna izquierda -->
-          <div class="lg:w-[60%] w-full  p-4 rounded">
+          <div class="lg:w-[70%] w-full  p-4 rounded">
 
           <article class="max-w-10xl mx-auto">
 
 
-            <div class="bg-white rounded-3xl pt-2 px-6 shadow-sm border border-slate-100 flex items-center justify-between relative overflow-hidden mb-4">
+            <div class="bg-white rounded-3xl py-2 px-6 shadow-sm border border-slate-100 flex items-center justify-between relative overflow-hidden mb-4">
               <div class="z-10">
-                <h2 class="text-xl font-bold text-slate-900">Héroe de Barrio</h2>
-                <p class="text-slate-500 mt-1 text-sm">has ayudado a muchos casos de tu zona</p>
+                <h2 class="text-3xl font-bold text-slate-900"> 🏆 Mi Puntaje</h2>
+                <span class="text-2xl font-bold text-primary"> {{ authStore.usuario()?.puntos }} pts </span>
+
+                <!-- <p class="text-slate-500 mt-1 text-sm">has ayudado a muchos casos de tu zona</p> -->
               </div>
               <!-- Icono Corazón -->
               <div class="bg-pink-50/50 p-2 rounded-full">
@@ -96,63 +95,56 @@
           </div>
 
           <!-- Columna derecha -->
-          <div class="lg:w-[50%] w-full  p-4 rounded xl:sticky xl:top-0 xl:h-screen">
+          <div class="lg:w-[30%] w-full  p-4 rounded xl:sticky xl:top-0 xl:h-screen">
             <article class="bg-white rounded-3xl pt-2 px-4 shadow-sm border border-slate-100  mb-4 w-full">
+                @if (perfilStore.isSuccess()) {
+                    <div class="flex gap-2">
+                              <!-- Ejemplo botones que abren el modal -->
+                      <button pButton label="Editar perfil" icon="pi pi-pencil" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PERDIL)"></button>
+                      <button pButton label="Cambiar contraseña" icon="pi pi-key" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PASSWORD)"></button>
+                    </div>
 
+                    <app-perfil-card [usuario]="this.perfilStore.perfilDeUsuario()!" [idUsuario]="idUsuario()"></app-perfil-card>
+                }
 
+                @if (perfilStore.isLoading()) {
+                  <div class="w-20 h-20 border-6 border-gray-200 border-t-green-500 rounded-full animate-spin"></div>
+                  <span class="text-sm text-zinc-500">Cargando usuario...</span>
 
+                }
 
-              @if (perfilStore.isSuccess()) {
-                  <div class="flex gap-2">
-                            <!-- Ejemplo botones que abren el modal -->
-                    <button pButton label="Editar perfil" icon="pi pi-pencil" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PERDIL)"></button>
-                    <button pButton label="Cambiar contraseña" icon="pi pi-key" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PASSWORD)"></button>
+                @if (perfilStore.isError()) {
+                  <div
+                    class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800 shadow-sm"
+                    role="alert"
+                  >
+                    <!-- Icono -->
+                    <i class="pi pi-exclamation-triangle text-red-500 text-lg mt-0.5"></i>
+
+                    <!-- Texto -->
+                    <div class="flex-1">
+                      <p class="font-semibold text-sm">Error en el servidor</p>
+                      <p class="text-sm text-red-700">
+                        Ocurrió un problema al cargar el perfil. Intentá nuevamente más tarde.
+                      </p>
+                    </div>
                   </div>
+                }
 
-                  <app-perfil-card
-                          [usuario]="this.perfilStore.perfilDeUsuario()!"
-                          [idUsuario]="idUsuario()"></app-perfil-card>
-
-              }
-
-              @if (perfilStore.isLoading()) {
-                <div class="w-20 h-20 border-6 border-gray-200 border-t-green-500 rounded-full animate-spin"></div>
-                <span class="text-sm text-zinc-500">Cargando usuario...</span>
-
-              }
-
-              @if (perfilStore.isError()) {
-                <div
-                  class="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-800 shadow-sm"
-                  role="alert"
-                >
-                  <!-- Icono -->
-                  <i class="pi pi-exclamation-triangle text-red-500 text-lg mt-0.5"></i>
-
-                  <!-- Texto -->
-                  <div class="flex-1">
-                    <p class="font-semibold text-sm">Error en el servidor</p>
-                    <p class="text-sm text-red-700">
-                      Ocurrió un problema al cargar el perfil. Intentá nuevamente más tarde.
-                    </p>
-                  </div>
-                </div>
-              }
-
-                <!-- @switch (opcionesDeTAP_0()) {
-                        @case (opcionesDeEdicionENUM.EDITAR_PERDIL) {
-                        <app-editar-perfil [idUsuario]="idUsuario()"
-                          (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-editar-perfil>
-                        }
-                        @case (opcionesDeEdicionENUM.EDITAR_PASSWORD) {
-                        <app-edit-password [idUsuario]="idUsuario()"
-                          (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-edit-password>
-                        }
-                        @default {
-                        <app-perfil-card (onEditarPerfil)="onEditarPerfil()" (onEditarPassword)="onEditarPassword()"
-                          [idUsuario]="idUsuario()"></app-perfil-card>
-                        }
-                      } -->
+                  <!-- @switch (opcionesDeTAP_0()) {
+                          @case (opcionesDeEdicionENUM.EDITAR_PERDIL) {
+                          <app-editar-perfil [idUsuario]="idUsuario()"
+                            (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-editar-perfil>
+                          }
+                          @case (opcionesDeEdicionENUM.EDITAR_PASSWORD) {
+                          <app-edit-password [idUsuario]="idUsuario()"
+                            (onCloseEditarPerfil)="onCloseEditarPerfil()"></app-edit-password>
+                          }
+                          @default {
+                          <app-perfil-card (onEditarPerfil)="onEditarPerfil()" (onEditarPassword)="onEditarPassword()"
+                            [idUsuario]="idUsuario()"></app-perfil-card>
+                          }
+                        } -->
             </article>
           </div>
 

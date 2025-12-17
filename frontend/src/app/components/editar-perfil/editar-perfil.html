@@ -3,6 +3,10 @@
 
     <form [formGroup]="editForm" class="flex flex-col gap-2 py-2 w-full min-w-[200px] max-w-[700px] sm:w-[360px] lg:w-[500px] xl:w-[650px]"  autocomplete="off">
 
+
+      @if (isError()) {
+        <p-message severity="error" size="small">{{errorMensaje()}}</p-message>
+      }
       <div class="flex  items-start w-full">
 
         <!-- PREVIEW -->
@@ -123,7 +127,7 @@
 
       </div>
 
-      <div class="flex justify-between w-full mt-8">
+      <div class="flex justify-between w-full mt-8 mb-4">
         <button pButton  size="small" severity="secondary" (click)="onCloseEditarPerfilLocal()">
           <i class="pi pi-times" pButtonIcon></i>
           <span pButtonLabel>Cancelar</span>

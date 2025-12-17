@@ -151,9 +151,19 @@ public class UsuarioService implements IUsuarioService {
      * @return El UsuarioSmallDTO del usuario actualizado.
      */
     @Transactional
-    public UsuarioSmallDTO updateUsuario(Long id, UsuarioUpdateDTO dto, MultipartFile file) throws IOException {
+    public UsuarioSmallDTO updateUsuario(Long id, UsuarioUpdateDTO dto, MultipartFile file) {
         Usuario existingUsuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado para actualizar con ID: " + id));
+
+        String newEmail = dto.getEmail();
+        if (newEmail != null && !newEmail.isBlank()) {
+
+            // si el email lo tiene OTRO usuario => error
+            if (usuarioRepository.existsByEmailIgnoreCaseAndIdNot(newEmail.trim(), id)) {
+                throw new BadRequestException("El email '" + newEmail + "' ya está en uso.");
+            }
+
+        }
 
         // 1) Actualizar campos de texto (nombre, apellido, etc.)
         usuarioUpdateMapper.updateFromDto(dto, existingUsuario);
@@ -189,7 +199,14 @@ public class UsuarioService implements IUsuarioService {
             }
 
             foto.setNombre(file.getOriginalFilename());
-            foto.setContent(file.getBytes());
+            try {
+                foto.setContent(file.getBytes());
+            } catch (IOException e) {
+                // Convertís IO -> tu APIException (sale con JSON lindo)
+                throw new BadRequestException("No se pudo leer el archivo de imagen. Probá con otra imagen.");
+            }
+
+
         } else {
             // NO HAY ARCHIVO → ELIMINAR FOTO SI EXISTE
             Foto foto = existingUsuario.getFotoPerfil();

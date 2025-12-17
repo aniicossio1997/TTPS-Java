@@ -6,6 +6,7 @@ import { UsuarioUpdateRequest } from '../interfaces/usuarioUpdateRequest.interfa
 import { UsuarioDetalleDTO } from '../interfaces/UsuarioDetalleDTO.interface';
 import { RestablecerPasswordRequest } from '../interfaces/restablecerPasswordRequest.interface';
 import { ApiResponse } from '../interfaces/local/ApiResponse.interface';
+import { UsuarioSmall } from '../interfaces/usuario.interface.';
 
 
 @Injectable({
@@ -27,7 +28,7 @@ export class UsuarioService {
    *  - 'data': JSON con los datos del usuario (como en el curl)
    *  - 'file': imagen opcional
    */
-  putUpdateUsuario(id: number,data: UsuarioUpdateRequest,file?: File | null): Observable<any> {
+  putUpdateUsuario(id: number,data: UsuarioUpdateRequest,file?: File | null): Observable<UsuarioSmall> {
 
     const formData = new FormData();
     // Parte JSON (equivalente a -F 'data={...};type=application/json')
@@ -41,7 +42,7 @@ export class UsuarioService {
       formData.append('file', file, file.name);
     }
 
-    return this.http.put<any>(`${this.apiUrl}/${id}`, formData);
+    return this.http.put<UsuarioSmall>(`${this.apiUrl}/${id}`, formData);
   }
 
   ///api/usuarios/1/password

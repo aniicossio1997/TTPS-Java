@@ -112,7 +112,7 @@ export class PublicacionFormComponent implements OnInit {
       especie: this.fb.control<string>('', Validators.required),
       nombre: this.fb.control<string>('', Validators.required),
       descripcion: this.fb.control<string>('', Validators.maxLength(256)),
-      fechaPerdida: this.fb.control<Date>(new Date(), Validators.required),
+      fechaPerdida: this.fb.control<Date | null>(null, Validators.required),
       tamanio: this.fb.control<string>('PEQUENO'),
       color: this.fb.control<string>('Negro'),
       ubicacion: this.fb.group({
@@ -156,6 +156,7 @@ export class PublicacionFormComponent implements OnInit {
       ? TipoPublicacion.PROPIO
       : TipoPublicacion.AJENO;
 
+      console.log("FECHA EXISTE:::", data.fecha)
     this.publicacionForm.patchValue({
       tipo: tipo,
       especie: data.especie,
@@ -163,23 +164,23 @@ export class PublicacionFormComponent implements OnInit {
       descripcion: data.descripcion,
       color: data.color,
       tamanio: data.tamanio,
+      fechaPerdida: data.fecha ? new Date(data.fecha) : null,
       ubicacion:{
       lat: String(data.ubicacion!.latitud!),
       lng: String(data.ubicacion.longitud),
-      provincia: data.ubicacion?.provincia ?? '',
-      idExternoProvincia: data.ubicacion?.idExternoProvincia ?? '',
-      municipio: data.ubicacion?.municipio ?? '',
-      idExternoMunicipio: data.ubicacion?.idExternoMunicipio ?? '',
-      departamento: data.ubicacion?.departamento ?? '',
-      idExternoDepartamento: data.ubicacion?.idExternoDepartamento ?? '',
+
       },
 
     });
+
+    console.log("DESPUES DE ACTUALIZAR::",this.publicacionForm.get('fechaPerdida')?.value)
 
     this.publicacionForm.get('tipo')?.updateValueAndValidity();
     if (data.fotos?.length) {
       this.fotosExistentes.set(data.fotos);
     }
+
+
   }
 
   COLOR_MAP: Record<string, string> = {
@@ -199,7 +200,7 @@ export class PublicacionFormComponent implements OnInit {
     if (this.publicacionForm.valid) {
       const formValue = this.publicacionForm.value;
 
-      const { nombre, descripcion, tipo, color, especie, tamanio, ubicacion } = formValue;
+      const { nombre, descripcion, tipo, color, especie, tamanio, ubicacion, fechaPerdida } = formValue;
       console.log({ nombre, descripcion, tipo, color, especie, tamanio, ubicacion })
       console.log("ANTES DEL CONSOLE:LOG")
       if (!color || !especie || !tamanio || !ubicacion || !nombre || !ubicacion)
@@ -212,6 +213,8 @@ export class PublicacionFormComponent implements OnInit {
         color: color,
         especie: especie,
         tamanio: tamanio,
+        fecha: fechaPerdida!,
+
         ubicacion: {
           latitud: Number(ubicacion!.lat!),
           longitud: Number(ubicacion.lng),

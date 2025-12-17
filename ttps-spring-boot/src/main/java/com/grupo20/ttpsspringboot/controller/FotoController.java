@@ -25,39 +25,6 @@ public class FotoController extends BaseController {
     private FotoService fotoService;
 
 
-    // URL: /api/fotos/avistamiento/123
-    @Operation(summary = "Obtener links de fotos de un avistamiento")
-    @GetMapping("/avistamiento/{avistamientoId}")
-    public ResponseEntity<List<FotoLinkDTO>> getFotosAvistamiento(@PathVariable Long avistamientoId) {
-
-        List<FotoLinkDTO> fotos = fotoService.getFotosAvistamientoLinks(avistamientoId);
-
-        if (fotos.isEmpty()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(fotos);
-    }
-
-    // URL: /api/fotos/publicacion/456
-    @Operation(summary = "Obtener links de fotos de una publicación")
-    @GetMapping("/publicacion/{publicacionId}")
-    public ResponseEntity<List<FotoLinkDTO>> getFotosPublicacion(@PathVariable Long publicacionId) {
-
-        List<FotoLinkDTO> fotos = fotoService.getFotosPublicacionLinks(publicacionId);
-
-        if (fotos.isEmpty()) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(fotos);
-    }
-
-    // URL: /api/fotos/usuario/456
-    @Operation(summary = "Obtiene un LINK una foto de un usuario")
-    @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<FotoLinkDTO> getFotoUsuario(@PathVariable Long usuarioId) {
-
-        FotoLinkDTO foto = fotoService.getFotoUsuario(usuarioId);
-
-        if (foto ==null) return ResponseEntity.noContent().build();
-        return ResponseEntity.ok(foto);
-    }
-
     @Operation(summary = "Obtiene un LINK una foto dado el ID de la foto")
     @GetMapping("/{fotoId}/raw")
     public ResponseEntity<byte[]> getFotoRaw(@PathVariable Long fotoId) {

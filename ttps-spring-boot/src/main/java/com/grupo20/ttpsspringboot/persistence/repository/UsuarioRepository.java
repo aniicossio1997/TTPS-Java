@@ -43,4 +43,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     List<Usuario> findTop100ByPuntosGreaterThanOrderByPuntosDesc(int puntos);
 
+    boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
+
 }

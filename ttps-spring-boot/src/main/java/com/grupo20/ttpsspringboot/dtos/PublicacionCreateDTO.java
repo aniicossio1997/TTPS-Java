@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -38,6 +40,8 @@ public class PublicacionCreateDTO {
     @NotNull(message = "El estado inicial es obligatorio")
     private EstadoPublicacionEnum estado;
 
+    private Date fecha;
+
     public Publicacion toEntity() {
         Publicacion entity = new Publicacion();
         entity.setNombre(this.nombre);
@@ -46,6 +50,7 @@ public class PublicacionCreateDTO {
         entity.setEspecie(this.especie);
         entity.setTamanio(this.tamanio);
         entity.addEstado(new EstadoPublicacion(estado, entity));
+        entity.setFecha(this.fecha);
         return entity;
     }
 }

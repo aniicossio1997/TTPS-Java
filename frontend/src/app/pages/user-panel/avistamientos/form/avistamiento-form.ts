@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, inject, signal } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, inject, signal, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormGroup,
@@ -50,7 +50,7 @@ type Form = {
     LocationPickerComponent,
   ],
 })
-export class AvistamientoForm implements OnInit {
+export class AvistamientoForm implements OnInit , OnDestroy{
   private fb = inject(NonNullableFormBuilder);
   private service = inject(AvistamientoService);
   private toastService = inject(ToastrService);
@@ -67,6 +67,9 @@ export class AvistamientoForm implements OnInit {
   avistamientoForm!: FormGroup<Form>;
 
   constructor() {}
+  ngOnDestroy(): void {
+    console.log("SE DESTRUYE EL COMPONENTE::")
+  }
 
   ngOnInit(): void {
     this.initializeForm();
@@ -94,6 +97,7 @@ export class AvistamientoForm implements OnInit {
   }
 
   onHide(): void {
+
     this.displayChange.emit(false);
     this.avistamientoForm.reset();
   }

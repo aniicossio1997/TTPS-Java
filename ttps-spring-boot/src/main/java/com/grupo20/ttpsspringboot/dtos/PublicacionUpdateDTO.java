@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.*;
 
 @Getter
 @Setter
@@ -19,6 +20,7 @@ public class PublicacionUpdateDTO {
     private String color;
     private String especie;
     private String tamanio;
+    private Date fecha;
 
     private List<Long> agradecimientos;
 

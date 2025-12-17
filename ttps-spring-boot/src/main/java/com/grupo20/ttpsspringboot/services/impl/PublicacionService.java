@@ -134,6 +134,7 @@ public class PublicacionService implements IPublicacionService {
 
         validate(publicacion, usuario);
 
+        if (dto.getFecha() != null) publicacion.setFecha(dto.getFecha());
         if (dto.getNombre() != null) publicacion.setNombre(dto.getNombre());
         if (dto.getDescripcion() != null) publicacion.setDescripcion(dto.getDescripcion());
         if (dto.getColor() != null) publicacion.setColor(dto.getColor());

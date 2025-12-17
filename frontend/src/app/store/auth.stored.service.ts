@@ -7,10 +7,11 @@ import {
 } from '@angular/core';
 
 import { AuthService } from '../services/auth.service';
-import { LoginResponse, Usuario } from '../interfaces/LoginResponse.interface';
+import { LoginResponse } from '../interfaces/LoginResponse.interface';
 import { EnumRolUsuario } from '../interfaces/local/rol-usuario.enum';
 import { Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
+import { UsuarioSmall } from '../interfaces/usuario.interface.';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStoreService {
@@ -25,7 +26,7 @@ export class AuthStoreService {
   readonly session = this._session.asReadonly();
 
   // ===== Computed =====
-  readonly usuario   = computed<Usuario | null>(() => this._session()?.usuario ?? null);
+  readonly usuario   = computed<UsuarioSmall | null>(() => this._session()?.usuario ?? null);
 
   readonly token     = computed<string | null>(() => this._session()?.token ?? null);
 
@@ -116,11 +117,37 @@ export class AuthStoreService {
     }
 
     try {
-      const usuario: Usuario = JSON.parse(rawUsuario);
+      const usuario: UsuarioSmall = JSON.parse(rawUsuario);
       this._session.set({ token, usuario });
     } catch {
       this._session.set(null);
       this.clearStorage();
     }
   }
+
+  updateUsuarioEnSesion(usuario: UsuarioSmall) {
+
+    const current = this._session();
+    if (!current) return;
+
+    if(current?.usuario.id != usuario.id){
+      return;
+    }
+
+  const nextUsuario: UsuarioSmall = {
+    ...current.usuario,   // lo viejo
+    ...usuario,             // lo nuevo
+  };
+
+  const next: LoginResponse = {
+    ...current,
+    usuario: { ...nextUsuario },
+  };
+
+    this._session.set(next);
+    localStorage.setItem('usuario', JSON.stringify(this._session()!.usuario!));
+  }
+
+
+
 }

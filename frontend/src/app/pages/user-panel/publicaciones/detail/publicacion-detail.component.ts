@@ -76,8 +76,8 @@ export class PublicacionDetailComponent implements OnInit {
   @ViewChild('avistamientosList') avistamientosList!: AvistamientosList;
 
   avistamientos: Avistamiento[] = [];
-  displayAvistamientoModal: boolean = false;
-  selectedAvistamiento: Avistamiento | null = null;
+  displayAvistamientoModal =signal<boolean>(false);
+  selectedAvistamiento = signal<Avistamiento | null>(null);
 
   COLOR_MAP: Record<string, string> = {
     negro: '#000000',
@@ -279,16 +279,16 @@ export class PublicacionDetailComponent implements OnInit {
   // Avistamientos
 
   showAvistamientoModal(avistamiento?: Avistamiento): void {
-    this.displayAvistamientoModal = true;
+    this.displayAvistamientoModal.set(true);
     if (avistamiento) {
-      this.selectedAvistamiento = avistamiento;
+      this.selectedAvistamiento.set(avistamiento);
     }
   }
 
   handleAvistamientoDisplayChange(open: boolean): void {
-    this.displayAvistamientoModal = open;
+    this.displayAvistamientoModal.set(open);
     if (!open) {
-      this.selectedAvistamiento = null;
+      this.selectedAvistamiento.set(null);
     }
   }
 

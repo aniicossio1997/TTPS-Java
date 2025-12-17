@@ -41,6 +41,7 @@ export interface PublicacionCreate {
   tamanio: string;
   ubicacion: ubicacionCreateRequest;
   estado: EstadoPublicacionEnum;
+  fecha?: Date;
 }
 
 export interface PublicacionUpdate extends Partial<Omit<PublicacionCreate, 'ubicacion'>> {

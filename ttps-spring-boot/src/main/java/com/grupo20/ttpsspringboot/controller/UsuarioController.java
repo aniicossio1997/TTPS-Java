@@ -2,6 +2,7 @@ package com.grupo20.ttpsspringboot.controller;
 
 import com.grupo20.ttpsspringboot.dtos.*;
 import com.grupo20.ttpsspringboot.dtos.bases.ApiResponseDTO;
+import com.grupo20.ttpsspringboot.exceptions.BadRequestException;
 import com.grupo20.ttpsspringboot.services.impl.UsuarioService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.Parameter;
@@ -60,19 +63,10 @@ public class UsuarioController extends BaseController {
             @RequestPart("data") @Valid UsuarioUpdateDTO usuarioDto,
             // --- FIN DEL CAMBIO ---
 
-            @RequestPart(value = "file", required = false) MultipartFile file) {
+            @RequestPart(value = "file", required = false) MultipartFile file)  {
 
-        try {
-            // Tu lógica sigue igual...
-            UsuarioSmallDTO updatedUsuario = usuarioService.updateUsuario(id, usuarioDto, file);
-            return new ResponseEntity<>(updatedUsuario, HttpStatus.OK);
-
-        } catch (EntityNotFoundException e) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        UsuarioSmallDTO updated = usuarioService.updateUsuario(id, usuarioDto, file);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/{id}/foto")

@@ -12,6 +12,7 @@ import { Dialog } from 'primeng/dialog';
 import { PerfilByUserStoreService } from '../../../store/perfilByUser.stored.service';
 import { UsuarioService } from '../../../services/usuario.service';
 import { RouterLink } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 enum TapEnum{
   TAP_0="0", // -> PUBLICACIONES
@@ -35,7 +36,7 @@ enum OpcionesDeEdicionENUM{
 
 @Component({
   selector: 'app-perfil-section',
-  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser, AvistamientosUser, Dialog, RouterLink],
+  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser, AvistamientosUser,  RouterLink, CommonModule],
   templateUrl: './perfil-section.html',
   styleUrl: './perfil-section.scss',
   schemas:[CUSTOM_ELEMENTS_SCHEMA],
@@ -44,7 +45,7 @@ enum OpcionesDeEdicionENUM{
 })
 export class PerfilSection implements OnInit {
 
-  private authStore= inject(AuthStoreService)
+  public authStore= inject(AuthStoreService)
 
   readonly perfilStore =inject(PerfilByUserStoreService)
 

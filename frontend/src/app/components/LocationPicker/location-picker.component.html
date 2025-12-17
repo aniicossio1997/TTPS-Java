@@ -17,12 +17,28 @@
       </p>
   </p-button> -->
 
+  <div class="group relative flex items-center gap-4 p-4 border border-gray-300 rounded-xl bg-white hover:border-emerald-500 hover:shadow-md transition-all cursor-pointer">
+
+  <div class="p-3 bg-emerald-50 text-emerald-600 rounded-lg group-hover:bg-emerald-100 transition-colors">
+    <i class="pi pi-map-marker text-xl"></i> </div>
+
+  <div class="flex-1">
+    <p class="text-xs text-gray-500 font-medium uppercase tracking-wide">Ubicación seleccionada</p>
+    <h3 class="text-gray-800 font-semibold text-lg truncate">Buenos Aires, La Plata</h3>
+    <p class="text-sm text-gray-400">Toca para cambiar</p>
+  </div>
+
+  <div class="text-gray-400 group-hover:text-emerald-500 transition-colors">
+    <i class="pi pi-chevron-right"></i>
+  </div>
+
+</div>
 
 <button
   type="button"
   (click)="open()"
   class="
-    w-full mt-4
+    w-full mt-1
     flex items-center gap-3
     px-4 py-2
     border-3 border-emerald-400 rounded-lg
@@ -30,31 +46,28 @@
     hover:bg-emerald-50
     transition
     cursor-pointer
-
+    border-dotted
     focus:outline-none focus:ring-2 focus:ring-emerald-300
   "
   aria-label="Clic para ver la ubicación"
+  [class.border-emerald-400]="!isInvalid()"
+  [class.border-gray-400]="isInvalid()"
+  [class.text-gray-800]="isInvalid()"
 >
-<div class="flex justify-center w-full gap-2 align-middle">
+<div class="flex w-full gap-2 align-middle" style="justify-content: center;">
     <!-- Icono grande REAL -->
-  <i class="pi pi-map-marker " style="font-size: 1.6rem;" ></i>
+  <i class="pi pi-map" style="font-size: 1.6rem;" ></i>
 
   <div class="font-medium">
       {{textoLabel()}}
       @if(confirmed()){
             <div class="flex">
-            <span class="font-light text-gray-500 ">(Toca aquí para buscar/cambiar la ubicación)</span>
+            <span class="font-light text-gray-600 ">(Toca aquí para buscar/cambiar la ubicación)</span>
             </div>
       }
   </div>
 </div>
 </button>
-
-
-
-
-
-
 
 
 

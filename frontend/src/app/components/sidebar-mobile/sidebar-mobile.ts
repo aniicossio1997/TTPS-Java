@@ -28,7 +28,7 @@ export class SidebarMobile {
   }
 
   salir(){
-    console.log('Cerrando sesión desde el sidebar');
+
     this.authStore.logout();
   }
 }
