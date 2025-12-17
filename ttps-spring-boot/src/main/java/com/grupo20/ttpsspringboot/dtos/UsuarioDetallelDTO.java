@@ -4,6 +4,10 @@ import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import lombok.Data;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Data
 public class UsuarioDetallelDTO {
     private Long id;
@@ -12,6 +16,7 @@ public class UsuarioDetallelDTO {
     private String email;
     private RolUsuarioEnum rol;
     private String telefono;
+    private List<MedallaDTO> medallas = new ArrayList<>();
 
     private UbicacionDTO ubicacion;
 

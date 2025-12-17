@@ -1,0 +1,42 @@
+<p-card styleClass="shadow-lg border-round-xl overflow-hidden">
+  <h3 class="m-0 text-xl font-bold text-gray-800">Medallas</h3>
+
+  <div class="flex flex-col">
+    @for (medalla of medallas; track medalla.id; let last = $last) { @let config =
+    getConfig(medalla.tipo);
+
+    <div class="flex items-center p-4">
+      <div
+        [class]="
+          'w-10 h-10 min-w-10 flex items-center justify-center rounded-full text-xl shadow-sm ' +
+          config.color
+        "
+      >
+        {{ config.emoji }}
+      </div>
+
+      <div class="ml-4 grow">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1">
+          <div>
+            <h4 class="font-semibold text-gray-700">{{ config.nombre }}</h4>
+            <p class="text-sm text-gray-500">{{ config.descripcion }}</p>
+          </div>
+
+          <span class="text-xs font-medium text-gray-400 flex items-center gap-1">
+            <i class="pi pi-calendar text-[10px]"></i>
+            {{ medalla.fechaAsignacion | date : 'mediumDate' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    @if (!last) {
+    <div class="mx-4 border-t border-gray-100"></div>
+    } } @empty {
+    <div class="p-8 text-center">
+      <div class="text-5xl mb-3">⭐</div>
+      <p class="text-gray-500 font-medium text-lg">¡Comienza tu aventura para ganar medallas!</p>
+    </div>
+    }
+  </div>
+</p-card>

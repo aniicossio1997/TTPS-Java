@@ -32,14 +32,7 @@
         <p-divider style="margin: 5px 0px" />
 
         <div class="flex align-items-center gap-3">
-          <p-avatar
-            [image]="avatarUrl()"
-            [label]="usuario.nombre[0] + usuario.apellido[0]"
-            class="bg-red-500 shrink-0"
-            style="background-color: #ece9fc; color: #2a1261"
-            shape="circle"
-            size="large"
-          ></p-avatar>
+          <app-user-avatar [usuario]="usuario"  size="large"/>
           <div class="overflow-hidden">
             <div class="font-semibold text-lg text-800 text-ellipsis">
               {{ usuario.nombre }} {{ usuario.apellido }}
