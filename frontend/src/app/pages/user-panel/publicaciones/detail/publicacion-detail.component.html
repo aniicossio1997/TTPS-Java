@@ -181,16 +181,15 @@
   </div>
 
 
-  @if (displayAvistamientoModal()) {
       <app-avistamiento-form
     [display]="displayAvistamientoModal()"
     [publicacionId]="publicacion()!.id"
     (displayChange)="handleAvistamientoDisplayChange($event)"
     (success)="handleAvistamientoSuccess()"
   ></app-avistamiento-form>
-  <p-confirmDialog></p-confirmDialog>
-  }
 
   }
+  <p-confirmDialog></p-confirmDialog>
+
 </div>
 
