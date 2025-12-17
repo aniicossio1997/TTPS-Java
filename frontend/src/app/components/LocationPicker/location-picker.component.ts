@@ -99,7 +99,7 @@ export class LocationPickerComponent implements AfterViewInit {
       return `${this.initialLocation()?.provincia}, ${this.initialLocation()?.departamento}  ${this.initialLocation()?.municipio ?  ' ,'+this.initialLocation()?.municipio : ''} `;
     }
 
-    return 'Debe hacer click en alguna ubicacion';
+    return 'Sin ubicación';
   });
 
 

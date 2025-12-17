@@ -1,6 +1,8 @@
 package com.grupo20.ttpsspringboot.services.impl;
 
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
+import com.grupo20.ttpsspringboot.exceptions.BadRequestException;
+import com.grupo20.ttpsspringboot.exceptions.ForbiddenException;
 import com.grupo20.ttpsspringboot.persistence.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,6 +50,7 @@ public class AuthService {
             return usuario; // Credenciales correctas
         }
 
-        return null; // Email no encontrado o contraseña incorrecta
+        throw new ForbiddenException("Usuario no encontrado o contraseña incorrecta");
+
     }
 }

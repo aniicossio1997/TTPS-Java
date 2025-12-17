@@ -9,20 +9,21 @@ import { UsuarioService } from '../../services/usuario.service';
 import { RestablecerPasswordRequest } from '../../interfaces/restablecerPasswordRequest.interface';
 import { ToastrService } from 'ngx-toastr';
 import { ApiStatus } from '../../interfaces/local/EnumApiStatus.enum';
+import { CommonModule } from '@angular/common';
 
 
 function passwordMatchValidator(form: AbstractControl) {
   const passwordNueva = form.get('passwordNueva')?.value;
-  const confirm = form.get('confirmPassword')?.value;
+  const confirm = form.get('confirmNuevaPassword')?.value;
 
   if (passwordNueva !== confirm) {
-    form.get('confirmPassword')?.setErrors({ mismatch: true });
+    form.get('confirmNuevaPassword')?.setErrors({ mismatch: true });
   } else {
-    const errors = form.get('confirmPassword')?.errors;
+    const errors = form.get('confirmNuevaPassword')?.errors;
     if (errors) {
       delete errors['mismatch'];
       if (Object.keys(errors).length === 0) {
-        form.get('confirmPassword')?.setErrors(null);
+        form.get('confirmNuevaPassword')?.setErrors(null);
       }
     }
   }
@@ -34,14 +35,16 @@ type RegisterForm = {
 
   passwordOld: FormControl<string>;
   passwordNueva: FormControl<string>;
-  confirmPassword: FormControl<string>;
+  confirmNuevaPassword: FormControl<string>;
 };
 
 @Component({
   selector: 'app-edit-password',
   imports: [
+    CommonModule,
     ButtonModule, ReactiveFormsModule,
-    PasswordModule,MessageModule, DividerModule
+    PasswordModule,MessageModule, DividerModule,
+    Tooltip
   ],
   templateUrl: './edit-password.html',
   styleUrl: './edit-password.scss',
@@ -68,7 +71,7 @@ export class EditPassword {
 
       passwordOld: this.fb.control('', [Validators.required,]),
       passwordNueva: this.fb.control('', [Validators.required, Validators.minLength(6)]),
-      confirmPassword: this.fb.control('', [Validators.required]),
+      confirmNuevaPassword: this.fb.control('', [Validators.required]),
     },
     { validators: passwordMatchValidator }
   );
@@ -77,9 +80,10 @@ export class EditPassword {
     this._status.set(ApiStatus.LOADING)
     this.mensajeError.set('')
     this._serviceUsuario.cambiarPassword(this.idUsuario(), {
-      confirmarPassword:this.formPassword.value!.confirmPassword!,
+      passwordOld:this.formPassword.value.passwordOld!,
+
       nuevoPassword:this.formPassword.value.passwordNueva!,
-      passwordOld:this.formPassword.value.passwordOld!
+      confirmarPassword:this.formPassword.value!.confirmNuevaPassword!,
     }).subscribe({
     next: (res) => {
       if (res.ok) {
@@ -109,6 +113,12 @@ export class EditPassword {
 
   onCloseEditarPerfilLocal(){
     this.onCloseEditarPerfil.emit()
+  }
+
+  passwordCheck(): 'neutral' | 'error' | 'success' {
+    const control = this.formPassword.get('passwordNueva');
+      if (!control!.dirty) return 'neutral';
+      return control?.invalid ? 'error': 'success';
   }
 
 }

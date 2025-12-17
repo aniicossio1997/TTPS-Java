@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, LOCALE_ID, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
 
 import { routes } from './app.routes';
@@ -11,8 +11,17 @@ import { provideAnimations } from '@angular/platform-browser/animations'; // 1. 
 import { provideToastr } from 'ngx-toastr';
 import { JwtInterceptor } from './Interceptors/JwtInterceptor.Interceptor';
 
+import { registerLocaleData } from '@angular/common';
+import localeEs from '@angular/common/locales/es';
+
+
+registerLocaleData(localeEs, 'es-ES');
+
 export const appConfig: ApplicationConfig = {
   providers: [
+    {
+      provide: LOCALE_ID, useValue: 'es-ES'
+    },
     provideAnimations(), // required animations providers
     provideToastr({
       // 2. Provee la configuración global (Opcional)
@@ -41,7 +50,7 @@ export const appConfig: ApplicationConfig = {
                 options:{
                     ripple: true
                     ,darkModeSelector: 'none', // o false
-                  cssLayer: {
+                    cssLayer: {
                               name: 'primeng', // Debe coincidir con el nombre de la capa en styles.css
                               order: 'tailwindcss, tailwindcss-primeui' // Debe coincidir con el orden en styles.css
                             }

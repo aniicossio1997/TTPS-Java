@@ -80,7 +80,8 @@ public class UsuarioService implements IUsuarioService {
         }
         var existe = usuarioRepository.findByEmail(usuarioDto.getEmail()).isPresent();
         if (existe) {
-            throw new IllegalArgumentException("El email '" + usuarioDto.getEmail() + "' ya está en uso.");
+            throw new BadRequestException("El email '" + usuarioDto.getEmail() + "' ya está en uso.");
+
         }
 
         // 3. Llamas al servicio de Georef pasando lat y lon

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnInit, signal, ViewChild, computed, ChangeDetectionStrategy } from '@angular/core';
 import {
   ReactiveFormsModule,
@@ -196,6 +197,12 @@ export class RegisterComponent implements OnInit {
     return control?.invalid;
   }
 
+  passwordCheck(): 'neutral' | 'error' | 'success' {
+    const control = this.registerForm.get('password');
+      if (!control!.dirty) return 'neutral';
+      return control?.invalid ? 'error': 'success';
+    }
+
   hasUbicacionExterna(): boolean {
     const ubicacion = this.registerForm.get('ubicacion')?.value;
 
@@ -221,14 +228,6 @@ export class RegisterComponent implements OnInit {
       rol: EnumRolUsuario.USUARIO_COMUN,
       telefono: formValue.phone,
       ubicacion: {
-        idExternoProvincia: ubicacion.idExternoProvincia ?? '',
-        provincia: ubicacion.provincia || '',
-
-        idExternoDepartamento: ubicacion.idExternoDepartamento ?? '',
-        departamento: ubicacion.departamento || '',
-
-        idExternoMunicipio: ubicacion.idExternoMunicipio ?? '',
-        municipio: ubicacion.municipio || '',
         latitud: Number(formValue.ubicacion.lat),
         longitud: Number(formValue.ubicacion.lng),
       },
@@ -240,8 +239,8 @@ export class RegisterComponent implements OnInit {
         this.router.navigate([`/${PUBLIC_ROUTES_ENUM.ROOT}/${PUBLIC_ROUTES_ENUM.LOGIN}`]);
         this.toastr.success('Se registró correctamente.', 'Éxito en el Registro');
       },
-      error: (err) => {
-        console.error('Login error:', err);
+      error: (err: HttpErrorResponse) => {
+        console.error('Login error:', err.error);
         this._status.set(ApiStatus.ERROR);
         this.toastr.error('Credenciales incorrectas.', 'Error de Autenticación');
       },

@@ -39,22 +39,16 @@ public class AuthController {
 
         Usuario usuarioValidado = authService.validarCredenciales(email, password);
 
-        if (usuarioValidado != null) {
 
-            Map claims = Map.of("email", usuarioValidado.getEmail(), "id", usuarioValidado.getId(), "rol", usuarioValidado.getRol());
+        Map claims = Map.of("email", usuarioValidado.getEmail(), "id", usuarioValidado.getId(), "rol", usuarioValidado.getRol());
 
-            String token = JwtUtils.generateToken(claims, jwtSecret);
+        String token = JwtUtils.generateToken(claims, jwtSecret);
 
-            AuthSessionDTO dto = new AuthSessionDTO();
+        AuthSessionDTO dto = new AuthSessionDTO();
 
-            dto.setToken(token);
-            dto.setUsuario(UsuarioSmallDTO.fromEntity(usuarioValidado));
-
-            return new ResponseEntity<>(dto, HttpStatus.OK);
-
-        } else {
-            return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-        }
+        dto.setToken(token);
+        dto.setUsuario(UsuarioSmallDTO.fromEntity(usuarioValidado));
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 
     /**
@@ -64,27 +58,20 @@ public class AuthController {
     public ResponseEntity<AuthSessionDTO> createUsuario(
             @Valid @RequestBody UsuarioCreateDTO usuarioDto) {
 
-        try {
-            // Llama al servicio con el DTO
-            usuarioDto.setEmail(usuarioDto.getEmail().toLowerCase().trim());
-            UsuarioSmallDTO usuarioValidado = usuarioService.createUsuario(usuarioDto);
+        // Llama al servicio con el DTO
+        usuarioDto.setEmail(usuarioDto.getEmail().toLowerCase().trim());
+        UsuarioSmallDTO usuarioValidado = usuarioService.createUsuario(usuarioDto);
 
-            Map claims = Map.of("email",
-                    usuarioValidado.getEmail(), "id", usuarioValidado.getId(), "rol", usuarioValidado.getRol());
+        Map claims = Map.of("email",
+                usuarioValidado.getEmail(), "id", usuarioValidado.getId(), "rol", usuarioValidado.getRol());
 
-            String token = JwtUtils.generateToken(claims, jwtSecret);
+        String token = JwtUtils.generateToken(claims, jwtSecret);
 
-            AuthSessionDTO dto = new AuthSessionDTO();
+        AuthSessionDTO dto = new AuthSessionDTO();
 
-            dto.setToken(token);
-            dto.setUsuario(usuarioValidado);
+        dto.setToken(token);
+        dto.setUsuario(usuarioValidado);
 
-            return new ResponseEntity<>(dto, HttpStatus.OK);
-
-        } catch (EntityNotFoundException | IllegalArgumentException e) {
-            return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        }
+        return new ResponseEntity<>(dto, HttpStatus.OK);
     }
 }

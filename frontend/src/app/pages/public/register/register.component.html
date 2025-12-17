@@ -42,22 +42,15 @@
         <div style="display: flex; margin-bottom: 4px; flex-direction: column;">
           <label for="">
 
-          {{hasUbicacionExterna() ? 'Ubicación seleccionada:' : 'Seleccionar ubicación:'}}
-
+         Ubicación
           @if(!hasUbicacionExterna()) {
             <span class="text-red-500">*</span>
           }
           </label>
 
-
         </div>
 
-            @if (isInvalid('ubicacion')) {
-                <p-message severity="error" size="small" variant="simple">La ubicación es obligatoria</p-message>
-            }
-
         <app-location-picker [initialLocation]="ubicacionPrecargada()"  (onLocationSelected)="onLocationSelected($event)" [isInvalid]="isInvalid('ubicacion')!"></app-location-picker>
-
 
       </div>
 
@@ -69,19 +62,21 @@
 
       <div class="register-form__field">
         <label style="display: block;">Contraseña @if(isInvalidTOBTN('password')){<span class="text-red-500">*</span>}</label>
-        <p-password  formControlName="password" [feedback]="false" toggleMask placeholder="Contraseña" autocomplete="new-password"   inputStyleClass="no-autofill"
->
-          <ng-template #footer>
-            <p-divider />
-            <ul class="pl-2 my-0 leading-normal">
-              <li>Como minimo debe tener 6 caracteres</li>
-            </ul>
-          </ng-template>
+        <p-password  formControlName="password" [feedback]="false" toggleMask placeholder="Contraseña" autocomplete="new-password"   inputStyleClass="no-autofill">
+
         </p-password>
-            @if (isInvalid('password')) {
-                <p-message severity="error" size="small" variant="simple">La contraseña es obligatoria</p-message>
-                <p-message severity="error" size="small" variant="simple">La contraseña debe tener al menos 6 caracteres</p-message>
-            }
+
+         <!-- Mínimo 6 caracteres -->
+        <div class="flex items-center gap-2 text-sm" [ngClass]="{
+          'text-gray-400': passwordCheck() === 'neutral',
+          'text-red-500':  passwordCheck() === 'error',
+          'text-green-600':passwordCheck() === 'success'
+        }">
+            <i class="pi"
+              [ngClass]="isInvalidTOBTN('password') ?  'pi-times-circle' : 'pi-check-circle'"></i>
+            <span>Mínimo 6 caracteres</span>
+        </div>
+
       </div>
 
       <div class="register-form__field">
@@ -89,7 +84,7 @@
         <p-password  formControlName="confirmPassword" [feedback]="false" toggleMask placeholder="Contraseña" autocomplete="new-password"   inputStyleClass="no-autofill">
         </p-password>
         @if ( registerForm.get('confirmPassword')?.hasError('mismatch') &&
-              registerForm.get('confirmPassword')?.touched) {
+              registerForm.get('confirmPassword')?.dirty) {
                 <p-message severity="error" size="small" variant="simple">Las contraseñas no coinciden</p-message>
         }
       </div>

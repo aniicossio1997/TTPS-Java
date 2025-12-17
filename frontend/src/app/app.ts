@@ -8,7 +8,6 @@ import { RouterOutlet } from '@angular/router';
   styleUrl: './app.scss'
 })
 export class App  implements OnInit {
-  protected readonly title = signal('frontend');
 
   constructor() {}
 

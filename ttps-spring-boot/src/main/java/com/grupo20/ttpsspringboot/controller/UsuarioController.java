@@ -85,7 +85,7 @@ public class UsuarioController extends BaseController {
 
         usuarioService.restablecerPassword(id, dto);
         return ResponseEntity.ok(
-                new ApiResponseDTO(true, 200, "Contraseña actualizada correctamente")
+                new ApiResponseDTO(true, HttpStatus.OK, "Contraseña actualizada correctamente")
         );
     }
 
