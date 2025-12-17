@@ -1,4 +1,5 @@
 import { FotoLinkDTO } from "./fotoLinkDTO";
+import { Medalla } from "./medalla.interface";
 import { Ubicacion } from "./ubicacion.interface";
 
 export interface  UsuarioDetalleDTO {
@@ -8,6 +9,7 @@ export interface  UsuarioDetalleDTO {
     email:    string;
     rol:      string;
     telefono: string;
-    ubicacion: Ubicacion
-    fotoLink?: FotoLinkDTO
+    ubicacion: Ubicacion;
+    fotoLink?: FotoLinkDTO;
+    medallas: Medalla[];
 }

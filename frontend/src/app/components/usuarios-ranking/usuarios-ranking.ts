@@ -7,6 +7,7 @@ import { AvatarModule } from 'primeng/avatar';
 import { TagModule } from 'primeng/tag';
 import { PublicService } from '../../services/public.service';
 import { DividerModule } from 'primeng/divider';
+import { UserAvatarComponent } from "../user-avatar/user-avatar";
 
 @Component({
   selector: 'app-usuarios-ranking',
@@ -17,8 +18,9 @@ import { DividerModule } from 'primeng/divider';
     SkeletonModule,
     AvatarModule,
     TagModule,
-    DividerModule
-  ],
+    DividerModule,
+    UserAvatarComponent
+],
   templateUrl: './usuarios-ranking.html',
 })
 export class UsuariosRanking {

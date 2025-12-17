@@ -7,6 +7,7 @@ import com.grupo20.ttpsspringboot.persistence.repository.AvistamientoRepository;
 import com.grupo20.ttpsspringboot.persistence.repository.PublicacionRepository;
 import com.grupo20.ttpsspringboot.services.IAvistamientoService;
 import com.grupo20.ttpsspringboot.services.IGeorefService;
+import com.grupo20.ttpsspringboot.services.IPuntuacionService;
 import io.jsonwebtoken.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,9 @@ public class AvistamientoService implements IAvistamientoService {
 
     @Autowired
     private AvistamientoRepository avistamientoRepository;
+
+    @Autowired
+    private IPuntuacionService puntuacionService;
 
     @Autowired
     private UbicacionService ubicacionService;
@@ -101,6 +105,8 @@ public class AvistamientoService implements IAvistamientoService {
         }
 
         avistamientoRepository.save(avistamiento);
+
+        this.puntuacionService.otorgarPuntosPorReporte(usuario);
 
         return avistamiento;
     }

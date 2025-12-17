@@ -13,6 +13,7 @@ import { PerfilByUserStoreService } from '../../../store/perfilByUser.stored.ser
 import { UsuarioService } from '../../../services/usuario.service';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { MedallasSection } from './medallas-section/medallas-section';
 
 enum TapEnum{
   TAP_0="0", // -> PUBLICACIONES
@@ -36,7 +37,7 @@ enum OpcionesDeEdicionENUM{
 
 @Component({
   selector: 'app-perfil-section',
-  imports: [ TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser, AvistamientosUser,  RouterLink, CommonModule],
+  imports: [TabsModule, PerfilCard, ButtonModule, EditarPerfil, EditPassword, PulicacionesUser, AvistamientosUser, Dialog, RouterLink, MedallasSection, CommonModule],
   templateUrl: './perfil-section.html',
   styleUrl: './perfil-section.scss',
   schemas:[CUSTOM_ELEMENTS_SCHEMA],

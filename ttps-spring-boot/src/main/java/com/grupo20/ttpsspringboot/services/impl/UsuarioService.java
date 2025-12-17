@@ -1,6 +1,7 @@
 package com.grupo20.ttpsspringboot.services.impl;
 
 import com.grupo20.ttpsspringboot.domain.models.Foto; // Importar Foto
+import com.grupo20.ttpsspringboot.domain.models.Medalla;
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.dtos.*;
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile; // Importar MultipartFile
 
 import java.io.IOException; // Importar IOException
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -141,7 +143,15 @@ public class UsuarioService implements IUsuarioService {
         usuarioOpt = usuarioRepository.findById(id);
         Usuario usuario = usuarioOpt.orElseThrow(() ->
                 new EntityNotFoundException("Usuario no encontrado con ID: " + id));
-        return UsuarioDetallelDTO.fromEntity(usuario);
+
+        Date now = new Date();
+        List<Medalla> medallas = usuario.getMedallas().stream()
+                .filter(medalla ->  medalla.getFechaVencimiento() == null || medalla.getFechaVencimiento().after(now)).toList();
+
+        UsuarioDetallelDTO dto =  UsuarioDetallelDTO.fromEntity(usuario);
+        dto.setMedallas(medallas.stream().map(MedallaDTO::fromEntity).toList());
+
+        return dto;
     }
 
     /**
@@ -231,10 +241,8 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public List<UsuarioSmallDTO> ranking() {
         //return usuarioRepository.ranking().stream().map(UsuarioSmallDTO::fromEntity).collect(Collectors.toList());
-        return  usuarioRepository.findTop100ByPuntosGreaterThanOrderByPuntosDesc(10).stream().map(UsuarioSmallDTO::fromEntity).collect(Collectors.toList());
-
+        return  usuarioRepository.findTop100ByPuntosGreaterThanOrderByPuntosDesc(1).stream().map(UsuarioSmallDTO::fromEntity).collect(Collectors.toList());
     }
-
 
     /**
      * Obtiene el contenido binario de la foto.
