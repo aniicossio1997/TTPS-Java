@@ -1,0 +1,57 @@
+@if (isDesktop()) {
+  <!-- DESKTOP (>= md): sidebar fija -->
+  <div class="flex h-screen w-full bg-slate-50 overflow-hidden font-sans text-slate-600">
+    <app-sidebar></app-sidebar>
+
+    <main class="flex-1 h-full overflow-y-auto bg-slate-50 relative py-6 px-4 ">
+
+      @if(showBackButton()){
+      <nav class="max-w-7xl  px-4 sm:px-6 lg:px-8 py-2">
+        <button
+          class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium hover:cursor-pointer"
+          (click)="onBack()"
+        >
+          <i class="pi pi-arrow-left" style="font-size: 0.8rem"></i>
+          Atrás
+        </button>
+        <h1 class="text-sm text-slate-500 mt-1">{{ currentTitle() }}</h1>
+      </nav>
+      }
+
+
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+} @else {
+  <!-- MOBILE (< md): header + drawer -->
+  <div class="h-screen w-full bg-slate-50 overflow-hidden font-sans text-slate-600 flex flex-col">
+    <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4">
+      <!-- Logo -->
+      <div class="flex flex-row items-center gap-2">
+       <img src="/fotos/icono.png" alt="¿Dónde estás? Volvé a casa" width="60px" height="60px" />
+        <div >
+          <span class="sidebar__logo-title">¿Dónde estás?</span>
+          <span class="sidebar__logo-subtitle">volvé a casa…</span>
+        </div>
+      </div>
+
+      <!-- Botón menú -->
+      <button
+        pButton
+        type="button"
+        icon="pi pi-bars"
+        class="p-button-rounded p-button-text"
+        (click)="openDrawer()"
+        aria-label="Abrir menú"
+        [size]="'large'"
+      ></button>
+    </header>
+
+    <main class="flex-1 overflow-y-auto p-4">
+      <router-outlet></router-outlet>
+    </main>
+
+    <app-sidebar-mobile (closeDrawer)="closeDrawer()" [drawerOpen]="drawerOpen()"></app-sidebar-mobile>
+
+  </div>
+}

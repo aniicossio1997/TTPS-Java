@@ -7,8 +7,10 @@ import {
   EventEmitter,
   signal,
   ChangeDetectionStrategy,
+  inject,
+
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, LocationStrategy , Location} from '@angular/common';
 import {
   Validators,
   FormsModule,
@@ -38,10 +40,10 @@ import { FormErrorComponent } from '../../../../../components/form-error/form-er
 import { RouterModule } from '@angular/router';
 import {
   LocationPickerComponent,
-  UbicacionSeleccionada,
 } from '../../../../../components/LocationPicker/location-picker.component';
 import { UbicacionExternaResponse } from '../../../../../interfaces/ubicacionExternaResponse';
 import { FotoLinkDTO } from '../../../../../interfaces/fotoLinkDTO';
+import { Ubicacion, UbicacionCreate } from '../../../../../interfaces/ubicacion.interface';
 
 enum TipoPublicacion {
   PROPIO = 'Propio',
@@ -77,6 +79,8 @@ type PublicacionSubmitEvent = [PublicacionCreate, File[]];
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublicacionFormComponent implements OnInit {
+  location= inject(LocationStrategy)
+
   @Input() publicacionId: number | null = null;
 
   @Input() publicacionExistente: Publicacion | null = null;
@@ -87,7 +91,7 @@ export class PublicacionFormComponent implements OnInit {
   public selectedFiles = signal<File[]>([]);
   public fotosExistentes = signal<FotoLinkDTO[]>([]);
 
-  ubicacionPrecargada = signal<UbicacionSeleccionada | null>(null);
+  ubicacionPrecargada = signal<UbicacionCreate| null>(null);
 
 
   publicacionForm;
@@ -133,8 +137,6 @@ export class PublicacionFormComponent implements OnInit {
       this.loadExistingData(this.publicacionExistente);
       this.submitLabel = 'Actualizar Publicación';
 
-      console.log("PUBLICACION::", this.publicacionExistente)
-
 
     } else if (this.publicacionId) {
       this.submitLabel = 'Actualizar Publicación';
@@ -156,7 +158,7 @@ export class PublicacionFormComponent implements OnInit {
       ? TipoPublicacion.PROPIO
       : TipoPublicacion.AJENO;
 
-      console.log("FECHA EXISTE:::", data.fecha)
+
     this.publicacionForm.patchValue({
       tipo: tipo,
       especie: data.especie,
@@ -173,7 +175,10 @@ export class PublicacionFormComponent implements OnInit {
 
     });
 
-    console.log("DESPUES DE ACTUALIZAR::",this.publicacionForm.get('fechaPerdida')?.value)
+
+
+    this.ubicacionPrecargada.set({...data.ubicacion!})
+
 
     this.publicacionForm.get('tipo')?.updateValueAndValidity();
     if (data.fotos?.length) {
@@ -196,13 +201,12 @@ export class PublicacionFormComponent implements OnInit {
   }
 
   async onSubmit() {
-    console.log("ENTRE AL SUBMIT")
+
     if (this.publicacionForm.valid) {
       const formValue = this.publicacionForm.value;
 
       const { nombre, descripcion, tipo, color, especie, tamanio, ubicacion, fechaPerdida } = formValue;
-      console.log({ nombre, descripcion, tipo, color, especie, tamanio, ubicacion })
-      console.log("ANTES DEL CONSOLE:LOG")
+
       if (!color || !especie || !tamanio || !ubicacion || !nombre || !ubicacion)
         return;
 
@@ -223,10 +227,10 @@ export class PublicacionFormComponent implements OnInit {
           estadoActual || (tipo === TipoPublicacion.PROPIO ? 'PERDIDO_PROPIO' : 'PERDIDO_AJENO'),
       };
 
-      console.log("ESTOY POR EMITIR AL PADRE")
+
       this.formSubmit.emit([publicacionData, this.selectedFiles()]);
 
-      console.log(`${this.publicacionId ? 'Actualizando' : 'Creando'} Publicación...`);
+
     } else {
       console.error('El formulario no es válido.');
       this.publicacionForm.markAllAsTouched();
@@ -247,7 +251,7 @@ export class PublicacionFormComponent implements OnInit {
     const currentFiles = this.selectedFiles();
     const newFiles = [...currentFiles, ...event.files];
     this.selectedFiles.set(newFiles);
-    console.log('Archivos agregados. Total actual:', this.selectedFiles().length);
+
   }
 
   onFileRemoved(event: FileRemoveEvent): void {
@@ -255,7 +259,7 @@ export class PublicacionFormComponent implements OnInit {
     const currentFiles = this.selectedFiles();
 
     const updatedFiles = currentFiles.filter((f) => f !== removedFile);
-    console.log({ updatedFiles });
+
     this.selectedFiles.set(updatedFiles);
   }
 
@@ -263,12 +267,13 @@ export class PublicacionFormComponent implements OnInit {
     this.selectedFiles.set([]);
   }
 
-  onLocationSelected(ubicacionExterna: UbicacionSeleccionada) {
-    this.ubicacionPrecargada.set({ ...ubicacionExterna });
+  onLocationSelected(ubicacionExterna: UbicacionCreate) {
+    const ubicacionPrevia : UbicacionCreate ={...ubicacionExterna} as UbicacionCreate;
+    this.ubicacionPrecargada.set({ ...ubicacionPrevia });
 
     this.publicacionForm.controls['ubicacion'].setValue({
-      lat: ubicacionExterna.lat.toString(),
-      lng: ubicacionExterna.lng.toString(),
+      lat: ubicacionExterna.latitud.toString(),
+      lng: ubicacionExterna.longitud.toString(),
       provincia: ubicacionExterna?.provincia ?? '',
       idExternoProvincia: ubicacionExterna?.idExternoProvincia ?? '',
       municipio: ubicacionExterna?.municipio ?? '',
@@ -282,5 +287,9 @@ export class PublicacionFormComponent implements OnInit {
     const ubicacion = this.publicacionForm.get('ubicacion')?.value;
 
     return !!ubicacion && ubicacion.lat !== '' && ubicacion.lng !== '';
+  }
+  onBack(){
+      this.location.back();
+
   }
 }

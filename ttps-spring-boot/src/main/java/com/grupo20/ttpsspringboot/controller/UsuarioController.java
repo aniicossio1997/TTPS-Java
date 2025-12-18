@@ -2,8 +2,8 @@ package com.grupo20.ttpsspringboot.controller;
 
 import com.grupo20.ttpsspringboot.dtos.*;
 import com.grupo20.ttpsspringboot.dtos.bases.ApiResponseDTO;
-import com.grupo20.ttpsspringboot.exceptions.BadRequestException;
-import com.grupo20.ttpsspringboot.services.impl.UsuarioService;
+import com.grupo20.ttpsspringboot.services.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid; // Necesario para validar el DTO
@@ -15,13 +15,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.List;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import org.springframework.http.MediaType;
 
 @Tag(name = "Usuarios")
 @RestController
@@ -47,6 +45,7 @@ public class UsuarioController extends BaseController {
         }
     }
 
+    @Operation(summary = "Edita un usuario existente")
     @PutMapping(value = "/{id}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<UsuarioSmallDTO> updateUsuario(
             @PathVariable Long id,
@@ -61,7 +60,6 @@ public class UsuarioController extends BaseController {
                     )
             )
             @RequestPart("data") @Valid UsuarioUpdateDTO usuarioDto,
-            // --- FIN DEL CAMBIO ---
 
             @RequestPart(value = "file", required = false) MultipartFile file)  {
 
@@ -80,6 +78,7 @@ public class UsuarioController extends BaseController {
         return ResponseEntity.ok(foto); // application/json
     }
 
+    @Operation(summary = "Cambiar la contraseña de un usuario")
     @PutMapping("/{id}/password")
     public ResponseEntity<ApiResponseDTO> cambiarPassword( @PathVariable Long id, @Valid @RequestBody RestablecerPasswordRequestDTO dto) {
 
@@ -87,6 +86,22 @@ public class UsuarioController extends BaseController {
         return ResponseEntity.ok(
                 new ApiResponseDTO(true, HttpStatus.OK, "Contraseña actualizada correctamente")
         );
+    }
+
+    @Operation(summary = "Modifica el estado de un usuario")
+    @PatchMapping("/{id}/estado") // Recomiendo agregar /estado para ser más específico
+    public ResponseEntity<UsuarioSmallDTO> cambiarEstado(
+            @PathVariable Long id,
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Nuevo estado del usuario",
+                    content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = UsuarioCambioEstadoRequestDTO.class)
+                    )
+            )
+            @RequestBody @Valid UsuarioCambioEstadoRequestDTO estadoRequestDTO) {
+        UsuarioSmallDTO updatedUser = usuarioService.cambiarEstado(id, estadoRequestDTO);
+        return ResponseEntity.ok(updatedUser);
     }
 
 

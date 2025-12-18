@@ -7,6 +7,7 @@ import org.mapstruct.*;
 @Mapper(componentModel = "spring")
 public interface UsuarioUpdateMapper {
 
+
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "puntos", ignore = true)          // si no querés que se actualicen acá
@@ -17,10 +18,8 @@ public interface UsuarioUpdateMapper {
     @Mapping(target = "avistamientos", ignore = true)
     @Mapping(target = "medallas", ignore = true)
     @Mapping(target = "ubicacion", ignore = true)       // la tratamos aparte
-    @Mapping(
-            target = "estado",
-            expression = "java(com.grupo20.ttpsspringboot.domain.enums.EstadoUsuarioEnum.HABILITADO)"
-    )
+    @Mapping(target = "estado", ignore = true)
+
     void updateFromDto(UsuarioUpdateDTO dto, @MappingTarget Usuario entity);
 }
 

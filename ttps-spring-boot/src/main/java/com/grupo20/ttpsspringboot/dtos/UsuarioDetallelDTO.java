@@ -1,5 +1,6 @@
 package com.grupo20.ttpsspringboot.dtos;
 
+import com.grupo20.ttpsspringboot.domain.enums.EstadoUsuarioEnum;
 import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import lombok.Data;
@@ -22,6 +23,10 @@ public class UsuarioDetallelDTO {
 
     private FotoLinkDTO fotoLink;
 
+    private Integer puntos;
+
+    private EstadoUsuarioEnum estado;
+
     public static UsuarioDetallelDTO fromEntity(Usuario entity) {
         UsuarioDetallelDTO dto = new UsuarioDetallelDTO();
         UbicacionDTO  ubicacionDTO = UbicacionDTO.fromEntity(entity.getUbicacion());
@@ -34,6 +39,7 @@ public class UsuarioDetallelDTO {
         dto.setRol(entity.getRol());
         dto.setTelefono(entity.getTelefono());
         dto.setUbicacion(ubicacionDTO);
+        dto.setEstado(entity.getEstado());
 
         dto.fotoLink = new FotoLinkDTO();
         dto.fotoLink = FotoLinkDTO.fromEntity(entity.getFotoPerfil());

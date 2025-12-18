@@ -16,7 +16,7 @@ export class AvistamientoService extends ApiService {
   public getFiltered(filter: AvistamientoFilter): Observable<Avistamiento[]> {
     const params = this.buildParams(filter);
 
-    console.log("buscando avistamientos", params)
+
     return this.get<Avistamiento[]>(this.endpoint, { params });
   }
 

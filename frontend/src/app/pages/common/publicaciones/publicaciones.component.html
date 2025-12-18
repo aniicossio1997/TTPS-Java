@@ -20,7 +20,7 @@
       size="large"
       class="block bg-primary-50"
       variant="outlined"
-      routerLink="/app/mapa"
+      [routerLink]="[this.destinationUrl]"
     />
     }
   </div>
@@ -159,7 +159,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       @for (publicacion of publicaciones(); track publicacion.id) {
-      <app-publicacion-card-item [publicacion]="publicacion" [searchText]="filtro().nombre" />
+      <app-publicacion-card-item [publicacion]="publicacion" [searchText]="filtro().nombre" [readOnly]="false" />
       }
     </div>
     }

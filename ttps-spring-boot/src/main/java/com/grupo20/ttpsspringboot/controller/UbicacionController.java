@@ -5,7 +5,7 @@ import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
 import com.grupo20.ttpsspringboot.dtos.UbicacionDTO;
 import com.grupo20.ttpsspringboot.dtos.UbicacionUpdateDTO;
 import com.grupo20.ttpsspringboot.exceptions.NotFoundException;
-import com.grupo20.ttpsspringboot.services.impl.UbicacionService;
+import com.grupo20.ttpsspringboot.services.UbicacionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

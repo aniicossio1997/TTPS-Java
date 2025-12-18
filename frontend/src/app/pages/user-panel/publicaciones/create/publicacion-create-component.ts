@@ -26,13 +26,13 @@ export class PublicacionCreateComponent {
   private readonly toastr = inject(ToastrService);
 
   public handleFormSubmit(event: PublicacionSubmitEvent): void {
-    console.log("ENTRE AL PADRE:: handleFormSubmit")
+
     const [publicacion, imagenes] = event;
-    console.log('Datos de Publicación listos para crear:', publicacion, imagenes);
+
 
     this.publicacionesService.create(publicacion, imagenes).subscribe({
       next: (publicacionCreada) => {
-        console.log('Publicación creada con éxito:', publicacionCreada);
+
         this.toastr.success('Se creo la publicacion con éxito', 'Éxito')
         this.router.navigate(['/app/publicaciones', 'detalle', publicacionCreada.id]);
       },

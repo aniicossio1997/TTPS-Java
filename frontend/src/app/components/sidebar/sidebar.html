@@ -7,16 +7,24 @@
           <span class="sidebar__logo-subtitle">volvé a casa…</span>
         </div>
       </div>
+
     </div>
 
+
     <nav class="sidebar__nav">
-      <a routerLink="/app/publicaciones" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link"
+      @if (isAdmin()) {
+        <div class="font-bold border-t border-gray-200 w-full">
+          <span class="flex justify-center">Administrador</span>
+        </div>
+      }
+
+      <a routerLink="publicaciones" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link"
         [routerLinkActiveOptions]="{ exact: false }">
         <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 512 512"
             fill="currentColor"
-            class="w-6 h-6 text-[#39B67D]"
+            class="w-4 h-4 text-[#39B67D]"
             routerLinkActive="text-white"
         >
             <path d="M226.5 92.9c14.3 42.9-.3 86.2-32.6 96.8s-70.1-15.6-84.4-58.5s.3-86.2 32.6-96.8s70.1 15.6 84.4 58.5zM100.4 198.6c18.9 32.4 14.3 70.1-10.2 84.1s-59.7-.9-78.5-33.3S-2.7 179.3 21.8 165.3s59.7 .9 78.5 33.3zM69.2 401.2C121.6 259.9 214.7 224 256 224s134.4 35.9 186.8 177.2c3.6 9.7 5.2 20.1 5.2 30.5v1.6c0 25.8-20.9 46.7-46.7 46.7c-11.5 0-22.9-1.4-34-4.2l-88-22c-15.3-3.8-31.3-3.8-46.6 0l-88 22c-11.1 2.8-22.5 4.2-34 4.2C84.9 480 64 459.1 64 433.3v-1.6c0-10.4 1.6-20.8 5.2-30.5zM421.8 282.7c-24.5-14-29.1-51.7-10.2-84.1s54-47.3 78.5-33.3s29.1 51.7 10.2 84.1s-54 47.3-78.5 33.3zM310.1 189.7c-32.3-10.6-46.9-53.9-32.6-96.8s52.1-69.1 84.4-58.5s46.9 53.9 32.6 96.8s-52.1 69.1-84.4 58.5z"/>
@@ -24,41 +32,61 @@
         <span>Inicio</span>
       </a>
 
-      <a routerLink="/app/mapa" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
+      <a routerLink="mapa" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
         <i class="pi pi-map-marker sidebar__nav-icon"></i>
         <span>Mapa</span>
       </a>
 
+      @if (isAdmin()) {
+       <a routerLink="usuarios" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
+        <i class="pi pi-users sidebar__nav-icon text-5xl" style="font-size: 16px;"></i>
+        <span>usuarios</span>
+      </a>
+      }
 
-      <a routerLink="perfil" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
+      <a [routerLink]="['perfil']" routerLinkActive="sidebar__nav-link--active" class="sidebar__nav-link">
         <i class="pi pi-user sidebar__nav-icon"></i>
         <span>Mi perfil</span>
       </a>
+
 
 
     </nav>
 
     <div class="sidebar__footer   ">
 
+      <div class="border-t border-gray-200 pt-4 mt-auto w-full">
 
-<div class="border-t border-gray-200 pt-4 mt-auto w-full">
+          <div class="flex flex-row mb-4 gap-2 items-center px-2">
 
-    <div class="flex flex-row mb-4 gap-2 items-center px-2">
-      <app-user-avatar [usuario]="authStore!.usuario()!" size="large" [showName]="false" />
-      <span class="text-gray-500 font-medium truncate">
-        {{authStore!.usuario()?.nombre}}
-      </span>
-    </div>
+            <app-user-avatar
+            [usuario]="authStore.usuario()!"
+            [showName]="false"
+            size="large"
+          ></app-user-avatar>
 
-    <button type="button"
-      class="w-full flex items-center  gap-4  hover:bg-red-100 text-red-500 font-bold rounded-bl-2xl rounded-br-2xl py-4 px-4 transition-colors duration-200 cursor-pointer"
-      (click)="salir()">
-       <i class="pi pi-sign-out text-lg" style="font-weight: 800;"></i>
-      <span>Salir</span>
 
-    </button>
+            <div class="flex items-center flex-col">
+              <span class="text-gray-500 font-medium truncate">{{authStore!.usuario()?.nombre}}</span>
+              @if(isAdmin()){
+              <span class="bg-green-200/10 text-green-400 text-[10px] font-bold px-1.5 py-0.2 rounded-[10px] border border-green-500/30">
+              ADMIN
+              </span>
+              }
 
-  </div>
+
+            </div>
+          </div>
+
+          <button type="button"
+            class="w-full flex items-center  gap-4  hover:bg-red-100 text-red-500 font-bold rounded-bl-2xl rounded-br-2xl py-4 px-4 transition-colors duration-200 cursor-pointer"
+            (click)="salir()">
+            <i class="pi pi-sign-out text-lg" style="font-weight: 800;"></i>
+            <span>Salir</span>
+
+          </button>
+
+      </div>
     </div>
   </aside>
 

@@ -8,7 +8,7 @@ import com.grupo20.ttpsspringboot.dtos.PublicacionDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionFilterDTO;
 import com.grupo20.ttpsspringboot.dtos.PublicacionUpdateDTO;
 import com.grupo20.ttpsspringboot.dtos.bases.PaginateBaseDTO;
-import com.grupo20.ttpsspringboot.services.impl.PublicacionService;
+import com.grupo20.ttpsspringboot.services.PublicacionService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;

@@ -3,10 +3,8 @@ import {
   AfterViewInit,
   Component,
   computed,
-  DestroyRef,
   effect,
   ElementRef,
-  EventEmitter,
   inject,
   input,
   output,
@@ -21,27 +19,10 @@ import * as L from 'leaflet';
 import { ButtonModule } from 'primeng/button';
 import { GeorefApiExternaService } from '../../services/georefApiExterna.service';
 import { UbicacionExternaResponse } from '../../interfaces/ubicacionExternaResponse';
-import { SelectButton } from 'primeng/selectbutton';
 import { FormsModule } from '@angular/forms';
-import { SelectListaUbicacion } from './select-lista-ubicacion/select-lista-ubicacion';
+import { UbicacionCreate } from '../../interfaces/ubicacion.interface';
 
 export type LatLng = { lat: number; lng: number };
-
-// location.types.ts
-export type UbicacionSeleccionada = {
-  lat: string;   // 👈 strings para calzar con tus FormControl<string>
-  lng: string;
-
-  // GeoRef (opcionales)
-  provincia?: string;
-  idExternoProvincia?: string;
-
-  municipio?: string;
-  idExternoMunicipio?: string;
-
-  departamento?: string;
-  idExternoDepartamento?: string;
-};
 
 
 
@@ -56,12 +37,6 @@ export class LocationPickerComponent implements AfterViewInit {
 
   private georef = inject(GeorefApiExternaService);
 
-  // Opciones estáticas (no necesitan ser signal si no cambian)
-    public readonly stateOptions = [
-      { icon: 'pi pi-map-marker', label: 'Mapa', value: 'mapa' },
-      { icon: 'pi pi-list', label: 'Lista', value: 'lista' },
-
-    ];
 
     // Tu signal inicializada
     public vistaOpciones = signal<'lista' | 'mapa'>('mapa');
@@ -69,14 +44,14 @@ export class LocationPickerComponent implements AfterViewInit {
 
   // INPUT / OUTPUT
   isInvalid = input<boolean>(false)
-  initialLocation = input<UbicacionSeleccionada | null>(null);
-  onLocationSelected = output<UbicacionSeleccionada>();
+  initialLocation = input<UbicacionCreate | null>(null);
+  onLocationSelected = output<UbicacionCreate>();
 
   dialogOpen = signal(false);
 
   // estado
-  confirmed = signal<UbicacionSeleccionada | null>(null);
-  temp = signal<UbicacionSeleccionada | null>(null);
+  confirmed = signal<UbicacionCreate | null>(null);
+  temp = signal<UbicacionCreate | null>(null);
 
   loadingGeoref = signal(false);
   georefText = signal('');
@@ -88,6 +63,7 @@ export class LocationPickerComponent implements AfterViewInit {
   private confirmedMarker?: L.Marker;
 
   private readonly LA_PLATA: L.LatLngExpression = [-34.9214, -57.9544];
+
 
 
   textoLabel = computed(() => {
@@ -109,7 +85,10 @@ export class LocationPickerComponent implements AfterViewInit {
 
       const isHasConfirmado= this.confirmed();
       if(!isHasConfirmado){
+
           this.confirmed.set(this.initialLocation());
+      }else if(this.initialLocation()){
+
       }
 
       if (!this.dialogOpen()) {
@@ -153,10 +132,13 @@ export class LocationPickerComponent implements AfterViewInit {
 
   cancel(): void {
 
+    if(!this.confirmed()){
     this.temp.set(null);
     this.georefText.set('')
+    }
+
     this.dialogOpen.set(false);
-     this.destroyMap();
+    this.destroyMap();
   }
 
   confirmMap(event: Event): void {
@@ -169,7 +151,7 @@ export class LocationPickerComponent implements AfterViewInit {
     this.destroyMap()
   }
 
-  onConfirmToSelectedList(ubicacionSelected:UbicacionSeleccionada ){
+  onConfirmToSelectedList(ubicacionSelected:UbicacionCreate ){
     this.confirmed.set(ubicacionSelected);
     this.onLocationSelected.emit(ubicacionSelected!);
     this.dialogOpen.set(false);
@@ -198,9 +180,9 @@ export class LocationPickerComponent implements AfterViewInit {
       const { lat, lng } = e.latlng;
 
 
-      const temp: UbicacionSeleccionada = {
-        lat: String(lat),
-        lng: String(lng),
+      const temp: UbicacionCreate = {
+        latitud: (lat),
+        longitud: (lng),
       };
 
       this.temp.set(temp);
@@ -215,8 +197,8 @@ export class LocationPickerComponent implements AfterViewInit {
     const t = this.temp() ?? this.confirmed();
     if (!this.map) return;
 
-    if (t?.lat && t?.lng) {
-      this.map.setView([+t.lat, +t.lng], 14);
+    if (t?.latitud && t?.longitud) {
+      this.map.setView([+t.latitud, +t.longitud], 14);
     } else {
       this.map.setView(this.LA_PLATA, 12);
     }
@@ -226,8 +208,8 @@ export class LocationPickerComponent implements AfterViewInit {
 
   private renderTempFromState(): void {
     const t = this.temp();
-    if (t?.lat && t?.lng) {
-      this.renderTempMarker(+t.lat, +t.lng);
+    if (t?.latitud && t?.longitud) {
+      this.renderTempMarker(+t.latitud, +t.longitud);
     } else {
       this.clearTempMarker();
     }
@@ -263,23 +245,22 @@ export class LocationPickerComponent implements AfterViewInit {
     this.hideConfirmedMarker();
 
     const c = this.confirmed();
-    if (!c?.lat || !c?.lng) return;
+    if (!c?.latitud || !c?.longitud) return;
 
-    this.confirmedMarker = L.marker([+c.lat, +c.lng]).addTo(this.map);
+    this.confirmedMarker = L.marker([+c.latitud, +c.longitud]).addTo(this.map);
   }
 
   // ---------------- GEOREF ----------------
 
-  private fetchGeoref(temp: UbicacionSeleccionada): void {
+  private fetchGeoref(temp: UbicacionCreate): void {
     this.loadingGeoref.set(true);
     this.georefText.set('');
 
-    this.georef.getUbicacionExterna(temp.lat, temp.lng).subscribe({
+    this.georef.getUbicacionExterna(temp.latitud.toString(), temp.longitud.toString()).subscribe({
       next: (res: UbicacionExternaResponse) => {
         const u = res.ubicacion;
 
-        const enriched: UbicacionSeleccionada = {
-          ...temp,
+        const enriched: UbicacionCreate = {
           provincia: u?.provincia?.nombre,
           idExternoProvincia: u?.provincia?.id,
           municipio: u?.municipio?.nombre,
@@ -287,6 +268,8 @@ export class LocationPickerComponent implements AfterViewInit {
 
           departamento: u?.departamento?.nombre,
           idExternoDepartamento: u?.departamento?.id,
+          latitud:u?.lat!,
+          longitud:u?.lon!
         };
 
 
@@ -319,6 +302,8 @@ export class LocationPickerComponent implements AfterViewInit {
 
 
 }
+
+
 
 
 

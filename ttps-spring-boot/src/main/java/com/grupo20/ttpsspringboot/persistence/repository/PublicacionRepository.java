@@ -47,6 +47,38 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
         AND (:#{#filter.departamento} IS NULL OR :#{#filter.departamento} = '' OR LOWER(p.ubicacion.departamento) LIKE LOWER(CONCAT('%', :#{#filter.departamento}, '%')))
         AND (:#{#filter.provincia} IS NULL OR :#{#filter.provincia} = '' OR LOWER(p.ubicacion.provincia) LIKE LOWER(CONCAT('%', :#{#filter.provincia}, '%')))
        
+        AND (:#{#filter.idExternoDepartamento} IS NULL OR :#{#filter.idExternoDepartamento} = '' OR p.ubicacion.idExternoDepartamento = :#{#filter.idExternoDepartamento})           
+           
+        AND (
+              ( :#{#filter.includeEstados == null || #filter.includeEstados.isEmpty()} = true )
+                 OR EXISTS (
+                   SELECT 1
+                   FROM EstadoPublicacion ep
+                   WHERE ep.publicacion = p
+                     AND ep.fecha = (
+                       SELECT MAX(ep2.fecha)
+                       FROM EstadoPublicacion ep2
+                       WHERE ep2.publicacion = p
+                     )
+                     AND ep.estado IN :#{#filter.includeEstados}
+                 )
+               )
+        AND (
+              ( :#{#filter.excluidosEstados == null ? true : #filter.excluidosEstados.isEmpty()} = true )
+        
+                     OR
+                     NOT EXISTS (
+                       SELECT 1
+                       FROM EstadoPublicacion ep
+                       WHERE ep.publicacion = p
+                         AND ep.fecha = (
+                           SELECT MAX(ep2.fecha)
+                           FROM EstadoPublicacion ep2
+                           WHERE ep2.publicacion = p
+                         )
+                         AND ep.estado IN :#{#filter.excluidosEstados}
+                     )
+                )
                                                                                                                                 
     """,
             countQuery = """
@@ -62,7 +94,41 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Long> 
         AND (:#{#filter.fechaDesde} IS NULL OR :#{#filter.fechaHasta} IS NULL OR p.fecha BETWEEN :#{#filter.fechaDesde} AND :#{#filter.fechaHasta})
         AND (:#{#filter.departamento} IS NULL OR :#{#filter.departamento} = '' OR LOWER(p.ubicacion.departamento) LIKE LOWER(CONCAT('%', :#{#filter.departamento}, '%')))
         AND (:#{#filter.provincia} IS NULL OR :#{#filter.provincia} = '' OR LOWER(p.ubicacion.provincia) LIKE LOWER(CONCAT('%', :#{#filter.provincia}, '%')))
+        
+        AND (:#{#filter.idExternoDepartamento} IS NULL OR :#{#filter.idExternoDepartamento} = '' OR p.ubicacion.idExternoDepartamento = :#{#filter.idExternoDepartamento})           
+        
+        AND (
+         ( :#{#filter.includeEstados == null || #filter.includeEstados.isEmpty()} = true )
+          OR EXISTS (
+            SELECT 1
+            FROM EstadoPublicacion ep
+            WHERE ep.publicacion = p
+              AND ep.fecha = (
+                SELECT MAX(ep2.fecha)
+                FROM EstadoPublicacion ep2
+                WHERE ep2.publicacion = p
+              )
+              AND ep.estado IN :#{#filter.includeEstados}
+          )
+        ) 
        
+          AND (
+                ( :#{#filter.excluidosEstados == null ? true : #filter.excluidosEstados.isEmpty()} = true )
+        
+                     OR
+                     NOT EXISTS (
+                       SELECT 1
+                       FROM EstadoPublicacion ep
+                       WHERE ep.publicacion = p
+                         AND ep.fecha = (
+                           SELECT MAX(ep2.fecha)
+                           FROM EstadoPublicacion ep2
+                           WHERE ep2.publicacion = p
+                         )
+                         AND ep.estado IN :#{#filter.excluidosEstados}
+                     )
+                )
+               
                                                                                                                                      
     """)
     Page<Publicacion> findByCaracteristicas(

@@ -16,17 +16,12 @@ import { Avistamiento, AvistamientoCreate } from '../../../../interfaces/avistam
 import { FormErrorComponent } from '../../../../components/form-error/form-error.component';
 import { AvistamientoService } from '../../../../services/avistamiento.service';
 import { ToastrService } from 'ngx-toastr';
-import { LocationPickerComponent, UbicacionSeleccionada } from '../../../../components/LocationPicker/location-picker.component';
+import { LocationPickerComponent } from '../../../../components/LocationPicker/location-picker.component';
+import { UbicacionCreate } from '../../../../interfaces/ubicacion.interface';
 
 type UbicacionControls = {
   lat: FormControl<string>;
   lng: FormControl<string>;
-  provincia: FormControl<string>;
-  idExternoProvincia: FormControl<string>;
-  municipio: FormControl<string>;
-  idExternoMunicipio: FormControl<string>;
-  departamento: FormControl<string>;
-  idExternoDepartamento: FormControl<string>;
 };
 
 type Form = {
@@ -68,7 +63,6 @@ export class AvistamientoForm implements OnInit , OnDestroy{
 
   constructor() {}
   ngOnDestroy(): void {
-    console.log("SE DESTRUYE EL COMPONENTE::")
   }
 
   ngOnInit(): void {
@@ -81,12 +75,6 @@ export class AvistamientoForm implements OnInit , OnDestroy{
       ubicacion: this.fb.group({
         lat: ['', Validators.required],
         lng: ['', Validators.required],
-        provincia: [''],
-        idExternoProvincia: [''],
-        municipio: [''],
-        idExternoMunicipio: [''],
-        departamento: [''],
-        idExternoDepartamento: [''],
       }),
     });
   }
@@ -132,16 +120,10 @@ export class AvistamientoForm implements OnInit , OnDestroy{
     }
   }
 
-    onLocationSelected(ubicacionExterna: UbicacionSeleccionada) {
+    onLocationSelected(ubicacionExterna: UbicacionCreate) {
       this.avistamientoForm.controls['ubicacion'].setValue({
-        lat: ubicacionExterna.lat.toString(),
-        lng: ubicacionExterna.lng.toString(),
-        provincia: ubicacionExterna?.provincia ?? '',
-        idExternoProvincia: ubicacionExterna?.idExternoProvincia ?? '',
-        municipio: ubicacionExterna?.municipio ?? '',
-        idExternoMunicipio: ubicacionExterna?.idExternoMunicipio ?? '',
-        departamento: ubicacionExterna?.departamento ?? '',
-        idExternoDepartamento: ubicacionExterna?.idExternoDepartamento ?? '',
+        lat: ubicacionExterna.latitud.toString(),
+        lng: ubicacionExterna.longitud.toString(),
       });
     }
 
@@ -149,7 +131,7 @@ export class AvistamientoForm implements OnInit , OnDestroy{
     const currentFiles = this.selectedFiles();
     const newFiles = [...currentFiles, ...event.files];
     this.selectedFiles.set(newFiles);
-    console.log('Archivos agregados. Total actual:', this.selectedFiles().length);
+
   }
 
   onFileRemoved(event: FileRemoveEvent): void {
@@ -157,7 +139,7 @@ export class AvistamientoForm implements OnInit , OnDestroy{
     const currentFiles = this.selectedFiles();
 
     const updatedFiles = currentFiles.filter((f) => f !== removedFile);
-    console.log({ updatedFiles });
+
     this.selectedFiles.set(updatedFiles);
   }
 }

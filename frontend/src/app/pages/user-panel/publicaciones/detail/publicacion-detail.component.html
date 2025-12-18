@@ -1,13 +1,4 @@
-<nav class="max-w-7xl px-4 sm:px-6 lg:px-8 py-2">
-  <button
-    class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium"
-    routerLink="/app/publicaciones"
-  >
-    <i class="pi pi-arrow-left" style="font-size: 0.8rem"></i>
-    Atrás
-  </button>
-  <h1 class="text-sm text-slate-500 mt-1">Publicaciones</h1>
-</nav>
+
 <div class="p-4 md:p-8">
   @if (isLoading()) {
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -181,7 +172,7 @@
   </div>
 
 
-      <app-avistamiento-form
+  <app-avistamiento-form
     [display]="displayAvistamientoModal()"
     [publicacionId]="publicacion()!.id"
     (displayChange)="handleAvistamientoDisplayChange($event)"
@@ -189,7 +180,7 @@
   ></app-avistamiento-form>
 
   }
-  <p-confirmDialog></p-confirmDialog>
+  <p-confirmDialog [draggable]="false" ></p-confirmDialog>
 
 </div>
 

@@ -47,6 +47,9 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponseDTO> handleGeneric(Exception ex) {
-        return build(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor");
+        //to debug
+        ex.printStackTrace();
+       // return build(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno del servidor");
+        return build(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 }

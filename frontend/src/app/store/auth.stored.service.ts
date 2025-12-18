@@ -39,6 +39,10 @@ export class AuthStoreService {
     () => this.isAuthenticated() && this.usuario()?.rol == EnumRolUsuario.USUARIO_COMUN
   );
 
+  baseUrl= computed(()=> {
+    return this.isAdmin() ? '/admin' : '/app'
+  })
+
   constructor() {
     this.restoreFromStorage();
   }
@@ -134,19 +138,22 @@ export class AuthStoreService {
       return;
     }
 
-  const nextUsuario: UsuarioSmall = {
-    ...current.usuario,   // lo viejo
-    ...usuario,             // lo nuevo
-  };
+    const nextUsuario: UsuarioSmall = {
+      ...current.usuario,   // lo viejo
+      ...usuario,             // lo nuevo
+    };
 
-  const next: LoginResponse = {
-    ...current,
-    usuario: { ...nextUsuario },
-  };
+    const next: LoginResponse = {
+      ...current,
+      usuario: { ...nextUsuario,
+        foto: nextUsuario.foto
+       },
+    };
 
     this._session.set(next);
     localStorage.setItem('usuario', JSON.stringify(this._session()!.usuario!));
   }
+
 
 
 

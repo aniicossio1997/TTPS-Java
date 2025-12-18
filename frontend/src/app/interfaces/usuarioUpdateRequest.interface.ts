@@ -1,4 +1,4 @@
-import { ubicacionCreateRequest } from "./ubicacionCreateRequest.interface";
+import { UbicacionCreate } from "./ubicacion.interface";
 
 
 export interface UsuarioUpdateRequest {
@@ -6,5 +6,5 @@ export interface UsuarioUpdateRequest {
   apellido: string;
   email: string;
   telefono?: string;
-  ubicacion: ubicacionCreateRequest;
+  ubicacion: UbicacionCreate;
 }

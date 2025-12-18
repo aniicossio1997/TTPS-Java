@@ -1,14 +1,5 @@
 <div class="max-w-[1000px]">
-  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2">
-    <button
-      class="flex items-center text-slate-500 hover:text-slate-800 transition-colors gap-2 font-medium"
-      routerLink="/app/publicaciones"
-    >
-      <i class="pi pi-arrow-left" style="font-size: 0.8rem"></i>
-      Atrás
-    </button>
-    <h1 class="text-sm text-slate-500 mt-1">Publicaciones</h1>
-  </nav>
+
   <form [formGroup]="publicacionForm" (ngSubmit)="onSubmit()" class="col-12 p-5">
     <p-card>
       <h2 class="m-0 text-2xl font-bold">
@@ -130,7 +121,8 @@
             <div class="flex flex-col gap-2">
               <label>Color principal <span class="text-sm font-light">(Opcional)</span></label>
               <div class="flex flex-wrap gap-3">
-                <div *ngFor="let color of getColors(); let i = index" class="flex items-center">
+                @for (color of getColors(); track $index; let i = $index) {
+                <div class="flex items-center">
                   <p-radioButton
                     name="color"
                     [inputId]="'color' + i"
@@ -151,6 +143,8 @@
                     ></span>
                   </label>
                 </div>
+                }
+
               </div>
             </div>
           </div>
@@ -162,7 +156,7 @@
       <p-fieldset legend="3. Ubicación" toggleable>
         <div class="w-full">
           <app-location-picker
-            [initialLocation]="null"
+            [initialLocation]="this.ubicacionPrecargada()"
             [isInvalid]="isInvalid('ubicacion')!"
             (onLocationSelected)="onLocationSelected($event)"
           ></app-location-picker>
@@ -219,7 +213,13 @@
 
       <p-divider></p-divider>
 
-      <div class="flex justify-end">
+      <div class="flex justify-between">
+        <p-button
+          [label]="'Cancelar'"
+          type="button"
+          severity="secondary"
+          (click)="onBack()"
+        ></p-button>
         <p-button
           [label]="submitLabel"
           icon="pi pi-check"

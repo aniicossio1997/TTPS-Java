@@ -19,7 +19,7 @@ import { FormControl } from '@angular/forms';
 import { DividerModule } from 'primeng/divider';
 import { Router, RouterLink } from '@angular/router';
 import { MessageModule } from 'primeng/message';
-import { LocationPickerComponent, UbicacionSeleccionada } from '../../../components/LocationPicker/location-picker.component';
+import { LocationPickerComponent } from '../../../components/LocationPicker/location-picker.component';
 import { CommonModule } from '@angular/common';
 import { Dialog } from 'primeng/dialog';
 import { UbicacionExternaResponse } from '../../../interfaces/ubicacionExternaResponse';
@@ -31,6 +31,7 @@ import { ToastrService } from 'ngx-toastr';
 import { InputMaskModule } from 'primeng/inputmask';
 import { Tooltip } from 'primeng/tooltip';
 import { PUBLIC_ROUTES_ENUM } from '../public.routes';
+import { UbicacionCreate } from '../../../interfaces/ubicacion.interface';
 
 function passwordMatchValidator(form: AbstractControl) {
   const password = form.get('password')?.value;
@@ -102,14 +103,14 @@ export class RegisterComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly _status = signal<ApiStatus>(ApiStatus.INIT);
 
-  ubicacionPrecargada = signal<UbicacionSeleccionada | null>(null);
+  ubicacionPrecargada = signal<UbicacionCreate | null>(null);
 
-  onLocationSelected( ubicacionExterna: UbicacionSeleccionada) {
+  onLocationSelected( ubicacionExterna: UbicacionCreate) {
       this.ubicacionPrecargada.set({...ubicacionExterna})
 
       this.registerForm.controls['ubicacion'].setValue({
-        lat: ubicacionExterna.lat.toString(),
-        lng: ubicacionExterna.lng.toString(),
+        lat: ubicacionExterna.latitud.toString(),
+        lng: ubicacionExterna.longitud.toString(),
         provincia: ubicacionExterna?.provincia ?? '',
         idExternoProvincia: ubicacionExterna?.idExternoProvincia ?? '',
         municipio: ubicacionExterna?.municipio ?? '',

@@ -89,7 +89,7 @@ export class PublicacionDetailComponent implements OnInit {
   };
 
   isOwner = computed(() => {
-    return this.authStore.usuario()?.id == this.publicacion()?.usuarioId;
+    return this.authStore.usuario()?.id == this.publicacion()?.usuarioId || this.authStore.isAdmin();
   });
 
   puedeEditar = computed(() => {
@@ -169,7 +169,7 @@ export class PublicacionDetailComponent implements OnInit {
   ];
 
   onAvistamientosCargados(avistamientos: Avistamiento[]): void {
-    console.log({ avistamientos });
+
     this.avistamientos = avistamientos;
   }
 
@@ -232,7 +232,12 @@ export class PublicacionDetailComponent implements OnInit {
       header: title,
       acceptLabel: 'Aceptar',
       rejectLabel: 'Cancelar',
-      acceptButtonStyleClass: 'p-button-danger',
+      acceptButtonStyleClass: 'p-button-primary',
+      rejectButtonProps: {
+                label: 'Cancel',
+                severity: 'secondary',
+                outlined: true,
+            },
       accept: () => {
         this.marcarRecuperada();
       },
@@ -246,7 +251,9 @@ export class PublicacionDetailComponent implements OnInit {
       header: title,
       acceptLabel: 'Aceptar',
       rejectLabel: 'Cancelar',
-      acceptButtonStyleClass: 'p-button-danger',
+      rejectButtonStyleClass:'p-button-secondary',
+      acceptButtonStyleClass: 'p-button-primary',
+
       accept: () => {
         this.adoptar();
       },

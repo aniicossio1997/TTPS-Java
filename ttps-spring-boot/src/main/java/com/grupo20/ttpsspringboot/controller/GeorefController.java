@@ -1,7 +1,7 @@
 package com.grupo20.ttpsspringboot.controller;
 
 import com.grupo20.ttpsspringboot.dtos.georef.*;
-import com.grupo20.ttpsspringboot.services.impl.GeorefService;
+import com.grupo20.ttpsspringboot.services.GeorefService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;

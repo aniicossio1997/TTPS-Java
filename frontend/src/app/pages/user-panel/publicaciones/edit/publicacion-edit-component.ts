@@ -61,11 +61,11 @@ export class PublicacionEditComponent implements OnInit {
 
     const [publicacion, imagenes] = event;
 
-    console.log("PUBLICACION SUBMIT", publicacion)
+
 
     this.publicacionesService.update(this.publicacionId, publicacion, imagenes).subscribe({
       next: (publicacionActualizada) => {
-        console.log('Publicación actualizada con éxito:', publicacionActualizada);
+
         this.toastr.success('Se modifico la publicacion con éxito', 'Éxito')
 
         this.router.navigate(['/app/publicaciones', 'detalle', publicacionActualizada.id]);

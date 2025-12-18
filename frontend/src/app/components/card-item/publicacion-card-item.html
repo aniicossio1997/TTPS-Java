@@ -3,8 +3,9 @@
   (click)="navigateToDetail(publicacion.id)"
 >
 
-  @if (this.authStore.usuario() && this.authStore.usuario()?.id ==publicacion.usuarioId ) {
+  @if (puedoEdit() ) {
       <p-button
+        [type]="'button'"
         class="bottom-2  absolute top-1 right-1 right-0"
         severity="secondary"
         [rounded]="false"
@@ -34,7 +35,10 @@
 
   </ng-template>
 
-    <span class="text-muted-color mt-0"><i class="pi pi-map-marker"></i> {{publicacion.ubicacion.provincia}},{{publicacion.ubicacion.departamento}} </span>
+  <div class="flex items-start flex-wrap justify-between gap-1 border-b border-surface-200 pb-2">
+    <span class="flex items-baseline gap-2"><app-user-avatar [usuario]="publicacion.usuario"></app-user-avatar> </span>
+    <span class="text-muted-color mt-0"><i class="pi pi-map-marker"></i>{{publicacion.ubicacion.provincia}},{{publicacion.ubicacion.departamento}} </span>
+  </div>
 
   <div class="space-y-2">
 

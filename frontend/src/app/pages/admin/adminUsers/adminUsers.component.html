@@ -1,3 +1,116 @@
-<p class="mt-2">
-  AdminUsers works!
-</p>
+
+@if (isSuccess()) {
+  <div class="card">
+    <p-table [value]="usuarioStore().data" [tableStyle]="{ 'min-width': '60rem' }" [paginator]="true"
+    [rows]="5"   [rowsPerPageOptions]="[5]"[loading]="isLoading()"  >
+        <ng-template #caption>
+            <div class="flex items-center justify-between">
+                <span class="text-xl font-bold">Usuarios</span>
+                <p-button icon="pi pi-refresh" rounded raised (click)="getUsuarios()" />
+            </div>
+        </ng-template>
+        <ng-template #header>
+            <tr>
+                <th></th>
+                <th>Usuario</th>
+                <th>Email</th>
+                <th>Telefono</th>
+                <th>Estado</th>
+                <th>Puntaje</th>
+            </tr>
+        </ng-template>
+        <ng-template #body let-usuario>
+            <tr>
+              <td>
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-bars"
+            class="p-button-rounded p-button-text"
+            (click)="generateMenu(usuario, menu, $event)"
+          ></button>
+          <p-menu
+            #menu
+            [popup]="true"
+            [model]="itemsMenu"
+            appendTo="body"
+          ></p-menu>
+
+
+
+
+
+                <div class="flex gap-4">
+                  <!-- <button pButton  class="p-button-rounded p-button-text"  iconPos="right"  (click)="$event.stopPropagation();;onMenu(menu,usuario, $event)" icon="pi pi-bars">
+                  </button>
+                    <p-menu #menu [model]="items" [popup]="true"   styleClass="w-auto md:w-60" /> -->
+                     <button pButton label="Editar" icon="pi pi-pencil" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PERDIL, usuario)"></button>
+                      <button pButton label="Cambiar" icon="pi pi-key" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PASSWORD, usuario)"></button>
+                </div>
+
+              </td>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <app-user-avatar [usuario]="usuario" [size]="'xlarge'"  ></app-user-avatar>
+                    <span>{{ usuario.nombre }}, {{ usuario.apellido }}</span>
+                  </div>
+                </td>
+
+                <td>{{ usuario.email}}</td>
+                <td>{{ usuario.telefono }}</td>
+                <td><p-tag [value]="getLabelEstadoUsuario(usuario)  | uppercase" [severity]="getColorEstado(usuario)" /> </td>
+                <td>
+                    {{usuario.puntos}}
+                </td>
+            </tr>
+        </ng-template>
+        <ng-template #footer>
+            <tr>
+                <td colspan="6">En total hay {{ usuarioStore().data.length >0 ? usuarioStore().data.length : 0 }} usuarios.</td>
+            </tr>
+        </ng-template>
+    </p-table>
+</div>
+}
+
+
+@if (isNotFound()) {
+  <div>
+    usuarios no encontrados
+  </div>
+}
+
+
+<p-dialog [baseZIndex]="1000" [draggable]="false" [(visible)]="modalOpen" [modal]="true" [closable]="false"
+  [style]="{ width: 'mx-auto', padding:'0px', top:'0' }">
+  <ng-template #header>
+    @if (selectedOption() ==opcionesDeEdicionENUM.EDITAR_PERDIL) {
+    <h1 class="text-lg font-bold my-4">Editar perfil</h1>
+    }@else {
+    <h1 class="text-lg font-bold my-4">Cambiar contraseña</h1>
+    }
+  </ng-template>
+
+  @switch (selectedOption()) {
+  @case (opcionesDeEdicionENUM.EDITAR_PERDIL) {
+  <div class="bg-white rounded-3xl  border-slate-100  max-w-3xl overflow-hidden ">
+
+    <app-editar-perfil [idUsuario]="idUsuarioSelected()!" (onCloseEditarPerfil)="closeModal()"
+      (onSuccessEdit)="onSuccessEdit()" />
+  </div>
+
+  }
+  @case (opcionesDeEdicionENUM.EDITAR_PASSWORD) {
+  <div class="bg-white  border-slate-100  max-w-3xl overflow-hidden ">
+
+    <app-edit-password [idUsuario]="idUsuarioSelected()!" (onCloseEditarPerfil)="closeModal()"
+      (onSuccessEdit)="onSuccessEdit()" />
+  </div>
+
+  }
+  @default {
+    <h1>Error</h1>
+    }
+  }
+</p-dialog>

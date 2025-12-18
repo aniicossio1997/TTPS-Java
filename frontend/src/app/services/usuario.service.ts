@@ -51,4 +51,7 @@ export class UsuarioService {
     return this.http.put<ApiResponse>(`${this.apiUrl}/${userId}/password`, body);
   }
 
+  getUsuarios(): Observable<UsuarioSmall[]> {
+    return this.http.get<UsuarioSmall[]>(`${this.apiUrl}`);
+  }
 }

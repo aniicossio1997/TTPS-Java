@@ -1,6 +1,5 @@
 import {
   LocationPickerComponent,
-  UbicacionSeleccionada,
 } from './../LocationPicker/location-picker.component';
 import {
   Component,
@@ -32,6 +31,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UsuarioUpdateRequest } from '../../interfaces/usuarioUpdateRequest.interface';
 import { HttpErrorResponse } from '@angular/common/http';
 import { AuthStoreService } from '../../store/auth.stored.service';
+import { UbicacionCreate } from '../../interfaces/ubicacion.interface';
 
 
 type UbicacionControls = {
@@ -47,7 +47,6 @@ type FormEdit = {
   phone: FormControl<string>;
   ubicacion: FormGroup<UbicacionControls>;
 
-  // 👇 NUEVO
   foto: FormControl<File | null>;
 };
 
@@ -105,7 +104,7 @@ export class EditarPerfil implements OnInit {
   readonly isSuccess = computed(() => this._status() === ApiStatus.SUCCESS);
   readonly isError = computed(() => this._status() === ApiStatus.ERROR);
 
-  ubicacionPrecargada = signal<UbicacionSeleccionada | null>(null);
+  ubicacionPrecargada = signal<UbicacionCreate | null>(null);
 
   // Esto es lo que se muestra como preview
   previewFoto = signal<string | null>(null);
@@ -161,11 +160,11 @@ export class EditarPerfil implements OnInit {
     return !!ubicacion && ubicacion.lat !== '' && ubicacion.lng !== '';
   }
 
-  onLocationSelected(ubicacionExterna: UbicacionSeleccionada) {
+  onLocationSelected(ubicacionExterna: UbicacionCreate) {
 
     this.editForm.controls['ubicacion'].setValue({
-      lat: ubicacionExterna.lat.toString(),
-      lng: ubicacionExterna.lng.toString(),
+      lat: ubicacionExterna.latitud.toString(),
+      lng: ubicacionExterna.longitud.toString(),
 
     });
     this.ubicacionPrecargada.set({ ...ubicacionExterna });
@@ -221,8 +220,8 @@ export class EditarPerfil implements OnInit {
       });
 
         this.ubicacionPrecargada.set({
-          lat: perfil.ubicacion.latitud.toString() ?? '',
-          lng: perfil.ubicacion.longitud.toString() ?? '',
+          latitud: perfil.ubicacion.latitud ?? '',
+          longitud: perfil.ubicacion.longitud ?? '',
 
           departamento: perfil.ubicacion.departamento,
           idExternoDepartamento: perfil.ubicacion.idExternoDepartamento,

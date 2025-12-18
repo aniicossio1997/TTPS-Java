@@ -8,7 +8,7 @@ public class NotFoundException extends APIException {
         super("Recurso no encontrado", HttpStatus.NOT_FOUND, "not_found");
     }
 
-    public NotFoundException(String publicaciónNoEncontrada) {
-        super("Recurso no encontrado", HttpStatus.NOT_FOUND, "not_found");
+    public NotFoundException(String message) {
+        super(message, HttpStatus.NOT_FOUND, "not_found");
     }
 }

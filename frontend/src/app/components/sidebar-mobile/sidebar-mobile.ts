@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject, input, output } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, output } from '@angular/core';
 import { Sidebar } from '../sidebar/sidebar';
 import { DrawerModule } from 'primeng/drawer';
 import { ButtonModule } from 'primeng/button';
@@ -6,6 +6,7 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/ro
 import { AuthStoreService } from '../../store/auth.stored.service';
 import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EnumRolUsuario } from '../../interfaces/local/rol-usuario.enum';
 
 @Component({
   selector: 'app-sidebar-mobile',
@@ -23,6 +24,8 @@ export class SidebarMobile {
 
   closeDrawer =  output<void>();
 
+  usuario= computed(()=> this.authStore.usuario())
+  isAdmin= computed(()=> this.authStore.usuario()?.rol==EnumRolUsuario.ADMINISTRADOR)
   constructor(){
 
   }

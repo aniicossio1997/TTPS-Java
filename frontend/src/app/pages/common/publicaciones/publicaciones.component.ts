@@ -167,7 +167,10 @@ export class PublicacionesComponent {
   }
 
   get destinationUrl(): string {
-    if (this.authStore.isAuthenticated()) {
+    if (this.authStore.isAuthenticated() && this.authStore.isAdmin()) {
+      return '/admin/publicaciones/crear';
+    }
+    if(this.authStore.isAuthenticated() && !this.authStore.isAdmin()){
       return '/app/publicaciones/crear';
     }
     return '/public/login';

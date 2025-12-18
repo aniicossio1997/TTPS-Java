@@ -66,7 +66,7 @@ export class MapaPublicaciones implements AfterViewInit, OnDestroy {
   private readonly publicacionIconInstance = createMarkerIcon('publicacion');
   private readonly avistamientoIconInstance = createMarkerIcon('avistamiento'); // Nueva instancia
 
-  private readonly CENTRO_AR: L.LatLngExpression = [-34.9214, -64.9544];
+  private readonly CENTRO_AR: L.LatLngExpression =  [-36.6773920760823,-60.5584771084959];
 
   constructor() {
     effect(() => {
@@ -100,7 +100,7 @@ export class MapaPublicaciones implements AfterViewInit, OnDestroy {
     const inicial = this.ubicacionInicial();
 
     if (inicial) {
-      centro = [inicial.latitud, inicial.longitud];
+      centro = [-36.6773920760823,-60.5584771084959];
     }
     const el = this.mapContainer.nativeElement;
     this.map = L.map(el, { center: centro, zoom: 15 });
@@ -192,7 +192,13 @@ export class MapaPublicaciones implements AfterViewInit, OnDestroy {
       }
     }
 
-    this.fitMapToMarkers();
+      // ✅ clave: dejar que el DOM/layout se estabilice y recién ahí recalcular size + fit
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        this.map?.invalidateSize(true);
+        this.fitMapToMarkers();
+      });
+    });
   }
 
   // 💡 buildPopupContent ahora recibe el tipo

@@ -1,3 +1,4 @@
+import { EstadoPublicacionEnum } from './../../interfaces/publicacion.interface';
 import { Component, Input, computed, inject, input } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
@@ -8,6 +9,7 @@ import { Publicacion } from '../../interfaces/publicacion.interface';
 import { AuthStoreService } from '../../store/auth.stored.service';
 import { EstadoPublicacionTag } from '../estado-publicacion-tag/estado-publicacion-tag';
 import { HighlightSearchPipe } from '../../shared/pipes/highlight-search.pipe';
+import { UserAvatarComponent } from '../user-avatar/user-avatar';
 
 interface EstadoTag {
   text: string;
@@ -18,13 +20,15 @@ interface EstadoTag {
   selector: 'app-publicacion-card-item',
   standalone: true,
   templateUrl: './publicacion-card-item.html',
-  imports: [CommonModule, CardModule, TagModule, ButtonModule, DatePipe, EstadoPublicacionTag, HighlightSearchPipe ],
+  imports: [CommonModule, CardModule, TagModule, ButtonModule, DatePipe, EstadoPublicacionTag, HighlightSearchPipe, UserAvatarComponent ],
 })
 export class PublicacionCardItem {
   private router = inject(Router);
   public authStore = inject(AuthStoreService);
 
   searchText = input<string | null | undefined>(null)
+
+  readOnly = input<boolean>(true)
 
   @Input({ required: true }) publicacion!: Publicacion;
 
@@ -46,20 +50,64 @@ export class PublicacionCardItem {
     }
   });
 
+  puedoEdit = computed(()=>{
+    return(
+    this.authStore.usuario() && this.authStore.usuario()?.id ==this.publicacion.usuarioId
+    && (this.publicacion.estado?.estado== 'PERDIDO_AJENO' ||this.publicacion.estado?.estado== 'PERDIDO_PROPIO' )
+    && this.readOnly())
+
+    })
+
   defaultImageUrl = 'https://placedog.net/500';
 
   navigateToDetail(id: number): void {
     if (!this.authStore.usuario()) return;
-    this.router.navigate(['/app/publicaciones/detalle/', id]);
+
+    if (this.authStore.isAuthenticated() && this.authStore.isAdmin()) {
+       this.router.navigate(['/admin/publicaciones/detalle', id]);
+       return
+    }
+    if(this.authStore.isAuthenticated() && !this.authStore.isAdmin()){
+      this.router.navigate([ '/app/publicaciones/detalle', id]);
+      return;
+    }
+    this.router.navigate(['/public/login']);
+
   }
 
   verUbicacion(ubicacion: any): void {
     // Aquí puedes implementar la lógica para abrir un modal de mapa o redirigir
-   // console.log('Ver ubicación:', ubicacion);
+
   }
 
   navigateToEdit(id: number){
     if (!this.authStore.usuario()) return;
-    this.router.navigate(['/app/publicaciones/editar/', id]);
+
+    if (this.authStore.isAuthenticated() && this.authStore.isAdmin()) {
+       this.router.navigate(['/admin/publicaciones/editar', id]);
+       return
+    }
+    if(this.authStore.isAuthenticated() && !this.authStore.isAdmin()){
+      this.router.navigate([ '/app/publicaciones/editar', id]);
+      return;
+    }
+    this.router.navigate(['/public/login']);
+  }
+
+  get destinationDetailUrl(): string {
+    if (this.authStore.isAuthenticated() && this.authStore.isAdmin()) {
+      return '/admin/publicaciones/crear';
+    }
+    if(this.authStore.isAuthenticated() && !this.authStore.isAdmin()){
+      return '/app/publicaciones/crear';
+    }
+    return '/public/login';
+  }
+
+
+
+
+  get estadoPublicacion(){
+    return EstadoPublicacionTag;
   }
 }
