@@ -29,6 +29,10 @@ import { ConfirmationService, MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { UsuarioDetalleDTO } from '../../../interfaces/UsuarioDetalleDTO.interface';
+import { CambiarEstadoUsuarioStoreService } from '../../../store/cambiarEstadoUsuario.stored.service';
+import { EstadoUsuarioEnum } from '../../../interfaces/local/estadoUsuarioEnum';
+import { TagModule } from 'primeng/tag';
 
 enum TapEnum {
   TAP_0 = '0', // -> PUBLICACIONES
@@ -63,17 +67,20 @@ enum OpcionesDeEdicionENUM {
     MedallasSection,
     CommonModule,
     RouterLink,
-    Menu,
-    ConfirmDialog
+    //Menu,
+    ConfirmDialog,
+    TagModule
   ],
   templateUrl: './perfil-section.html',
   styleUrl: './perfil-section.scss',
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [PerfilByUserStoreService, UsuarioService, ConfirmationService],
+  providers: [PerfilByUserStoreService, UsuarioService, ConfirmationService, CambiarEstadoUsuarioStoreService],
 })
 export class PerfilSection implements OnInit {
   //@Input({ required: true }) userId!: string;
+  private estadoUserStore = inject(CambiarEstadoUsuarioStoreService);
+  reLoadPerfilCard =signal<boolean>(false);
 
   usuarioId = input.required<string>();
 
@@ -83,13 +90,19 @@ export class PerfilSection implements OnInit {
 
   private paramMap = toSignal(this.route.paramMap);
 
-  readonly idUser = computed(() => Number(this.paramMap()?.get('idUser')));
+  readonly idUser = computed(() => Number(this.paramMap()?.get('usuarioId')));
 
   userIdNumber = computed(()=> Number(this.usuarioId()))
 
+  soyYoQuienVeMiPerfil = computed(()=> this.authStore.usuario()?.id== this.userIdNumber())
+
+  tengoElPerfilHabilitado= computed (()=>{
+    return this.perfilStore.perfilDeUsuario()?.estado==EstadoUsuarioEnum.HABILITADO
+  })
+
   private confirmationService = inject(ConfirmationService);
   readonly perfilStore = inject(PerfilByUserStoreService);
-  items: MenuItem[] | undefined;
+  items: MenuItem[]=[];
 
   modalOpen = false;
 
@@ -115,9 +128,12 @@ export class PerfilSection implements OnInit {
     return this.perfilStore.perfilDeUsuario()?.id== this.authStore.usuario()?.id
   }
 
-  canEditarPerfil(){
+  canViewActions(){
 
-    return this.perfilStore.perfilDeUsuario()?.id == this.authStore.usuario()?.id || this.authStore.isAdmin()
+    return (
+      this.perfilStore.perfilDeUsuario()?.id == this.authStore.usuario()?.id
+    && this.perfilStore.perfilDeUsuario()?.estado==EstadoUsuarioEnum.HABILITADO
+    ) || this.authStore.isAdmin();
   }
 
 
@@ -129,7 +145,7 @@ export class PerfilSection implements OnInit {
    }
 
   ngOnInit() {
-    this.initMenu()
+
 
     this.perfilStore._getPerfil(Number(this.usuarioId()));
   }
@@ -176,11 +192,17 @@ export class PerfilSection implements OnInit {
   }
 
   // Ejemplo: Caso confirmación (Si/No)
-  confirmationEliminarUsuario() {
+  onConfirmationEliminarUsuario() {
+    let mensaje = {
+      mansaje: this.authStore.isAdmin() ? '¿Estás seguro de bloquear al usuario?' : '¿Estás seguro de darse se baja?',
+      header: this.authStore.isAdmin() ? 'Bloquear usuario' : 'Darse de baja',
+      estado: this.authStore.isAdmin() ? EstadoUsuarioEnum.BLOQUEADO_POR_ADMIN : EstadoUsuarioEnum.BAJA_VOLUNTARIA
+    }
+
     this.confirmationService.confirm({
       key: 'positionDialog',
-      header: 'Dar de baja',
-      message: '¿Estás seguro de darse de baja?',
+      header: mensaje.header,
+      message: mensaje.mansaje,
       icon: 'pi pi-exclamation-triangle',
       rejectButtonProps: {
         label: 'Cancel',
@@ -190,7 +212,10 @@ export class PerfilSection implements OnInit {
       rejectButtonStyleClass: 'p-button-secondary',
       acceptButtonStyleClass: 'p-button-danger',
       accept: () => {
-        // Lógica si dice que SÍ
+        this.estadoUserStore._cambiarEstadoUsuario(this.perfilStore.perfilDeUsuario()!.id,mensaje.estado, ()=>{
+           this.perfilStore._getPerfil(Number(this.usuarioId())); });
+
+
       },
       reject: () => {
         // Lógica si dice que NO
@@ -198,37 +223,8 @@ export class PerfilSection implements OnInit {
     });
   }
 
-  private initMenu() {
-    this.items = [
-      {
-        label: 'Opciones',
-        items: [
-          {
-            label: 'Editar',
-            icon: 'pi pi pi-pencil',
-            command: () => {
-              this.openModal(this.opcionesDeEdicionENUM.EDITAR_PERDIL)
-            }
-          },
-          {
-            label: 'Cambiar contraseña',
-            icon: 'pi pi pi-key',
-            command: () => {
-              this.openModal(this.opcionesDeEdicionENUM.EDITAR_PASSWORD)
-            }
 
-          },
-          {
-            label: 'Eliminar perfil',
-            icon: 'pi pi-trash',
-            command: () => {
-              this.confirmationEliminarUsuario()
-            }
-          }
-        ]
-      }
-    ];
+  get EstadoUsuarioEnum() {
+    return EstadoUsuarioEnum;
   }
-
-
 }

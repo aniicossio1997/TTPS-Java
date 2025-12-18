@@ -20,6 +20,7 @@ import { AuthService } from '../../../services/auth.service';
 import { AuthStoreService } from '../../../store/auth.stored.service';
 import { CommonModule } from '@angular/common';
 import { ApiStatus } from '../../../interfaces/local/EnumApiStatus.enum';
+import { HttpErrorResponse } from '@angular/common/http';
 
 
 interface Option {
@@ -59,7 +60,6 @@ export class LoginComponent implements OnInit {
 
   }
 
-  loading = false;
   errorMessage = '';
 
   // 🔹 Inyectamos el FormBuilder con el nuevo patrón
@@ -93,7 +93,6 @@ export class LoginComponent implements OnInit {
         return;
       }
 
-      this.loading = true;
       this.errorMessage = '';
 
       const { email, password } = this.loginForm.getRawValue();
@@ -111,9 +110,12 @@ export class LoginComponent implements OnInit {
         this.authStore.onSaveSession(resp)
         this._status.set(ApiStatus.SUCCESS);
       },
-      error: (err) => {
-         this._status.set(ApiStatus.ERROR);
-        this.authStore.onSaveSesionError(err)
+      error: (err : HttpErrorResponse) => {
+        let mensjae = err.error.message || 'Error en el Correo o Contraseña'
+        this.errorMessage = mensjae;
+        console.log('Login error:', err.error.message);
+        this._status.set(ApiStatus.ERROR);
+        this.authStore.onSaveSesionError(mensjae)
       }
     });
   }

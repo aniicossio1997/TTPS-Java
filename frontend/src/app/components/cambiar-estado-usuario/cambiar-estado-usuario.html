@@ -1,0 +1,23 @@
+<article class="sm:w-auto md:w-lg max-w-md">
+   <h1 class="text-lg font-bold my-1">Cambiar estados</h1>
+  <span class="p-text-secondary block mb-1">Selecciones un estado</span>
+<p-select [options]="estadosAMostrar()" [(ngModel)]="selectedEstado" [checkmark]="true" optionLabel="name"
+[showClear]="true" placeholder="Estados" class="w-full md:w-full overflow-visible z-50"   appendTo="body"
+ />
+
+
+
+<div class="flex justify-between w-full mt-8 mb-4">
+        <button type="button" pButton  size="small" severity="secondary" (click)="onCloseLocal()">
+          <i class="pi pi-times" pButtonIcon></i>
+          <span pButtonLabel>Cancelar</span>
+        </button>
+
+        <button type="submit" pButton size="small" [disabled]="selectedEstado === null"
+
+        [loading]="isLoading()" >
+          <i class="pi pi-check" pButtonIcon  ></i>
+          <span pButtonLabel>Guardar</span>
+        </button>
+</div>
+</article>

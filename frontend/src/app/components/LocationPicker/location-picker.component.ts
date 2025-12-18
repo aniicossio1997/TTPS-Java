@@ -21,6 +21,7 @@ import { GeorefApiExternaService } from '../../services/georefApiExterna.service
 import { UbicacionExternaResponse } from '../../interfaces/ubicacionExternaResponse';
 import { FormsModule } from '@angular/forms';
 import { UbicacionCreate } from '../../interfaces/ubicacion.interface';
+import { Tooltip } from 'primeng/tooltip';
 
 export type LatLng = { lat: number; lng: number };
 
@@ -29,7 +30,7 @@ export type LatLng = { lat: number; lng: number };
 @Component({
   selector: 'app-location-picker',
   standalone: true,
-  imports: [CommonModule, Dialog, ButtonModule,  FormsModule, ],
+  imports: [CommonModule, Dialog, ButtonModule,  FormsModule,Tooltip ],
   templateUrl: './location-picker.component.html',
   styleUrls: ['./location-picker.component.scss'],
 })
@@ -39,7 +40,7 @@ export class LocationPickerComponent implements AfterViewInit {
 
 
     // Tu signal inicializada
-    public vistaOpciones = signal<'lista' | 'mapa'>('mapa');
+  public vistaOpciones = signal<'lista' | 'mapa'>('mapa');
 
 
   // INPUT / OUTPUT
@@ -56,14 +57,19 @@ export class LocationPickerComponent implements AfterViewInit {
   loadingGeoref = signal(false);
   georefText = signal('');
 
-  @ViewChild('mapContainer') mapContainer?: ElementRef<HTMLDivElement>;
+  @ViewChild('mapContainer') mapContainer!: ElementRef<HTMLDivElement>;
 
   private map?: L.Map;
   private tempMarker?: L.Marker;
   private confirmedMarker?: L.Marker;
 
   private readonly LA_PLATA: L.LatLngExpression = [-34.9214, -57.9544];
+  loadingMap = signal(true);
 
+  isValidUbicacion = computed(() => {
+    const c = this.temp();
+    return !!(c && !c.idExternoProvincia && !c.provincia);
+  });
 
 
   textoLabel = computed(() => {
@@ -123,12 +129,38 @@ export class LocationPickerComponent implements AfterViewInit {
 
   open(): void {
     this.dialogOpen.set(true);
-    if(this.map){
-      this.map.invalidateSize();
-    }
-
+    queueMicrotask(() => {
+      setTimeout(() => {
+        this.initMap();
+      }, 50); // suficiente para que PrimeNG pinte el dialog
+    });
 
   }
+
+  private initMap() {
+  if (this.map) {
+    this.map.invalidateSize();
+    this.loadingMap.set(false);
+    return;
+  }
+
+  this.map = L.map(this.mapContainer.nativeElement, {
+    center: [-34.9214, -57.9544], // La Plata
+    zoom: 13,
+  });
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+  }).addTo(this.map);
+
+  // ⬅️ IMPORTANTE
+  setTimeout(() => {
+    this.map?.invalidateSize();
+    this.loadingMap.set(false);
+  }, 100);
+}
+
+
 
   cancel(): void {
 
@@ -271,6 +303,8 @@ export class LocationPickerComponent implements AfterViewInit {
           latitud:u?.lat!,
           longitud:u?.lon!
         };
+
+        console.log('Ubicación enriquecida:', enriched);
 
 
         this.temp.set(enriched);

@@ -47,10 +47,10 @@ export class AuthStoreService {
     this.restoreFromStorage();
   }
 
-  onSaveSesionError(error?:any){
+  onSaveSesionError(message?:string) {
     this._session.set(null);
     this.clearStorage();
-    this.toastr.error('Credenciales incorrectas.', 'Error de Autenticación');
+    this.toastr.error(message || 'Error en el Correo o Contraseña', 'Error de Autenticación');
   }
 
   // ===== Acciones públicas =====

@@ -1,10 +1,12 @@
 package com.grupo20.ttpsspringboot.persistence.repository;
 
+import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
 import com.grupo20.ttpsspringboot.domain.models.Usuario;
 import com.grupo20.ttpsspringboot.domain.enums.EstadoUsuarioEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -45,4 +47,13 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     boolean existsByEmailIgnoreCaseAndIdNot(String email, Long id);
 
+
+    long countByRolAndEstado(
+            RolUsuarioEnum rol,
+            EstadoUsuarioEnum estado
+    );
+
+    // UsuarioRepository.java
+    @Query("SELECT u FROM Usuario u LEFT JOIN FETCH u.ubicacion WHERE u.id = :id")
+    Optional<Usuario> findByIdWithUbicacion(@Param("id") Long id);
 }

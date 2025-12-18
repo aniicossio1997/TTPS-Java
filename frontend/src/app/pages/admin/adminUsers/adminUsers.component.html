@@ -1,7 +1,7 @@
 
 @if (isSuccess()) {
   <div class="card">
-    <p-table [value]="usuarioStore().data" [tableStyle]="{ 'min-width': '60rem' }" [paginator]="true"
+    <p-table  #dt [value]="usuarioStore().data" [tableStyle]="{ 'min-width': '60rem' }" [paginator]="true"
     [rows]="5"   [rowsPerPageOptions]="[5]"[loading]="isLoading()"  >
         <ng-template #caption>
             <div class="flex items-center justify-between">
@@ -22,32 +22,70 @@
         <ng-template #body let-usuario>
             <tr>
               <td>
-          <button
-            pButton
-            pRipple
-            type="button"
-            icon="pi pi-bars"
-            class="p-button-rounded p-button-text"
-            (click)="generateMenu(usuario, menu, $event)"
-          ></button>
-          <p-menu
-            #menu
-            [popup]="true"
-            [model]="itemsMenu"
-            appendTo="body"
-          ></p-menu>
 
+                <!-- <div class="flex gap-4">
 
-
-
-
-                <div class="flex gap-4">
-                  <!-- <button pButton  class="p-button-rounded p-button-text"  iconPos="right"  (click)="$event.stopPropagation();;onMenu(menu,usuario, $event)" icon="pi pi-bars">
-                  </button>
-                    <p-menu #menu [model]="items" [popup]="true"   styleClass="w-auto md:w-60" /> -->
                      <button pButton label="Editar" icon="pi pi-pencil" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PERDIL, usuario)"></button>
                       <button pButton label="Cambiar" icon="pi pi-key" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PASSWORD, usuario)"></button>
+
+                    </div> -->
+
+
+                                <!-- Botón de tres puntos -->
+                <button
+                  (click)="toggleMenu(usuario.id, $event)"
+                  class="text-[#10b981] hover:text-[#10b981] border border-[#a7f3d0] hover:bg-[#eefff7] p-2 rounded-sm focus:outline-none transition-colors cursor-pointer">
+                  <!-- Icono de 3 puntos vertical (SVG) -->
+                   <i class="pi pi-bars"></i>
+                </button>
+
+                <!--
+                  MENÚ DROPDOWN
+                  Solo se muestra si openMenuId coincide con el ID de este usuario
+                -->
+                  @if (openMenuId() == usuario.id) {
+                <div
+                     class="absolute  left-0 mt-0 w-48 bg-white rounded-md shadow-lg z-50 border-2 border-surface-100  ring-opacity-5 origin-top-right animate-fadeIn">
+
+                  <div class="py-1 text-left -mt-2" role="menu">
+
+                    <!-- Opción 1: Ir al detalle -->
+                    <button (click)="irAlDetalle(usuario)" class=" cursor-pointer w-full text-left px-4 py-2 text-sm  text-gray-600 hover:bg-gray-100 flex items-center gap-2 group">
+                       <!-- Icono Eye SVG -->
+                      <i class="pi pi-eye"></i>
+                       Ver detalle
+                    </button>
+
+                    <!-- Opción 2: Editar -->
+                    <button (click)="editarUsuario(usuario)" class="cursor-pointer w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 flex items-center gap-2 group">
+                      <!-- Icono Edit SVG -->
+                      <i class="pi pi-user-edit"></i>
+                      Editar
+                    </button>
+
+                    <div class="border-t border-gray-100 my-1"></div>
+                    @if (usuario.estado === estadoUsuarioEnum.HABILITADO) {
+                                          <!-- Opción 3: Eliminar -->
+                    <button (click)="eliminarUsuario(usuario)" class="cursor-pointer w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
+                       <!-- Icono Trash SVG -->
+                        <i class="pi pi-ban"></i>
+                        Bloquear
+                    </button>
+                    }
+
+                  @if (usuario.estado != estadoUsuarioEnum.HABILITADO) {
+                                          <!-- Opción 3: Eliminar -->
+                    <button (click)="confirmationHabilitarUsuario(usuario)" class="cursor-pointer w-full text-left px-4 py-2 text-sm text-green-600 hover:bg-green-50 flex items-center gap-2">
+                       <!-- Icono Trash SVG -->
+                        <i class="pi pi-check"></i>
+                        Habilitar
+                    </button>
+                    }
+
+                  </div>
                 </div>
+                  }
+
 
               </td>
                 <td>
@@ -87,7 +125,8 @@
   <ng-template #header>
     @if (selectedOption() ==opcionesDeEdicionENUM.EDITAR_PERDIL) {
     <h1 class="text-lg font-bold my-4">Editar perfil</h1>
-    }@else {
+    }
+    @if(selectedOption() ==opcionesDeEdicionENUM.EDITAR_PASSWORD) {
     <h1 class="text-lg font-bold my-4">Cambiar contraseña</h1>
     }
   </ng-template>
@@ -96,7 +135,7 @@
   @case (opcionesDeEdicionENUM.EDITAR_PERDIL) {
   <div class="bg-white rounded-3xl  border-slate-100  max-w-3xl overflow-hidden ">
 
-    <app-editar-perfil [idUsuario]="idUsuarioSelected()!" (onCloseEditarPerfil)="closeModal()"
+    <app-editar-perfil [idUsuario]="usuarioSelected()?.id!" (onCloseEditarPerfil)="closeModal()"
       (onSuccessEdit)="onSuccessEdit()" />
   </div>
 
@@ -104,7 +143,7 @@
   @case (opcionesDeEdicionENUM.EDITAR_PASSWORD) {
   <div class="bg-white  border-slate-100  max-w-3xl overflow-hidden ">
 
-    <app-edit-password [idUsuario]="idUsuarioSelected()!" (onCloseEditarPerfil)="closeModal()"
+    <app-edit-password [idUsuario]="usuarioSelected()?.id!" (onCloseEditarPerfil)="closeModal()"
       (onSuccessEdit)="onSuccessEdit()" />
   </div>
 
@@ -114,3 +153,6 @@
     }
   }
 </p-dialog>
+
+
+<p-confirmdialog key="positionDialog" />

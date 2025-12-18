@@ -1,6 +1,7 @@
 package com.grupo20.ttpsspringboot.dtos;
 
 import com.grupo20.ttpsspringboot.domain.enums.EstadoUsuarioEnum;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,5 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UsuarioCambioEstadoRequestDTO {
+
     private EstadoUsuarioEnum estado;
 }

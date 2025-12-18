@@ -92,13 +92,6 @@ public class UsuarioController extends BaseController {
     @PatchMapping("/{id}/estado") // Recomiendo agregar /estado para ser más específico
     public ResponseEntity<UsuarioSmallDTO> cambiarEstado(
             @PathVariable Long id,
-            @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    description = "Nuevo estado del usuario",
-                    content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = UsuarioCambioEstadoRequestDTO.class)
-                    )
-            )
             @RequestBody @Valid UsuarioCambioEstadoRequestDTO estadoRequestDTO) {
         UsuarioSmallDTO updatedUser = usuarioService.cambiarEstado(id, estadoRequestDTO);
         return ResponseEntity.ok(updatedUser);

@@ -25,7 +25,8 @@
 } @else {
   <!-- MOBILE (< md): header + drawer -->
   <div class="h-screen w-full bg-slate-50 overflow-hidden font-sans text-slate-600 flex flex-col">
-    <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4">
+    <header class="h-20 bg-white border-b border-slate-200 flex items-center justify-between px-4 relative z-10">
+
       <!-- Logo -->
       <div class="flex flex-row items-center gap-2">
        <img src="/fotos/icono.png" alt="¿Dónde estás? Volvé a casa" width="60px" height="60px" />
@@ -40,8 +41,8 @@
         pButton
         type="button"
         icon="pi pi-bars"
-        class="p-button-rounded p-button-text"
-        (click)="openDrawer()"
+        class="p-button-rounded p-button-text z-50"
+        (click)="openDrawer($event)"
         aria-label="Abrir menú"
         [size]="'large'"
       ></button>
@@ -51,7 +52,8 @@
       <router-outlet></router-outlet>
     </main>
 
-    <app-sidebar-mobile (closeDrawer)="closeDrawer()" [drawerOpen]="drawerOpen()"></app-sidebar-mobile>
+    <app-sidebar-mobile   [drawerOpen]="drawerOpen()"
+  (drawerOpenChange)="drawerOpen.set($event)" ></app-sidebar-mobile>
 
   </div>
 }

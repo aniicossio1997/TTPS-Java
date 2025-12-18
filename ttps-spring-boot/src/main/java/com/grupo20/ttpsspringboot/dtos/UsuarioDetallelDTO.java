@@ -27,6 +27,8 @@ public class UsuarioDetallelDTO {
 
     private EstadoUsuarioEnum estado;
 
+    
+
     public static UsuarioDetallelDTO fromEntity(Usuario entity) {
         UsuarioDetallelDTO dto = new UsuarioDetallelDTO();
         UbicacionDTO  ubicacionDTO = UbicacionDTO.fromEntity(entity.getUbicacion());
@@ -40,6 +42,7 @@ public class UsuarioDetallelDTO {
         dto.setTelefono(entity.getTelefono());
         dto.setUbicacion(ubicacionDTO);
         dto.setEstado(entity.getEstado());
+        dto.setPuntos(entity.getPuntos());
 
         dto.fotoLink = new FotoLinkDTO();
         dto.fotoLink = FotoLinkDTO.fromEntity(entity.getFotoPerfil());

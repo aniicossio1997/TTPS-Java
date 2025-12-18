@@ -83,7 +83,7 @@ export class AvistamientosUser {
   private _call_api(){
     this.avistamientoState.set({...this.avistamientoState(), status:ApiStatus.LOADING})
 
-    this.avistamientoService.getFiltered({usuarioId: this.authStore.usuario()?.id})
+    this.avistamientoService.getFiltered({usuarioId: this.idUsuarioToBy()})
        .subscribe({
         next: (resp) => {
           if(resp.length >0){

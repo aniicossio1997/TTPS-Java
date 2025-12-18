@@ -1,10 +1,13 @@
     <p-drawer
-      [visible]="drawerOpen()"
-      position="left"
-      styleClass="w-72"
-      (onHide)="closeDrawer.emit()"
-      [closable]="false"
-    >
+  [visible]="drawerOpen()"
+  (visibleChange)="drawerOpenChange.emit($event)"
+  position="left"
+  styleClass="w-72"
+  [closable]="true"
+    position="left"
+    styleClass="w-72"
+    [closable]="true">
+
       <ng-template pTemplate="header">
         <div class="flex items-center gap-2">
           <img src="/fotos/icono.png" alt="¿Dónde estás? Volvé a casa" width="50px" height="50px" />

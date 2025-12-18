@@ -1,46 +1,44 @@
 import { Injectable } from '@angular/core';
-import { HttpRequest, HttpHandler, HttpEvent, HttpInterceptor } from '@angular/common/http';
+import {
+  HttpInterceptor,
+  HttpRequest,
+  HttpHandler,
+  HttpEvent
+} from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthStoreService } from '../store/auth.stored.service';
-import { environment } from '../../environments/environment';
-
 
 @Injectable()
 export class JwtInterceptor implements HttpInterceptor {
-    constructor(private authenticationService: AuthStoreService) { }
+  constructor(private authStore: AuthStoreService) {}
 
-    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const url = req.url;
 
-    // Lista de endpoints que NO deben llevar Authorization
-    const publicEndpoints = [
-      `${environment.API_URL}/auth/register`,
-      `${environment.API_URL}/auth/`,
-      `${environment.API_URL}/public/publicaciones`,
-      `${environment.API_URL}/public/`,
-      `${environment.API_URL}/auth/login`,
-      `${environment.API_URL}/georef`,
-      environment.URL_MAP  // por si querés mantenerlo
-    ];
+    // Si usás proxy, tus llamadas deberían ser /api/...
+    const isApi = url.includes('/api/');
+    const isPublic =
+      url.includes('/api/auth/') ||
+      url.includes('/api/public/') ||
+      url.includes('/api/georef'); // si lo exponés así por tu proxy
 
-    // Si la URL matchea alguno de los endpoints públicos → no agregar Bearer
-    const isPublic = publicEndpoints.some(url => request.url.startsWith(url));
-
-    if (isPublic) {
-      return next.handle(request);
+    if (!isApi || isPublic) {
+      return next.handle(req);
     }
 
-      // 2) Agregar token si corresponde
-      const currentUser = this.authenticationService.getCurrentSession();
+    const session = this.authStore.session();
+    const token = session?.token;
 
-      if (currentUser?.token) {
-
-        request = request.clone({
-          setHeaders: {
-            Authorization: `Bearer ${currentUser.token}`
-          }
-        });
-      }
-
-    return next.handle(request);
+    if (!token) {
+      // te va a ayudar a ver por qué llega sin token
+      return next.handle(req);
     }
+
+
+    return next.handle(
+      req.clone({
+        setHeaders: { Authorization: `Bearer ${token}` }
+      })
+    );
+  }
 }

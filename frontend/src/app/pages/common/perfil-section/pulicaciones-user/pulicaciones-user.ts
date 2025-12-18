@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, OnInit, signal } from '@angular/core';
 import { PublicacionCardItem } from '../../../../components/card-item/publicacion-card-item';
 import { catchError, of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -29,6 +29,7 @@ export class PulicacionesUser implements OnInit {
   private readonly publicService = inject(PublicService);
   private readonly authStore = inject(AuthStoreService);
 
+  idUsuarioToBy= input.required<number>();
 
   public publicacionesState = signal<PublicacionState>({
     data: [],
@@ -71,7 +72,7 @@ export class PulicacionesUser implements OnInit {
   private _call_api(){
     this.publicacionesState.set({...this.publicacionesState(), status:ApiStatus.LOADING})
     this.publicService
-          .getFiltered({size:2500,page:1,usuarioId: this.authStore.usuario()?.id})
+          .getFiltered({size:2500,page:1,usuarioId: this.idUsuarioToBy()})
           .pipe(
             catchError((err: HttpErrorResponse) => {
               const errorMessage = `Error al cargar: ${err.statusText || 'Desconocido'}`;

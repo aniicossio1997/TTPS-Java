@@ -8,6 +8,7 @@ import { TagModule } from 'primeng/tag';
 import { PublicService } from '../../services/public.service';
 import { DividerModule } from 'primeng/divider';
 import { UserAvatarComponent } from "../user-avatar/user-avatar";
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-usuarios-ranking',
@@ -19,7 +20,8 @@ import { UserAvatarComponent } from "../user-avatar/user-avatar";
     AvatarModule,
     TagModule,
     DividerModule,
-    UserAvatarComponent
+    UserAvatarComponent,
+    RouterLink
 ],
   templateUrl: './usuarios-ranking.html',
 })

@@ -38,6 +38,7 @@ export const APP_ROUTES: Routes = [
         data: { title: 'Mapa de Avistamientos' }
       },
       { path: 'perfil', component: UserLogueado ,data: { title: 'Mi Perfil' }},
+      { path: 'publicaciones/usuario/:usuarioId', component: PerfilSection ,data: { title: 'Perfil de otro usuario' }},
 
 
     ],

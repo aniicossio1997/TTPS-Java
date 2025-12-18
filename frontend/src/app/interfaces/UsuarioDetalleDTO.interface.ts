@@ -1,4 +1,5 @@
 import { FotoLinkDTO } from "./fotoLinkDTO";
+import { EstadoUsuarioEnum } from "./local/estadoUsuarioEnum";
 import { Medalla } from "./medalla.interface";
 import { Ubicacion } from "./ubicacion.interface";
 
@@ -12,4 +13,6 @@ export interface  UsuarioDetalleDTO {
     ubicacion: Ubicacion;
     fotoLink?: FotoLinkDTO;
     medallas: Medalla[];
+    estado: EstadoUsuarioEnum
+    puntos: number;
 }

@@ -5,14 +5,19 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   inject,
   Injectable,
   OnDestroy,
   OnInit,
   signal,
+  ViewChild,
+  ViewChildren,
+  QueryList,
+  HostListener,
 } from '@angular/core';
 
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { Tag, TagModule } from 'primeng/tag';
 import { RatingModule } from 'primeng/rating';
 import { ButtonModule } from 'primeng/button';
@@ -23,14 +28,19 @@ import { UserAvatarComponent } from '../../../components/user-avatar/user-avatar
 import { UsuarioDetalleDTO } from '../../../interfaces/UsuarioDetalleDTO.interface';
 import { EstadoUsuarioEnum } from '../../../interfaces/local/estadoUsuarioEnum';
 import { Subscription } from 'rxjs';
-import { MenuItem } from 'primeng/api';
+import { ConfirmationService, MenuItem } from 'primeng/api';
 import { Menu } from 'primeng/menu';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { Dialog } from 'primeng/dialog';
 import { EditarPerfil } from '../../../components/editar-perfil/editar-perfil';
 import { EditPassword } from '../../../components/edit-password/edit-password';
 import { AuthStoreService } from '../../../store/auth.stored.service';
-import { Router } from '@angular/router';
+import { NavigationEnd, NavigationStart, Router } from '@angular/router';
+import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ManagementRoutes } from '../../../const/rutas.const';
+import { CambiarEstadoUsuario } from '../../../components/cambiar-estado-usuario/cambiar-estado-usuario';
+import { CambiarEstadoUsuarioStoreService } from '../../../store/cambiarEstadoUsuario.stored.service';
 
 interface UsuariosStateStore {
   data: UsuarioSmall[];
@@ -42,7 +52,7 @@ enum OpcionesDeEdicionENUM {
   VER_PERFIL = 'VER_PERFIL',
   EDITAR_PERDIL = 'EDITAR_PERDIL',
   EDITAR_PASSWORD = 'EDITAR_PASSWORD',
-  ELIMINAR_PERFIL = 'ELIMINAR_PERFIL',
+  CAMBIAR_ESTADO = 'CAMBIAR_ESTADO',
 }
 
 @Component({
@@ -56,30 +66,38 @@ enum OpcionesDeEdicionENUM {
     TableModule,
     Tag,
     UserAvatarComponent,
-    Menu,
     ConfirmDialog,
     Dialog,
     EditarPerfil,
     EditPassword,
+    CambiarEstadoUsuario,
+
   ],
   templateUrl: './adminUsers.component.html',
   styleUrls: ['./adminUsers.component.scss'],
-  providers: [UsuarioService],
-  standalone: true,
+  providers: [UsuarioService, ConfirmationService, CambiarEstadoUsuarioStoreService],
+
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminUsersComponent implements OnInit, OnDestroy {
+
+  @ViewChild('dt') dt!: Table;
+  private confirmationService = inject(ConfirmationService);
+  private estadoUserStore = inject(CambiarEstadoUsuarioStoreService);
+
   private readonly toastr = inject(ToastrService);
   private readonly serviceUser = inject(UsuarioService);
   public authStore = inject(AuthStoreService);
-
-   private router = inject(Router);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
 
   modalOpen = false;
   selectedOption = signal<OpcionesDeEdicionENUM | null>(null);
-  idUsuarioSelected = signal<number |null>(null)
+
+  usuarioSelected = signal<UsuarioSmall | null>(null)
 
   itemsMenu: MenuItem[] = [];
+  @ViewChild('menuCompartido') menuCompartido!: Menu;
 
   subs: Subscription = null!;
 
@@ -100,10 +118,22 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
 
   public avistamientos = computed(() => this.usuarioStore().data);
 
-  constructor() {}
+
+  private navSub: Subscription = new Subscription();
+
+  constructor() {
+        // Cerrar cualquier overlay al iniciar navegación
+
+  }
+
+
+
 
   ngOnInit() {
     this.getUsuarios();
+
+    // Cerrar todos los menús cuando hay navegación
+
   }
 
   getColorEstado(
@@ -134,6 +164,7 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subs?.unsubscribe();
+    this.navSub?.unsubscribe();
   }
 
   getUsuarios() {
@@ -163,57 +194,22 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
     });
   }
 
-  async onMenu(menu: Menu, usuario: UsuarioSmall, $event: any) {
-    menu.toggle($event);
-    this.itemsMenu = [];
-    this.itemsMenu = [
-      {
-        label: 'Opciones',
-        items: [
-          {
-            label: 'Ir al detalle',
-            icon: 'pi pi-eye',
-            routerLink: ['/admin/usuarios', usuario.id],
-            command: async () => {
-               menu.hide();
-               await this.router.navigate(['/admin/usuarios', usuario.id]);
-            },
-          },
-          {
-            label: 'Editar',
-            icon: 'pi pi pi-pencil',
-            command: () => {
-              this.openModal(this.opcionesDeEdicionENUM.EDITAR_PERDIL, usuario)
-            },
-          },
-          // {
-          //   label: 'Cambiar contraseña',
-          //   icon: 'pi pi pi-key',
-          //   command: () => {
-          //     this.openModal(this.opcionesDeEdicionENUM.EDITAR_PASSWORD)
-          //   }
-
-          // },
-          {
-            label: 'Cambiar estado',
-            icon: 'pi pi-cog',
-            command: () => {
-              //this.confirmationEliminarUsuario()
-            },
-          },
-        ],
-      },
-    ];
-
+// 2. Escuchamos clicks en CUALQUIER parte de la página
+  @HostListener('document:click', ['$event'])
+  clickout(event: Event) {
+    // Si el usuario hace click en cualquier lado (que no sea el botón), cerramos
+    if (this.openMenuId() !== null) {
+      this.openMenuId.set(null) ;
+    }
   }
 
   openModal(option: OpcionesDeEdicionENUM, usuario:UsuarioSmall) {
-    this.idUsuarioSelected.set(usuario.id)
+    this.usuarioSelected.set(usuario)
     this.selectedOption.set(option);
     this.modalOpen = true;
   }
   closeModal() {
-    this.idUsuarioSelected.set(null)
+    this.usuarioSelected.set(null)
     this.modalOpen = false;
     this.selectedOption.set(null); // opcional (si querés “resetear”)
   }
@@ -225,26 +221,97 @@ export class AdminUsersComponent implements OnInit, OnDestroy {
   get opcionesDeEdicionENUM() {
     return OpcionesDeEdicionENUM;
   }
+  get estadoUsuarioEnum() {
+    return EstadoUsuarioEnum;
+  }
 
-    generateMenu(item: any, menu: Menu, event: any) {
-    menu.toggle(event);
 
-    this.itemsMenu = [
-      {
-        label: 'Detalle',
-        icon: 'pi pi-eye',
-        command: () => {
-            this.router.navigate(['/admin/usuarios', item.id]);
-        },
+  openMenuId =signal<number | null>(null);
+
+      // Abrir/Cerrar menú
+  toggleMenu(id: number, event: Event) {
+
+    event.stopPropagation(); // Evita que el click llegue al backdrop inmediatamente
+    if ( this.openMenuId() &&this.openMenuId() == id) {
+      this.closeMenu();
+    } else {
+      this.openMenuId.set(id);
+    }
+  }
+
+  // Cerrar cualquier menú abierto
+  closeMenu() {
+    this.openMenuId.set(null);
+  }
+
+    // --- TUS ACCIONES ---
+
+  irAlDetalle(usuario: UsuarioSmall) {
+    this.closeMenu(); // 1. Cerramos menú
+    console.log('Navegando a detalle de:', usuario.nombre);
+        if (usuario.id) {
+            // Navegamos y forzamos el cierre del menú para evitar el bug visual
+            this.router.navigate([`${ManagementRoutes.Admin}/${ManagementRoutes.Usuarios}`,usuario.id]);
+            this.menuCompartido.hide();
+        }
+  }
+
+  editarUsuario(usuario: UsuarioSmall) {
+    this.closeMenu();
+    this.openModal(OpcionesDeEdicionENUM.EDITAR_PERDIL, usuario);
+    console.log('Abriendo modal editar para:', usuario.nombre);
+    // this.openModal(...)
+  }
+
+  eliminarUsuario(usuario: UsuarioSmall) {
+    this.closeMenu();
+    this.confirmationEliminarUsuario(usuario);
+    //this.openModal(OpcionesDeEdicionENUM.CAMBIAR_ESTADO, usuario);
+  }
+
+  confirmationEliminarUsuario(usuario: UsuarioSmall) {
+    this.confirmationService.confirm({
+      key: 'positionDialog',
+      header: 'Bloquear usuario',
+      message: '¿Estás seguro de bloquear al usuario?',
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        text: true,
       },
-      {
-        label: 'Eliminar',
-        icon: 'pi pi-trash',
-        command: () => {
-          //this.delete(item);
-        },
+      rejectButtonStyleClass: 'p-button-secondary',
+      acceptButtonStyleClass: 'p-button-danger',
+      accept: () => {
+        this.estadoUserStore._cambiarEstadoUsuario(usuario.id, EstadoUsuarioEnum.BLOQUEADO_POR_ADMIN, ()=>{ this.getUsuarios()});
+
       },
-    ];
+      reject: () => {
+        // Lógica si dice que NO
+      }
+    });
+  }
+
+  confirmationHabilitarUsuario(usuario: UsuarioSmall) {
+    this.confirmationService.confirm({
+      key: 'positionDialog',
+      header: 'Habilitar usuario',
+      message: '¿Estás seguro de habilitar al usuario?',
+      icon: 'pi pi-exclamation-triangle',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        text: true,
+      },
+      rejectButtonStyleClass: 'p-button-secondary',
+      acceptButtonStyleClass: '',
+      accept: () => {
+        this.estadoUserStore._cambiarEstadoUsuario(usuario.id, EstadoUsuarioEnum.HABILITADO, ()=>{ this.getUsuarios()});
+      },
+      reject: () => {
+        // Lógica si dice que NO
+      }
+    });
   }
 
 }

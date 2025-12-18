@@ -26,11 +26,19 @@ export class LayoutComponent {
   // Drawer para mobile
   readonly drawerOpen = signal(false);
 
-  openDrawer() {
-    this.drawerOpen.set(true);
+  openDrawer($event:any) {
+
+    this.drawerOpen.set($event);
+     console.log('abrir drawer');
+    $event.stopPropagation();
+
   }
   closeDrawer() {
     this.drawerOpen.set(false);
+  }
+  onCloseDrawer(value:boolean){
+    this.drawerOpen.set(value);
+
   }
 
   //-------------------------
@@ -51,6 +59,7 @@ export class LayoutComponent {
     // ... tu lógica de suscripción a eventos
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(() => {
       this.updateHeaderInfo();
+      this.closeDrawer();
     });
 
     this.updateHeaderInfo();

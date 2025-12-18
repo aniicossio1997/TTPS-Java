@@ -7,7 +7,7 @@
           <div class="lg:w-[70%] w-full  p-4 rounded">
 
           <article class="max-w-10xl mx-auto">
-            <app-medallas-section [medallas]="perfilStore.perfilDeUsuario()?.medallas || []"/>
+            <app-medallas-section [medallas]="perfilStore.perfilDeUsuario()?.medallas || []" />
 
             <article class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 mb-4 mt-4">
               @if (canAgregarPublicaciones()) {
@@ -24,8 +24,22 @@
 
             <p-tabs lazy [value]="activeTab()" (valueChange)="onTabChange($event)" scrollable class="rounded-3xl ">
                 <p-tablist>
-                  <p-tab value="0">Mis publicaciones</p-tab>
-                  <p-tab value="1">Mis avistamientos</p-tab>
+                  <p-tab value="0">
+                    <div class="flex flex-wrap">
+                    @if (userIdNumber()== this.authStore.usuario()?.id) {
+                      Mis publicaciones
+                    }@else {
+                      Publicaciones del usuario
+                    }
+                    </div>
+                  </p-tab>
+                  <p-tab value="1">
+                    @if (userIdNumber()== this.authStore.usuario()?.id) {
+                      Mis avistamientos
+                    }@else {
+                      Avistamientos del usuario
+                    }
+                  </p-tab>
                 </p-tablist>
                 <p-tabpanels>
                   <p-tabpanel value="0">
@@ -51,21 +65,48 @@
           <div class="lg:w-[30%] w-full  p-4 rounded xl:sticky xl:top-0 xl:h-screen">
             <article class="bg-white rounded-3xl pt-2 px-4 shadow-sm border border-slate-100  mb-4 w-full">
                 @if (perfilStore.isSuccess()) {
-                    <div class="flex gap-2 flex-wrap relative">
-                              <!-- Ejemplo botones que abren el modal -->
+                    <div class="flex gap-1 flex-wrap relative pl-2">
+                      <!-- Ejemplo botones que abren el modal -->
                       <!-- <button pButton label="Editar perfil" icon="pi pi-pencil" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PERDIL)"></button>
                       <button pButton label="Contraseña" icon="pi pi-key" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PASSWORD)"></button>
-                      <button pButton label="Baja voluntaria" icon="pi pi-trash" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PASSWORD)"></button> -->
+                      <button pButton label="Baja voluntaria" icon="pi pi-trash" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PASSWORD)"></button>
+                      -->
 
-                      @if (canEditarPerfil()) {
-                          <p-menu #menu [model]="items" [popup]="true" [appendTo]="'body'"  styleClass="w-full md:w-60" />
-                          <p-button class="text-sm" iconPos="right"  (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" [label]="'Menu'"/>
-                      }
+                      @if (canViewActions()) {
+                          <!-- <p-menu #menu [model]="items" [popup]="true" [appendTo]="'body'"  styleClass="w-full md:w-60" />
+                          <p-button class="text-sm" iconPos="right" variant="outlined"  (click)="menu.toggle($event)" icon="pi pi-ellipsis-v" [label]="''"/>
+                           -->
+                      <button pButton [severity]="'secondary'" label="Perfil" icon="pi pi-pencil" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PERDIL)"></button>
+                      <button pButton [severity]="'secondary'" label="Contraseña" icon="pi pi-key" size="small" (click)="openModal(opcionesDeEdicionENUM.EDITAR_PASSWORD)"></button>
 
+
+                    }
+                    @if (this.perfilStore.perfilDeUsuario()?.estado == EstadoUsuarioEnum.HABILITADO  && soyYoQuienVeMiPerfil()) {
+                      <button pButton [severity]="'secondary'" label="Baja"  icon="pi pi-trash" size="small" (click)="onConfirmationEliminarUsuario()"></button>
+
+                    }
+
+
+                    @if (!tengoElPerfilHabilitado()&& soyYoQuienVeMiPerfil()) {
+                      <div class="mt-2 p-2 bg-red-50 border border-red-200 rounded-lg">
+                        <p class="text-red-700 text-sm ">
+                          Se deshabilitado tu perfil.
+                          Al cerrar sesión no podrás volver a ingresar hasta que tu perfil sea habilitado nuevamente.
+                        </p>
+                      </div>
+                    }
 
                     </div>
 
                     <app-perfil-card [usuario]="this.perfilStore.perfilDeUsuario()!" [idUsuario]="userIdNumber()"></app-perfil-card>
+
+                   @if (authStore.isAdmin()) {
+                      <div class="pb-4">
+                        <p-tag [value]="perfilStore.getLabelEstadoUsuario()| uppercase" [severity]="perfilStore.getColorEstado()" />
+                      </div>
+                    }
+
+
                 }
 
                 @if (perfilStore.isLoading()) {

@@ -18,11 +18,10 @@ public class UsuarioSmallDTO {
     private Integer puntos;
     private FotoLinkDTO foto;
     private EstadoUsuarioEnum estado;
-    private UbicacionDTO ubicacion;
 
     public static UsuarioSmallDTO fromEntity(Usuario entity) {
         UsuarioSmallDTO dto = new UsuarioSmallDTO();
-        UbicacionDTO  ubicacionDTO = UbicacionDTO.fromEntity(entity.getUbicacion());
+        //UbicacionDTO  ubicacionDTO = UbicacionDTO.fromEntity(entity.getUbicacion());
 
         dto.setId(entity.getId());
         dto.setNombre(entity.getNombre());
@@ -32,7 +31,7 @@ public class UsuarioSmallDTO {
         dto.setTelefono(entity.getTelefono());
         dto.setPuntos(entity.getPuntos());
         dto.setEstado(entity.getEstado());
-        dto.setUbicacion(ubicacionDTO);
+        //dto.setUbicacion(ubicacionDTO);
 
         if (entity.getFotoPerfil() != null) {
             dto.setFoto(FotoLinkDTO.fromEntity(entity.getFotoPerfil()));

@@ -10,7 +10,7 @@
     <h2 class="register-card__title">Iniciar sesión</h2>
 
     @if (isError()) {
-      <p-message severity="error" icon="pi pi-times-circle" styleClass="mb-10">Error en el Correo o Contraseña</p-message>
+      <p-message severity="error" icon="pi pi-times-circle" styleClass="mb-10">{{errorMessage}}</p-message>
     }
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="register-form" autocomplete="off">

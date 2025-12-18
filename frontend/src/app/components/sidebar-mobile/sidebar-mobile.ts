@@ -20,9 +20,13 @@ export class SidebarMobile {
   private destroyRef = inject(DestroyRef);
 
   readonly authStore = inject(AuthStoreService);
+
   drawerOpen = input.required<boolean>()
 
   closeDrawer =  output<void>();
+  onCloseDrawer =  output<boolean>();
+
+  drawerOpenChange = output<boolean>();
 
   usuario= computed(()=> this.authStore.usuario())
   isAdmin= computed(()=> this.authStore.usuario()?.rol==EnumRolUsuario.ADMINISTRADOR)
@@ -33,5 +37,12 @@ export class SidebarMobile {
   salir(){
 
     this.authStore.logout();
+    this.closeDrawer.emit(); // También cerrar al salir
+  }
+
+  handleVisibleChange(isVisible:boolean){
+    if (!isVisible) {
+      this.closeDrawer.emit();
+    }
   }
 }

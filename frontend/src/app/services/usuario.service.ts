@@ -7,6 +7,8 @@ import { UsuarioDetalleDTO } from '../interfaces/UsuarioDetalleDTO.interface';
 import { RestablecerPasswordRequest } from '../interfaces/restablecerPasswordRequest.interface';
 import { ApiResponse } from '../interfaces/local/ApiResponse.interface';
 import { UsuarioSmall } from '../interfaces/usuario.interface.';
+import { pathEstadoBajaUsuario } from '../interfaces/pathEstadoBajaUsuario';
+import { EstadoUsuarioEnum } from '../interfaces/local/estadoUsuarioEnum';
 
 
 @Injectable({
@@ -53,5 +55,13 @@ export class UsuarioService {
 
   getUsuarios(): Observable<UsuarioSmall[]> {
     return this.http.get<UsuarioSmall[]>(`${this.apiUrl}`);
+  }
+
+  pathEstadoUsuario(userId: number, nuevoEstado: EstadoUsuarioEnum): Observable<ApiResponse> {
+    // El cuerpo que espera tu DTO de Java
+   const url = `${this.apiUrl}/${userId}/estado`;
+    const body = { estado: nuevoEstado };
+
+    return this.http.patch<any>(url, body);
   }
 }

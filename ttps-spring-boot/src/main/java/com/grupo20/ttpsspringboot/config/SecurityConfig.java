@@ -71,7 +71,7 @@ public class SecurityConfig {
         config.setAllowedOriginPatterns(List.of("http://localhost:*"));
 
         // Permitir todos los métodos necesarios
-        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS"));
+        config.setAllowedMethods(List.of("GET","POST","PUT","DELETE","OPTIONS", "PATCH"));
 
         // Permitir todos los headers (incluidos usuario, password, etc.)
         config.setAllowedHeaders(List.of("*"));

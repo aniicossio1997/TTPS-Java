@@ -31,8 +31,8 @@
         </div>
         <p-divider style="margin: 5px 0px" />
 
-        <div class="flex align-items-center gap-3">
-          <app-user-avatar [usuario]="usuario"  size="large"/>
+        <div class="flex align-items-center gap-3 " >
+          <app-user-avatar [usuario]="usuario"  size="large" class="cursor-pointer" [routerLink]="['usuario', usuario.id]" />
           <div class="overflow-hidden">
             <div class="font-semibold text-lg text-800 text-ellipsis">
               {{ usuario.nombre }} {{ usuario.apellido }}

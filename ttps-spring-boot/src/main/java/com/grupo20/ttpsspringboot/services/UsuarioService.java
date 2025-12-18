@@ -1,5 +1,7 @@
 package com.grupo20.ttpsspringboot.services;
 
+import com.grupo20.ttpsspringboot.domain.enums.EstadoUsuarioEnum;
+import com.grupo20.ttpsspringboot.domain.enums.RolUsuarioEnum;
 import com.grupo20.ttpsspringboot.domain.models.Foto; // Importar Foto
 import com.grupo20.ttpsspringboot.domain.models.Medalla;
 import com.grupo20.ttpsspringboot.domain.models.Ubicacion;
@@ -289,6 +291,23 @@ public class UsuarioService implements IUsuarioService {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
+        //no permitir deshabilitar al último admin
+        if (
+                usuario.getRol() == RolUsuarioEnum.ADMINISTRADOR &&
+                        usuario.getEstado() == EstadoUsuarioEnum.HABILITADO &&
+                        estadoRequestDTO.getEstado() != EstadoUsuarioEnum.HABILITADO
+        ) {
+            long adminsHabilitados = usuarioRepository.countByRolAndEstado(
+                    RolUsuarioEnum.ADMINISTRADOR,
+                    EstadoUsuarioEnum.HABILITADO
+            );
+
+            if (adminsHabilitados <= 1) {
+                throw new BadRequestException(
+                        "No se puede dar de baja al último administrador del sistema"
+                );
+            }
+        }
         // 2. Modificas el campo en el objeto Java
         usuario.setEstado(estadoRequestDTO.getEstado());
 

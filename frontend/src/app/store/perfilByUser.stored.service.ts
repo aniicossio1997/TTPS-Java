@@ -6,6 +6,7 @@ import { ToastrService } from 'ngx-toastr';
 import { UsuarioService } from '../services/usuario.service';
 import { UsuarioDetalleDTO } from '../interfaces/UsuarioDetalleDTO.interface';
 import { Subscription } from 'rxjs';
+import { EstadoUsuarioEnum } from '../interfaces/local/estadoUsuarioEnum';
 
 @Injectable()
 export class PerfilByUserStoreService implements OnDestroy {
@@ -19,6 +20,39 @@ export class PerfilByUserStoreService implements OnDestroy {
   readonly isError = computed(() => this._status() === ApiStatus.ERROR);
 
   private subs = new Subscription();
+
+  getColorEstado = computed <'warn' | 'success' | 'secondary' | 'info' | 'danger' | 'contrast'
+      >(() => {
+
+            const estado = this.perfilDeUsuario()?.estado;
+            switch (estado) {
+              case EstadoUsuarioEnum.BAJA_VOLUNTARIA:
+                return 'danger';
+              case EstadoUsuarioEnum.BLOQUEADO_POR_ADMIN:
+                return 'danger';
+              case EstadoUsuarioEnum.HABILITADO:
+                return 'success'
+              default:
+                return 'secondary';
+            }
+      })
+
+      getLabelEstadoUsuario = computed <'Baja voluntaria' | 'Bloqueado' | 'Habilitado' | 'Desconocido'
+      >(() => {
+
+            const estado = this.perfilDeUsuario()?.estado;
+          switch (estado) {
+            case EstadoUsuarioEnum.BAJA_VOLUNTARIA:
+              return 'Baja voluntaria';
+            case EstadoUsuarioEnum.BLOQUEADO_POR_ADMIN:
+              return 'Bloqueado';
+            default:
+              return 'Habilitado';
+          }
+      })
+
+
+
 
   readonly servicePerfil = inject(UsuarioService);
 
@@ -42,6 +76,7 @@ export class PerfilByUserStoreService implements OnDestroy {
       })
     );
   }
+
 
   ngOnDestroy(): void {
     this.subs?.unsubscribe();
