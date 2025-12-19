@@ -1,1 +1,2190 @@
-{"openapi":"3.1.0","info":{"title":"API de Donde Estás","description":"Documentación de la API REST del sistema de trazabilidad","contact":{"name":"Grupo 20","email":"grupo20@example.com"},"version":"1.0.0"},"servers":[{"url":"http://localhost:8081","description":"Generated server url"}],"security":[{"bearerAuth":[]}],"paths":{"/api/usuarios/{id}":{"get":{"tags":["Usuarios"],"operationId":"getUsuarioById","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UsuarioSmallDTO"}}}}}},"put":{"tags":["Usuarios"],"operationId":"updateUsuario","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UsuarioUpdateDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UsuarioSmallDTO"}}}}}}},"/api/ubicaciones/{id}":{"get":{"tags":["Ubicaciones"],"operationId":"get","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/UbicacionDTO"}}}}}},"put":{"tags":["Ubicaciones"],"operationId":"update","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UbicacionUpdateDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"object"}}}}}}},"/api/publicaciones/{id}":{"get":{"tags":["Publicaciones"],"operationId":"get_1","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PublicacionDTO"}}}}}},"put":{"tags":["Publicaciones"],"operationId":"update_1","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/PublicacionUpdateDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PublicacionDTO"}}}}}},"delete":{"tags":["Publicaciones"],"operationId":"delete","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PublicacionDTO"}}}}}}},"/api/publicaciones":{"get":{"tags":["Publicaciones"],"operationId":"getFiltered","parameters":[{"name":"filter","in":"query","required":true,"schema":{"$ref":"#/components/schemas/PublicacionFilterDTO"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PaginateBaseDTOPublicacionDTO"}}}}}},"post":{"tags":["Publicaciones"],"operationId":"create","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/PublicacionCreateDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PublicacionDTO"}}}}}}},"/api/avistamientos":{"get":{"tags":["Avistamientos"],"operationId":"getFiltered_1","parameters":[{"name":"filter","in":"query","required":true,"schema":{"$ref":"#/components/schemas/AvistamientoFilterDTO"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/AvistamientoDTO"}}}}}}},"post":{"tags":["Avistamientos"],"operationId":"create_1","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/AvistamientoCreateDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/AvistamientoDTO"}}}}}}},"/api/auth/register":{"post":{"tags":["Auth"],"operationId":"createUsuario","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/UsuarioCreateDTO"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/AuthSessionDTO"}}}}}}},"/api/auth/login":{"post":{"tags":["Auth"],"operationId":"login","parameters":[{"name":"usuario","in":"header","required":true,"schema":{"type":"string"}},{"name":"password","in":"header","required":true,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/AuthSessionDTO"}}}}}}},"/api/usuarios":{"get":{"tags":["Usuarios"],"operationId":"getAllUsuarios","responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/UsuarioSmallDTO"}}}}}}}},"/api/ubicaciones/buscar":{"get":{"tags":["Ubicaciones"],"operationId":"getFiltered_2","parameters":[{"name":"idExterno","in":"query","required":false,"schema":{"type":"string"}},{"name":"provincia","in":"query","required":false,"schema":{"type":"string"}},{"name":"ciudad","in":"query","required":false,"schema":{"type":"string"}},{"name":"barrio","in":"query","required":false,"schema":{"type":"string"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/UbicacionDTO"}}}}}}}},"/api/avistamientos/{id}":{"get":{"tags":["Avistamientos"],"operationId":"get_2","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/AvistamientoDTO"}}}}}}}},"components":{"schemas":{"UsuarioUpdateDTO":{"type":"object","properties":{"nombre":{"type":"string","maxLength":100,"minLength":0},"apellido":{"type":"string","maxLength":100,"minLength":0},"email":{"type":"string","format":"email"},"nuevaUbicacionId":{"type":"integer","format":"int64"}}},"UsuarioSmallDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"nombre":{"type":"string"},"apellido":{"type":"string"},"email":{"type":"string"},"rol":{"type":"string","enum":["ADMINISTRADOR","USUARIO_COMUN"]}}},"UbicacionUpdateDTO":{"type":"object","properties":{"idExterno":{"type":"string"},"provincia":{"type":"string"},"ciudad":{"type":"string"},"barrio":{"type":"string"},"latitud":{"type":"number","format":"double"},"longitud":{"type":"number","format":"double"}}},"PublicacionUpdateDTO":{"type":"object","properties":{"nombre":{"type":"string"},"descripcion":{"type":"string"},"color":{"type":"string"},"especie":{"type":"string"},"raza":{"type":"string"},"tamanio":{"type":"string"},"agradecimientos":{"type":"array","items":{"type":"integer","format":"int64"}},"ubicacion":{"$ref":"#/components/schemas/UbicacionUpdateDTO"},"estado":{"type":"string","enum":["PERDIDO_PROPIO","PERDIDO_AJENO","RECUPERADO","ADOPTADO"]}}},"EstadoPublicacionDTO":{"type":"object","properties":{"estado":{"type":"string","enum":["PERDIDO_PROPIO","PERDIDO_AJENO","RECUPERADO","ADOPTADO"]},"fecha":{"type":"string","format":"date-time"}}},"PublicacionDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"nombre":{"type":"string"},"descripcion":{"type":"string"},"fecha":{"type":"string","format":"date-time"},"color":{"type":"string"},"especie":{"type":"string"},"raza":{"type":"string"},"tamanio":{"type":"string"},"ubicacion":{"$ref":"#/components/schemas/UbicacionDTO"},"usuarioId":{"type":"integer","format":"int64"},"estado":{"$ref":"#/components/schemas/EstadoPublicacionDTO"},"fotos":{"type":"array","items":{"type":"string"}}}},"UbicacionDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"idExterno":{"type":"string"},"provincia":{"type":"string"},"ciudad":{"type":"string"},"barrio":{"type":"string"},"latitud":{"type":"number","format":"double"},"longitud":{"type":"number","format":"double"}}},"PublicacionCreateDTO":{"type":"object","properties":{"nombre":{"type":"string","minLength":1},"descripcion":{"type":"string"},"color":{"type":"string","minLength":1},"especie":{"type":"string","minLength":1},"raza":{"type":"string","minLength":1},"tamanio":{"type":"string","minLength":1},"ubicacion":{"$ref":"#/components/schemas/UbicacionCreateDTO"},"estado":{"type":"string","enum":["PERDIDO_PROPIO","PERDIDO_AJENO","RECUPERADO","ADOPTADO"]}},"required":["color","especie","estado","nombre","raza","tamanio","ubicacion"]},"UbicacionCreateDTO":{"type":"object","properties":{"idExterno":{"type":"string"},"provincia":{"type":"string","minLength":1},"ciudad":{"type":"string","minLength":1},"barrio":{"type":"string","minLength":1},"latitud":{"type":"number","format":"double"},"longitud":{"type":"number","format":"double"}},"required":["barrio","ciudad","latitud","longitud","provincia"]},"AvistamientoCreateDTO":{"type":"object","properties":{"descripcion":{"type":"string","minLength":1},"ubicacion":{"$ref":"#/components/schemas/UbicacionCreateDTO"},"publicacionId":{"type":"integer","format":"int64"}},"required":["descripcion","publicacionId","ubicacion"]},"AvistamientoDTO":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"descripcion":{"type":"string"},"agradecimiento":{"type":"boolean"},"fecha":{"type":"string","format":"date-time"},"ubicacion":{"$ref":"#/components/schemas/UbicacionDTO"},"publicacionId":{"type":"integer","format":"int64"},"usuario":{"$ref":"#/components/schemas/UsuarioSmallDTO"}}},"UsuarioCreateDTO":{"type":"object","properties":{"nombre":{"type":"string","minLength":1},"apellido":{"type":"string","minLength":1},"email":{"type":"string","format":"email","minLength":1},"password":{"type":"string","maxLength":2147483647,"minLength":6},"rol":{"type":"string","enum":["ADMINISTRADOR","USUARIO_COMUN"]},"ubicacion":{"$ref":"#/components/schemas/UbicacionCreateDTO"}},"required":["apellido","email","nombre","password","rol","ubicacion"]},"AuthSessionDTO":{"type":"object","properties":{"token":{"type":"string"},"usuario":{"$ref":"#/components/schemas/UsuarioSmallDTO"}}},"PublicacionFilterDTO":{"type":"object","properties":{"page":{"type":"integer","format":"int32"},"size":{"type":"integer","format":"int32"},"sortBy":{"type":"string"},"sortDir":{"type":"string"},"nombre":{"type":"string"},"especie":{"type":"string"},"raza":{"type":"string"},"tamanio":{"type":"string"},"color":{"type":"string"},"fechaDesde":{"type":"string","format":"date-time"},"fechaHasta":{"type":"string","format":"date-time"},"usuarioId":{"type":"integer","format":"int64"}}},"PaginateBaseDTOPublicacionDTO":{"type":"object","properties":{"page":{"type":"integer","format":"int32"},"size":{"type":"integer","format":"int32"},"totalElements":{"type":"integer","format":"int64"},"elements":{"type":"array","items":{"$ref":"#/components/schemas/PublicacionDTO"}}}},"AvistamientoFilterDTO":{"type":"object","properties":{"publicacionId":{"type":"integer","format":"int64"},"usuarioId":{"type":"integer","format":"int64"}}}},"securitySchemes":{"bearerAuth":{"type":"http","name":"bearerAuth","scheme":"bearer","bearerFormat":"JWT"}}}}
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "API de Donde Estás",
+        "description": "Documentación de la API REST del sistema de trazabilidad",
+        "contact": {
+            "name": "Grupo 20",
+            "email": "grupo20@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8081",
+            "description": "Generated server url"
+        }
+    ],
+    "security": [
+        {
+            "bearerAuth": []
+        }
+    ],
+    "tags": [
+        {
+            "name": "Georef Proxy",
+            "description": "Endpoints para consultar la API del gobierno"
+        }
+    ],
+    "paths": {
+        "/api/usuarios/{id}": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "operationId": "getUsuarioById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsuarioDetallelDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Edita un usuario existente",
+                "operationId": "updateUsuario",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "$ref": "#/components/schemas/UsuarioUpdateDTO"
+                                    },
+                                    "file": {
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "required": [
+                                    "data"
+                                ]
+                            },
+                            "encoding": {
+                                "data": {
+                                    "contentType": "application/json"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsuarioSmallDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/usuarios/{id}/password": {
+            "put": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Cambiar la contraseña de un usuario",
+                "operationId": "cambiarPassword",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RestablecerPasswordRequestDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ubicaciones/{id}": {
+            "get": {
+                "tags": [
+                    "Ubicaciones"
+                ],
+                "operationId": "get",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UbicacionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Ubicaciones"
+                ],
+                "operationId": "update",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UbicacionUpdateDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/publicaciones/{id}": {
+            "get": {
+                "tags": [
+                    "Publicaciones"
+                ],
+                "operationId": "get_1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PublicacionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Publicaciones"
+                ],
+                "operationId": "update_1",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "$ref": "#/components/schemas/PublicacionUpdateDTO"
+                                    },
+                                    "files": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "data"
+                                ]
+                            },
+                            "encoding": {
+                                "data": {
+                                    "contentType": "application/json"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PublicacionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Publicaciones"
+                ],
+                "operationId": "delete",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PublicacionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/avistamientos/{id}": {
+            "get": {
+                "tags": [
+                    "Avistamientos"
+                ],
+                "operationId": "get_2",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AvistamientoDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Avistamientos"
+                ],
+                "operationId": "updateAvistamiento",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "$ref": "#/components/schemas/AvistamientoUpdateDTO"
+                                    },
+                                    "files": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "data"
+                                ]
+                            },
+                            "encoding": {
+                                "data": {
+                                    "contentType": "application/json"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AvistamientoDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/publicaciones": {
+            "get": {
+                "tags": [
+                    "Publicaciones"
+                ],
+                "operationId": "getFiltered",
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/PublicacionFilterDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginateBaseDTOPublicacionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Publicaciones"
+                ],
+                "operationId": "create",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "$ref": "#/components/schemas/PublicacionCreateDTO"
+                                    },
+                                    "files": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "data"
+                                ]
+                            },
+                            "encoding": {
+                                "data": {
+                                    "contentType": "application/json"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PublicacionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/avistamientos": {
+            "get": {
+                "tags": [
+                    "Avistamientos"
+                ],
+                "operationId": "getFiltered_1",
+                "parameters": [
+                    {
+                        "name": "filter",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/AvistamientoFilterDTO"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/AvistamientoDTO"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Avistamientos"
+                ],
+                "operationId": "create_1",
+                "requestBody": {
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "data": {
+                                        "$ref": "#/components/schemas/AvistamientoCreateDTO"
+                                    },
+                                    "files": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "string",
+                                            "format": "binary"
+                                        }
+                                    }
+                                },
+                                "required": [
+                                    "data"
+                                ]
+                            },
+                            "encoding": {
+                                "data": {
+                                    "contentType": "application/json"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AvistamientoDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/register": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "operationId": "createUsuario",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UsuarioCreateDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthSessionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/auth/login": {
+            "post": {
+                "tags": [
+                    "Auth"
+                ],
+                "operationId": "login",
+                "parameters": [
+                    {
+                        "name": "usuario",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "password",
+                        "in": "header",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/AuthSessionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/usuarios/{id}/estado": {
+            "patch": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "summary": "Modifica el estado de un usuario",
+                "operationId": "cambiarEstado",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UsuarioCambioEstadoRequestDTO"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsuarioSmallDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/usuarios": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "operationId": "getAllUsuarios",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UsuarioSmallDTO"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/usuarios/{id}/foto": {
+            "get": {
+                "tags": [
+                    "Usuarios"
+                ],
+                "operationId": "getFotoUsuario",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/FotoResponseDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/ubicaciones/buscar": {
+            "get": {
+                "tags": [
+                    "Ubicaciones"
+                ],
+                "operationId": "getFiltered_2",
+                "parameters": [
+                    {
+                        "name": "idExternoProvincia",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "provincia",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "idExternoMunicipio",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "municipio",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "idExternoDepartamento",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "departamento",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UbicacionDTO"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/public/ranking": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "operationId": "get_3",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/UsuarioSmallDTO"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/public/publicaciones": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "operationId": "getPublicaciones",
+                "parameters": [
+                    {
+                        "name": "nombre",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "especie",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "raza",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "tamanio",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "color",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "fechaDesde",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "fechaHasta",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "format": "date-time"
+                        }
+                    },
+                    {
+                        "name": "usuarioId",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    {
+                        "name": "includeEstados",
+                        "in": "query",
+                        "description": "Estados de la publicación (separados por coma)",
+                        "required": false,
+                        "style": "form",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "PERDIDO_PROPIO",
+                                    "PERDIDO_AJENO",
+                                    "RECUPERADO",
+                                    "ADOPTADO"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "excluidosEstados",
+                        "in": "query",
+                        "description": "Estados de la publicación (separados por coma)",
+                        "required": false,
+                        "style": "form",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "enum": [
+                                    "PERDIDO_PROPIO",
+                                    "PERDIDO_AJENO",
+                                    "RECUPERADO",
+                                    "ADOPTADO"
+                                ]
+                            }
+                        }
+                    },
+                    {
+                        "name": "departamento",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "provincia",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "idExternoDepartamento",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "size",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        }
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "sortDir",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/PaginateBaseDTOPublicacionDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/public/foto/{fotoId}/raw": {
+            "get": {
+                "tags": [
+                    "Public"
+                ],
+                "summary": "Obtiene un LINK una foto dado el ID de la foto",
+                "operationId": "getFotoRaw",
+                "parameters": [
+                    {
+                        "name": "fotoId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "byte"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/me": {
+            "get": {
+                "tags": [
+                    "me"
+                ],
+                "operationId": "me",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/UsuarioSmallDTO"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/georef/ubicacion": {
+            "get": {
+                "tags": [
+                    "Georef Proxy"
+                ],
+                "summary": "Obtener ubicación (Provincia/Muni/Depto) desde coordenadas",
+                "operationId": "getUbicacion",
+                "parameters": [
+                    {
+                        "name": "latitud",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "longitud",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GeorefUbicacionResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/georef/provincias": {
+            "get": {
+                "tags": [
+                    "Georef Proxy"
+                ],
+                "summary": "Obtener listado de provincias (Proxy)",
+                "operationId": "getProvincias",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GeorefProvinciasResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/georef/municipios/{idProvincia}": {
+            "get": {
+                "tags": [
+                    "Georef Proxy"
+                ],
+                "summary": "Obtener municipios de una provincia",
+                "operationId": "getMunicipios",
+                "parameters": [
+                    {
+                        "name": "idProvincia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GeorefMunicipiosResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/georef/departamentos/{idProvincia}": {
+            "get": {
+                "tags": [
+                    "Georef Proxy"
+                ],
+                "summary": "Obtener departamentos de una provincia",
+                "operationId": "getDepartamentos",
+                "parameters": [
+                    {
+                        "name": "idProvincia",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/GeorefDepartamentosResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/fotos/{fotoId}/raw": {
+            "get": {
+                "tags": [
+                    "Fotos"
+                ],
+                "summary": "Obtiene un LINK una foto dado el ID de la foto",
+                "operationId": "getFotoRaw_1",
+                "parameters": [
+                    {
+                        "name": "fotoId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "byte"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "UbicacionUpdateDTO": {
+                "type": "object",
+                "properties": {
+                    "latitud": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "longitud": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "provincia": {
+                        "type": "string"
+                    },
+                    "idExternoProvincia": {
+                        "type": "string"
+                    },
+                    "municipio": {
+                        "type": "string"
+                    },
+                    "idExternoMunicipio": {
+                        "type": "string"
+                    },
+                    "departamento": {
+                        "type": "string"
+                    },
+                    "idExternoDepartamento": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "latitud",
+                    "longitud"
+                ]
+            },
+            "UsuarioUpdateDTO": {
+                "type": "object",
+                "description": "Datos del usuario",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "apellido": {
+                        "type": "string",
+                        "maxLength": 100,
+                        "minLength": 0
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email"
+                    },
+                    "telefono": {
+                        "type": "string"
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionUpdateDTO"
+                    }
+                },
+                "required": [
+                    "email"
+                ]
+            },
+            "FotoLinkDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "contentType": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "UsuarioSmallDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "apellido": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "rol": {
+                        "type": "string",
+                        "enum": [
+                            "ADMINISTRADOR",
+                            "USUARIO_COMUN"
+                        ]
+                    },
+                    "telefono": {
+                        "type": "string"
+                    },
+                    "puntos": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "foto": {
+                        "$ref": "#/components/schemas/FotoLinkDTO"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "HABILITADO",
+                            "BAJA_VOLUNTARIA",
+                            "BLOQUEADO_POR_ADMIN"
+                        ]
+                    }
+                }
+            },
+            "RestablecerPasswordRequestDTO": {
+                "type": "object",
+                "properties": {
+                    "passwordOld": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "nuevoPassword": {
+                        "type": "string",
+                        "maxLength": 2147483647,
+                        "minLength": 6
+                    },
+                    "confirmarPassword": {
+                        "type": "string",
+                        "minLength": 1
+                    }
+                },
+                "required": [
+                    "confirmarPassword",
+                    "nuevoPassword",
+                    "passwordOld"
+                ]
+            },
+            "ApiResponseDTO": {
+                "type": "object",
+                "properties": {
+                    "ok": {
+                        "type": "boolean"
+                    },
+                    "statusCode": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "status": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PublicacionUpdateDTO": {
+                "type": "object",
+                "description": "Datos de la publicación (JSON)",
+                "properties": {
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "descripcion": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "especie": {
+                        "type": "string"
+                    },
+                    "tamanio": {
+                        "type": "string"
+                    },
+                    "fecha": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "agradecimientos": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "format": "int64"
+                        }
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionUpdateDTO"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "PERDIDO_PROPIO",
+                            "PERDIDO_AJENO",
+                            "RECUPERADO",
+                            "ADOPTADO"
+                        ]
+                    }
+                }
+            },
+            "EstadoPublicacionDTO": {
+                "type": "object",
+                "properties": {
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "PERDIDO_PROPIO",
+                            "PERDIDO_AJENO",
+                            "RECUPERADO",
+                            "ADOPTADO"
+                        ]
+                    },
+                    "fecha": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "PublicacionDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "descripcion": {
+                        "type": "string"
+                    },
+                    "fecha": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "especie": {
+                        "type": "string"
+                    },
+                    "raza": {
+                        "type": "string"
+                    },
+                    "tamanio": {
+                        "type": "string"
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionDTO"
+                    },
+                    "usuarioId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "usuario": {
+                        "$ref": "#/components/schemas/UsuarioSmallDTO"
+                    },
+                    "estado": {
+                        "$ref": "#/components/schemas/EstadoPublicacionDTO"
+                    },
+                    "fotos": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FotoLinkDTO"
+                        }
+                    }
+                }
+            },
+            "UbicacionDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "latitud": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "longitud": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "provincia": {
+                        "type": "string"
+                    },
+                    "idExternoProvincia": {
+                        "type": "string"
+                    },
+                    "municipio": {
+                        "type": "string"
+                    },
+                    "idExternoMunicipio": {
+                        "type": "string"
+                    },
+                    "departamento": {
+                        "type": "string"
+                    },
+                    "idExternoDepartamento": {
+                        "type": "string"
+                    }
+                }
+            },
+            "AvistamientoUpdateDTO": {
+                "type": "object",
+                "description": "Datos de actualización del avistamiento (JSON)",
+                "properties": {
+                    "descripcion": {
+                        "type": "string"
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionUpdateDTO"
+                    },
+                    "agradecimiento": {
+                        "type": "boolean"
+                    },
+                    "fecha": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "AvistamientoDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "descripcion": {
+                        "type": "string"
+                    },
+                    "agradecimiento": {
+                        "type": "boolean"
+                    },
+                    "fecha": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionDTO"
+                    },
+                    "publicacionId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "usuario": {
+                        "$ref": "#/components/schemas/UsuarioSmallDTO"
+                    },
+                    "fotos": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/FotoLinkDTO"
+                        }
+                    }
+                }
+            },
+            "PublicacionCreateDTO": {
+                "type": "object",
+                "description": "Datos de la nueva publicación (JSON)",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "descripcion": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "especie": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "tamanio": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionCreateDTO"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "PERDIDO_PROPIO",
+                            "PERDIDO_AJENO",
+                            "RECUPERADO",
+                            "ADOPTADO"
+                        ]
+                    },
+                    "fecha": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                },
+                "required": [
+                    "color",
+                    "especie",
+                    "estado",
+                    "nombre",
+                    "tamanio",
+                    "ubicacion"
+                ]
+            },
+            "UbicacionCreateDTO": {
+                "type": "object",
+                "properties": {
+                    "latitud": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "longitud": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "provincia": {
+                        "type": "string"
+                    },
+                    "idExternoProvincia": {
+                        "type": "string"
+                    },
+                    "municipio": {
+                        "type": "string"
+                    },
+                    "idExternoMunicipio": {
+                        "type": "string"
+                    },
+                    "departamento": {
+                        "type": "string"
+                    },
+                    "idExternoDepartamento": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "latitud",
+                    "longitud"
+                ]
+            },
+            "AvistamientoCreateDTO": {
+                "type": "object",
+                "description": "Datos de la nueva publicación (JSON)",
+                "properties": {
+                    "descripcion": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionCreateDTO"
+                    },
+                    "publicacionId": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                },
+                "required": [
+                    "descripcion",
+                    "publicacionId",
+                    "ubicacion"
+                ]
+            },
+            "UsuarioCreateDTO": {
+                "type": "object",
+                "properties": {
+                    "nombre": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "apellido": {
+                        "type": "string",
+                        "minLength": 1
+                    },
+                    "email": {
+                        "type": "string",
+                        "format": "email",
+                        "minLength": 1
+                    },
+                    "password": {
+                        "type": "string",
+                        "maxLength": 2147483647,
+                        "minLength": 6
+                    },
+                    "rol": {
+                        "type": "string",
+                        "enum": [
+                            "ADMINISTRADOR",
+                            "USUARIO_COMUN"
+                        ]
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionCreateDTO"
+                    },
+                    "telefono": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "apellido",
+                    "email",
+                    "nombre",
+                    "password",
+                    "rol",
+                    "ubicacion"
+                ]
+            },
+            "AuthSessionDTO": {
+                "type": "object",
+                "properties": {
+                    "token": {
+                        "type": "string"
+                    },
+                    "usuario": {
+                        "$ref": "#/components/schemas/UsuarioSmallDTO"
+                    }
+                }
+            },
+            "UsuarioCambioEstadoRequestDTO": {
+                "type": "object",
+                "properties": {
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "HABILITADO",
+                            "BAJA_VOLUNTARIA",
+                            "BLOQUEADO_POR_ADMIN"
+                        ]
+                    }
+                }
+            },
+            "MedallaDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "tipo": {
+                        "type": "string",
+                        "enum": [
+                            "Rescatista Nivel 1",
+                            "Rescatista Nivel 2",
+                            "Rescatista Nivel 3",
+                            "Héroe del Barrio",
+                            "Ángel Guardián",
+                            "Nuevo Tutor"
+                        ]
+                    },
+                    "fechaAsignacion": {
+                        "type": "string",
+                        "format": "date-time"
+                    }
+                }
+            },
+            "UsuarioDetallelDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "apellido": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "rol": {
+                        "type": "string",
+                        "enum": [
+                            "ADMINISTRADOR",
+                            "USUARIO_COMUN"
+                        ]
+                    },
+                    "telefono": {
+                        "type": "string"
+                    },
+                    "medallas": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MedallaDTO"
+                        }
+                    },
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionDTO"
+                    },
+                    "fotoLink": {
+                        "$ref": "#/components/schemas/FotoLinkDTO"
+                    },
+                    "puntos": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "estado": {
+                        "type": "string",
+                        "enum": [
+                            "HABILITADO",
+                            "BAJA_VOLUNTARIA",
+                            "BLOQUEADO_POR_ADMIN"
+                        ]
+                    }
+                }
+            },
+            "FotoResponseDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "content": {
+                        "type": "string",
+                        "format": "byte"
+                    },
+                    "contentType": {
+                        "type": "string"
+                    },
+                    "url": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PublicacionFilterDTO": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "sortBy": {
+                        "type": "string"
+                    },
+                    "sortDir": {
+                        "type": "string"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "especie": {
+                        "type": "string"
+                    },
+                    "raza": {
+                        "type": "string"
+                    },
+                    "tamanio": {
+                        "type": "string"
+                    },
+                    "color": {
+                        "type": "string"
+                    },
+                    "fechaDesde": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "fechaHasta": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "usuarioId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "includeEstados": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "PERDIDO_PROPIO",
+                                "PERDIDO_AJENO",
+                                "RECUPERADO",
+                                "ADOPTADO"
+                            ]
+                        }
+                    },
+                    "excluidosEstados": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "PERDIDO_PROPIO",
+                                "PERDIDO_AJENO",
+                                "RECUPERADO",
+                                "ADOPTADO"
+                            ]
+                        }
+                    },
+                    "departamento": {
+                        "type": "string"
+                    },
+                    "provincia": {
+                        "type": "string"
+                    },
+                    "idExternoDepartamento": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PaginateBaseDTOPublicacionDTO": {
+                "type": "object",
+                "properties": {
+                    "page": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "totalElements": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "elements": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PublicacionDTO"
+                        }
+                    }
+                }
+            },
+            "GeorefUbicacionResponse": {
+                "type": "object",
+                "properties": {
+                    "ubicacion": {
+                        "$ref": "#/components/schemas/UbicacionDetalleDTO"
+                    }
+                }
+            },
+            "UbicacionDetalleDTO": {
+                "type": "object",
+                "properties": {
+                    "lat": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "lon": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "provincia_id": {
+                        "type": "string"
+                    },
+                    "provincia_nombre": {
+                        "type": "string"
+                    },
+                    "municipio_id": {
+                        "type": "string"
+                    },
+                    "municipio_nombre": {
+                        "type": "string"
+                    },
+                    "departamento_id": {
+                        "type": "string"
+                    },
+                    "departamento_nombre": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GeorefProvinciasResponse": {
+                "type": "object",
+                "properties": {
+                    "provincias": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/ProvinciaDTO"
+                        }
+                    },
+                    "cantidad": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "inicio": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "ProvinciaDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "centroide_lat": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "centroide_lon": {
+                        "type": "number",
+                        "format": "double"
+                    }
+                }
+            },
+            "GeorefMunicipiosResponse": {
+                "type": "object",
+                "properties": {
+                    "municipios": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MunicipioDTO"
+                        }
+                    },
+                    "cantidad": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "inicio": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "MunicipioDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "centroide_lat": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "centroide_lon": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "provincia_id": {
+                        "type": "string"
+                    },
+                    "provincia_nombre": {
+                        "type": "string"
+                    }
+                }
+            },
+            "DepartamentoDTO": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "nombre": {
+                        "type": "string"
+                    },
+                    "centroide_lat": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "centroide_lon": {
+                        "type": "number",
+                        "format": "double"
+                    },
+                    "provincia_id": {
+                        "type": "string"
+                    },
+                    "provincia_nombre": {
+                        "type": "string"
+                    }
+                }
+            },
+            "GeorefDepartamentosResponse": {
+                "type": "object",
+                "properties": {
+                    "departamentos": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/DepartamentoDTO"
+                        }
+                    },
+                    "cantidad": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "total": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "inicio": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "AvistamientoFilterDTO": {
+                "type": "object",
+                "properties": {
+                    "publicacionId": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "usuarioId": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "name": "bearerAuth",
+                "scheme": "bearer",
+                "bearerFormat": "JWT"
+            }
+        }
+    }
+}
