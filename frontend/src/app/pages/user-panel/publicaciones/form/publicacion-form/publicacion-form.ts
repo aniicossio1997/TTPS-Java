@@ -105,7 +105,7 @@ export class PublicacionFormComponent implements OnInit {
 
   publicacionForm;
   tipoPublicacionOpciones: SelectItem<TipoPublicacion>[];
-  especies: Especie[] = ['Perro', 'Gato', 'Otro'];
+  especies: Especie[] = ['Perro', 'Gato', 'Ave', 'Otro'];
   tamanos: { value: Tamanio; label: string }[] = [
     { value: 'PEQUENO', label: 'Pequeño' },
     { value: 'MEDIANO', label: 'Mediano' },

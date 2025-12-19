@@ -187,7 +187,11 @@ export class PublicacionDetailComponent implements OnInit {
   }
 
   public editarPublicacion(id: number): void {
-    this.router.navigate(['/app/publicaciones', 'editar', id]);
+    if(this.authStore.isAdmin()){
+      this.router.navigate(['/admin/publicaciones/editar', id]);
+    } else {
+      this.router.navigate(['/app/publicaciones/editar', id]);
+    }
   }
 
   public verUbicacion(ubicacion: any): void {

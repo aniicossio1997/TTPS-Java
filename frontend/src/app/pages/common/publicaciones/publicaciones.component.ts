@@ -175,4 +175,16 @@ export class PublicacionesComponent {
     }
     return '/public/login';
   }
+    get destinationMapaUrl(): string {
+    if (this.authStore.isAuthenticated() && this.authStore.isAdmin()) {
+      return '/admin/mapa';
+    }
+    if(this.authStore.isAuthenticated() && !this.authStore.isAdmin()){
+      return '/app/mapa';
+    }
+    return '/public/login';
+  }
+
+
+
 }

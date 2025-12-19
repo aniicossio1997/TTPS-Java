@@ -87,16 +87,9 @@
       <div class="flex flex-col w-full">
 
 
-
-
-
       <div class="info text-sm">
         @if (temp()) {
 
-                  @if (isValidUbicacion()) {
-        <p class="text-red-700 text-sm ">
-          La ubicación seleccionada no es válida. Por favor, selecciona una ubicación dentro de Argentina. </p>
-        }
           <div>
             <b>Latitud:</b> {{ temp()!.latitud }} &nbsp;
             <b>Longitud:</b> {{ temp()!.longitud }}
@@ -116,8 +109,8 @@
       <div class="flex justify-between w-full pt-2">
         <p-button [type]="'button'"   severity="secondary" label="Cancelar" (click)="cancel()"   />
         <button [type]="'button'" pButton label="Confirmar" (click)="confirmMap($event)"
-        [pTooltip]="temp()==null || isValidUbicacion() ? 'Debe seleccionar una ubicación valida (en Argentina)' : undefined!" tooltipPosition="top"
-        [disabled]="temp()==null || isValidUbicacion()"></button>
+        [disabled]="temp() == null"
+        ></button>
       </div>
       </div>
 

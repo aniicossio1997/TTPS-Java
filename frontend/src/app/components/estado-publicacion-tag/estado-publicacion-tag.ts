@@ -36,7 +36,7 @@ export class EstadoPublicacionTag {
       case EstadoPublicacionEnum.RECUPERADO:
         return { text: 'RECUPERADO', severity: 'success' };
       case EstadoPublicacionEnum.ADOPTADO:
-        return { text: 'ADOPTADO', severity: 'success' };
+        return { text: 'ADOPTADO', severity: 'contrast' };
       default:
         return { text: 'ESTADO DESCONOCIDO', severity: 'secondary' };
     }

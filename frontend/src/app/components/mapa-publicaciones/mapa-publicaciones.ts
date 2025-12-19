@@ -7,12 +7,14 @@ import {
   ViewChild,
   OnDestroy,
   effect,
+  inject,
 } from '@angular/core';
 import * as L from 'leaflet';
 import 'leaflet.markercluster';
 import { Publicacion } from '../../interfaces/publicacion.interface';
 import { Avistamiento } from '../../interfaces/avistamiento.interface';
 import { Ubicacion } from '../../interfaces/ubicacion.interface';
+import { AuthStoreService } from '../../store/auth.stored.service';
 
 type MarkerType = 'avistamiento' | 'publicacion';
 
@@ -52,6 +54,10 @@ export class MapaPublicaciones implements AfterViewInit, OnDestroy {
   publicaciones = input<Publicacion[]>([]);
   avistamientos = input<Avistamiento[]>([]);
   ubicacionInicial = input<Ubicacion | null>(null);
+
+  readonly authStore = inject(AuthStoreService);
+
+
 
   @ViewChild('mapContainer') mapContainer!: ElementRef<HTMLDivElement>;
 
@@ -201,6 +207,26 @@ export class MapaPublicaciones implements AfterViewInit, OnDestroy {
     });
   }
 
+  get urlDetallePublicacion(): string {
+    if (this.authStore.isAuthenticated() && this.authStore.isAdmin()) {
+      return '/admin/publicaciones/detalle/';
+    }
+    if(this.authStore.isAuthenticated() && !this.authStore.isAdmin()){
+      return '/app/publicaciones/detalle/';
+    }
+    return '/public/login';
+  }
+
+  get avistamiento(): string {
+    if (this.authStore.isAuthenticated() && this.authStore.isAdmin()) {
+      return '/admin/avistamientos/detalle/';
+    }
+    if(this.authStore.isAuthenticated() && !this.authStore.isAdmin()){
+      return '/app/avistamientos/detalle/';
+    }
+    return '/public/login';
+  }
+
   // 💡 buildPopupContent ahora recibe el tipo
   private buildPopupContent(
     item: Publicacion | Avistamiento,
@@ -211,8 +237,10 @@ export class MapaPublicaciones implements AfterViewInit, OnDestroy {
     const title = isPublicacion ? (item as Publicacion).nombre : 'Avistamiento';
     const description = item.descripcion.substring(0, 50) + '...';
     const detailUrl = isPublicacion
-      ? `/app/publicaciones/detalle/${item.id}`
-      : `/app/avistamientos/detalle/${item.id}`; // Asume una ruta de avistamiento
+      ? `${this.urlDetallePublicacion}${item.id}`
+      : `${this.avistamiento}${item.id}`; // Asume una ruta de avistamiento
+
+
 
     let imageUrl = '';
     const photos = (item as any).fotos;
