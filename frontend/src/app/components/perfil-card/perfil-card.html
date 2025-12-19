@@ -5,9 +5,15 @@
   <div class="flex flex-wrap gap-6 pt-2">
 
     <div class="w-auto ">
+      @if (hasFoto()) {
         <div class="h-32 w-32 rounded-full bg-slate-200 overflow-hidden border-2 border-white shadow-md">
                 <img [src]="hasFoto() ? usuario().fotoLink!.url! : '/fotos/sin_imagen.png'" alt="Avatar" class="h-full w-full object-cover"/>
         </div>
+      }@else {
+        <p-avatar [label]="inicialesUsuario()" size="xlarge" shape="circle"/>
+
+      }
+
     </div>
 
     <div class="w-auto ">
@@ -26,7 +32,7 @@
   </div>
     <div class="w-auto  ">
             <!-- Sección de Ubicación Agregada -->
-        <div class=" border-slate-200 md:space-y-2 xl:space-y-1">
+        <div class=" border-slate-200 md:space-y-2 xl:space-y-1 mb-2">
           <h4 class="text-md font-semibold text-slate-400 uppercase tracking-wider mb-2"> <i class="pi pi-map-marker"></i>  Ubicación</h4>
           <div class="flex flex-wrap  gap-8">
             <div class="flex flex-col">
@@ -43,6 +49,14 @@
             </div>
           </div>
         </div>
+
+        <app-simple-location-map
+          [ubicacion]="{ lat: this.usuario().ubicacion!.latitud!, lng: this.usuario()!.ubicacion!.longitud! }"
+          [textoLabel]="'Ubicación de ' + usuario().nombre "
+          mapHeight="320px"
+        />
+
+
     </div>
 
   </div>

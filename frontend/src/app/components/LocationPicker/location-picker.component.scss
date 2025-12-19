@@ -20,3 +20,43 @@
   align-items: center;
   justify-content: center;
 }
+
+
+:host ::ng-deep .green-dot-marker {
+  background: transparent; // evita el fondo blanco default
+  border: none;
+}
+
+.green-dot-marker .dot {
+  width: 12px;
+  height: 12px;
+  background-color: #10b981; // emerald-500
+  border-radius: 50%;
+  border: 2px solid white;
+  box-shadow: 0 0 6px rgba(16, 185, 129, 0.8);
+    cursor: pointer;
+}
+
+
+
+/* Flechita */
+.green-dot-marker .dot::before {
+  content: '';
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+
+  width: 6px;
+  height: 6px;
+  background-color: #111827;
+
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+/* Mostrar tooltip en hover */
+.green-dot-marker .dot:hover::after,
+.green-dot-marker .dot:hover::before {
+  opacity: 1;
+}

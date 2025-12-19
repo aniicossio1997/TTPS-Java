@@ -8,6 +8,8 @@ import {
   signal,
   ChangeDetectionStrategy,
   inject,
+  input,
+  computed,
 
 } from '@angular/core';
 import { CommonModule, LocationStrategy , Location} from '@angular/common';
@@ -44,6 +46,7 @@ import {
 import { UbicacionExternaResponse } from '../../../../../interfaces/ubicacionExternaResponse';
 import { FotoLinkDTO } from '../../../../../interfaces/fotoLinkDTO';
 import { Ubicacion, UbicacionCreate } from '../../../../../interfaces/ubicacion.interface';
+import { ApiStatus } from '../../../../../interfaces/local/EnumApiStatus.enum';
 
 enum TipoPublicacion {
   PROPIO = 'Propio',
@@ -80,6 +83,12 @@ type PublicacionSubmitEvent = [PublicacionCreate, File[]];
 })
 export class PublicacionFormComponent implements OnInit {
   location= inject(LocationStrategy)
+
+  statusForm = input.required<ApiStatus>()
+  readonly isLoading = computed(() => this.statusForm() === ApiStatus.LOADING);
+  readonly isSuccess = computed(() => this.statusForm() === ApiStatus.SUCCESS);
+  readonly isError   = computed(() => this.statusForm() === ApiStatus.ERROR);
+
 
   @Input() publicacionId: number | null = null;
 

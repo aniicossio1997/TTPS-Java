@@ -103,7 +103,13 @@ export class RegisterComponent implements OnInit {
   private readonly toastr = inject(ToastrService);
   private readonly _status = signal<ApiStatus>(ApiStatus.INIT);
 
+  public errorMessage = signal<string>('');
+
   ubicacionPrecargada = signal<UbicacionCreate | null>(null);
+
+    readonly isLoading = computed(() => this._status() === ApiStatus.LOADING);
+  readonly isSuccess = computed(() => this._status() === ApiStatus.SUCCESS);
+  readonly isError   = computed(() => this._status() === ApiStatus.ERROR);
 
   onLocationSelected( ubicacionExterna: UbicacionCreate) {
       this.ubicacionPrecargada.set({...ubicacionExterna})
@@ -221,6 +227,7 @@ export class RegisterComponent implements OnInit {
       return;
     }
 
+    this.errorMessage.set('');
     const request: RegisterRequest = {
       nombre: formValue.firstName,
       apellido: formValue.lastName,
@@ -242,8 +249,10 @@ export class RegisterComponent implements OnInit {
       },
       error: (err: HttpErrorResponse) => {
         console.error('Login error:', err.error);
+        let mensaje =err.error?.message || 'Ocurrió un error durante el registro.';
+        this.errorMessage.set(mensaje);
         this._status.set(ApiStatus.ERROR);
-        this.toastr.error('Credenciales incorrectas.', 'Error de Autenticación');
+        this.toastr.error(mensaje, 'Error de Autenticación');
       },
     });
   }

@@ -8,6 +8,10 @@
 
     <h2 class="register-card__title">Registrarme</h2>
 
+        @if (isError()) {
+      <p-message severity="error" icon="pi pi-times-circle" styleClass="mb-10">{{errorMessage()}}</p-message>
+    }
+
     <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="register-form" autocomplete="off">
 
       <div class="register-form__row">

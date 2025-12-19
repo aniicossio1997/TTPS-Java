@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PublicacionFormComponent } from '../form/publicacion-form/publicacion-form';
 import {
@@ -10,6 +10,7 @@ import { PublicacionesService } from '../../../../services/publicaciones.service
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, switchMap, tap } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
+import { ApiStatus } from '../../../../interfaces/local/EnumApiStatus.enum';
 
 type PublicacionSubmitEvent = [PublicacionCreate, File[]];
 
@@ -22,6 +23,7 @@ type PublicacionSubmitEvent = [PublicacionCreate, File[]];
         [publicacionId]="publicacionId"
         [publicacionExistente]="publicacion"
         (formSubmit)="handleFormSubmit($event)"
+        [statusForm]="_status()"
       />
     </ng-container>
   `,
@@ -35,6 +37,10 @@ export class PublicacionEditComponent implements OnInit {
 
   public publicacionId: number | null = null;
   public publicacion$!: Observable<Publicacion>;
+
+  public _status  = signal<ApiStatus>(ApiStatus.INIT);
+
+
 
   ngOnInit(): void {
     this.publicacion$ = this.route.paramMap.pipe(
@@ -60,6 +66,7 @@ export class PublicacionEditComponent implements OnInit {
     }
 
     const [publicacion, imagenes] = event;
+     this._status.set(ApiStatus.LOADING);
 
 
 
@@ -67,10 +74,12 @@ export class PublicacionEditComponent implements OnInit {
       next: (publicacionActualizada) => {
 
         this.toastr.success('Se modifico la publicacion con éxito', 'Éxito')
+        this._status.set(ApiStatus.SUCCESS);
 
         this.router.navigate(['/app/publicaciones', 'detalle', publicacionActualizada.id]);
       },
       error: (err) => {
+          this._status.set(ApiStatus.ERROR);
         console.error('Error al actualizar la publicación:', err);
       },
     });
